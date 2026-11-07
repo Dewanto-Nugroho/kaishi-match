@@ -1,0 +1,23 @@
+# ---- data pribadi ----
+# progres belajar Anda dari Anki (tanggal & status tiap kartu)
+progress.js
+
+# ---- rahasia ----
+# kunci API untuk generator soal (salin dari ai-config.contoh.json)
+ai-config.json
+api-key.txt
+
+# ---- berkas turunan / cadangan ----
+# cadangan otomatis yang dibuat generate-soal.py
+soal-*.js
+
+# audio hasil ekstraksi: hak ciptanya milik sumber aslinya.
+# Setiap pengguna membuatnya sendiri dengan: ekstrak-media.cmd
+media/
+
+# ---- sisa proses ----
+.sync-*/
+.anki-copy-*.anki2
+*.log
+Thumbs.db
+desktop.ini

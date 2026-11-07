@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f4fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kaishi">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236f4df5'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E5%AD%97%3C/text%3E%3C/svg%3E">
+<title>Cocokkan Kata — Kaishi 1.5k</title>
+<style>
+  :root {
+    --bg: #f5f4fb;
+    --card: #ffffff;
+    --ink: #1c1a2b;
+    --muted: #7c7a92;
+    --line: #eae7f4;
+    --accent: #6f4df5;
+    --accent-2: #8b6bff;
+    --accent-soft: #efe9ff;
+    --ok: #1e9d63;
+    --ok-bg: #e4f7ee;
+    --bad: #d2453f;
+    --bad-bg: #fdeaea;
+    --shadow: 0 1px 2px rgba(28, 26, 43, .04), 0 8px 24px rgba(28, 26, 43, .06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .jp { font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic Pro", Meiryo, sans-serif; }
+  .hidden { display: none !important; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 20px 140px; }
+
+  /* ---------- top bar ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+  .crumb { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .crumb b { color: var(--accent); font-weight: 600; }
+  .crumb .sep { opacity: .5; }
+  .badge {
+    font-size: 12px; color: var(--accent); background: var(--accent-soft);
+    border-radius: 999px; padding: 5px 11px; font-weight: 600;
+  }
+  .badge.badge-anki { color: #5c5a72; background: #f1f0f6; }
+  .badge.badge-link { text-decoration: none; background: #fff; border: 1px solid var(--line); color: var(--accent); }
+  .badge.badge-link:hover { background: var(--accent-soft); border-color: transparent; }
+  .badge.badge-anki.ok { color: var(--ok); background: var(--ok-bg); }
+  .badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .chip.anki { background: #f6fbf8; border-color: #d9ece3; color: #2a6b4d; }
+  .chip.anki:hover { background: #eaf7f0; border-color: #a9dcc4; color: #1e7d4e; }
+  .chip.anki.active { background: #1e9d63; border-color: #1e9d63; color: #fff; }
+  .chipgroup { display: flex; flex-direction: column; gap: 7px; }
+  .chipgroup + .chipgroup { margin-top: 6px; }
+  .filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .filters .field select { height: 38px; border-radius: 10px; border: 1px solid var(--line); background: #fff; padding: 0 10px; font-size: 14px; color: var(--ink); cursor: pointer; }
+  .btn.small { height: 38px; padding: 0 16px; font-size: 14px; border-radius: 10px; }
+  #timer.low { color: var(--bad); }
+  .grouplabel { font-size: 11.5px; font-weight: 600; letter-spacing: .02em; color: var(--muted); text-transform: uppercase; }
+  .toast {
+    position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(8px);
+    background: #24222f; color: #fff; font-size: 13.5px; padding: 10px 16px; border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(20, 18, 30, .28); opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s; z-index: 60; max-width: 80vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .chip-sep { display: none; }
+  .ankiline { font-size: 12.5px; color: var(--muted); min-height: 16px; }
+  .ankiline b { color: var(--ink); font-weight: 600; }
+  .st {
+    font-size: 11px; border-radius: 6px; padding: 2px 7px; flex: none; font-weight: 600;
+    white-space: nowrap;
+  }
+  .st-baru { background: #f1f0f6; color: #6c6a80; }
+  .st-belajar { background: #fff2e0; color: #b26a00; }
+  .st-muda { background: #e9f1ff; color: #2d5fd0; }
+  .st-matang { background: var(--ok-bg); color: #1e7d4e; }
+  .st-ditunda { background: var(--bad-bg); color: #b03a35; }
+
+  /* ---------- setup ---------- */
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; }
+  .panel-head { padding: 18px 18px 10px; display: flex; flex-direction: column; gap: 12px; }
+  .searchrow { display: flex; gap: 10px; }
+  .search {
+    flex: 1; height: 46px; border-radius: 13px; border: 1px solid var(--line);
+    background: #fbfaff; padding: 0 15px; font-size: 15px; color: var(--ink); outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search:focus { border-color: var(--accent-2); box-shadow: 0 0 0 4px rgba(111, 77, 245, .1); }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px;
+    padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s;
+  }
+  .chip:hover { border-color: var(--accent-2); color: var(--accent); background: #faf8ff; }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .listhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 2px 0; }
+  .listhead span { font-size: 13px; color: var(--muted); }
+  .linkbtn { background: none; border: 0; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 2px; }
+  .linkbtn:hover { text-decoration: underline; }
+
+  .list { max-height: 52vh; overflow-y: auto; border-top: 1px solid var(--line); margin-top: 10px; }
+  .item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 18px; cursor: pointer;
+    border-bottom: 1px solid #f4f2fa;
+  }
+  .item:hover { background: #faf9ff; }
+  .item input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex: none; }
+  .item .word { min-width: 130px; display: flex; flex-direction: column; line-height: 1.15; }
+  .item .word .rt { font-size: 11px; color: var(--muted); }
+  .item .word .wk { font-size: 17px; }
+  .item .mean { flex: 1; font-size: 14px; color: #4b4960; }
+  .item .freq { font-size: 11px; color: var(--muted); background: #f4f2fa; border-radius: 6px; padding: 3px 7px; flex: none; }
+  .empty { padding: 26px 18px; color: var(--muted); font-size: 14px; text-align: center; }
+
+  .actionbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    background: rgba(255, 255, 255, .92); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line); padding: 12px 20px;
+  }
+  .actionbar-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .selinfo { font-size: 14px; color: #4b4960; }
+  .selinfo b { color: var(--accent); font-size: 17px; }
+  .grow { flex: 1; }
+  .field { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .field select {
+    height: 38px; border-radius: 10px; border: 1px solid var(--line); background: #fff;
+    padding: 0 10px; font-size: 14px; color: var(--ink); cursor: pointer; outline: none;
+  }
+  .field-label-sm { display: none; }
+  .btn {
+    height: 46px; padding: 0 22px; border-radius: 13px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: transform .12s, box-shadow .15s, background .15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn.primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-color: transparent; color: #fff; box-shadow: 0 8px 18px rgba(111, 77, 245, .28); }
+  .btn.primary:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn.ghost { background: #fff; }
+
+  /* ---------- game ---------- */
+  .hud { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 16px 18px; margin-bottom: 18px; }
+  .hud-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .hud-left { display: flex; align-items: center; gap: 12px; }
+  .clock {
+    width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--bad-bg); color: var(--bad); font-size: 20px; flex: none;
+  }
+  .hud-left b { display: block; font-size: 20px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .hud-left small { font-size: 12px; color: var(--muted); }
+  .hud-right { display: flex; align-items: center; gap: 8px; }
+  .pill { border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  .pill.count { background: #f4f2fa; color: #4b4960; }
+  .bar { height: 8px; border-radius: 999px; background: #f1eefa; margin-top: 14px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #ff8a7a, #f4553f); transition: width .25s ease; }
+
+  .board { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 12px; }
+  .tile {
+    position: relative; width: 100%; min-height: 70px; padding: 10px 16px;
+    border-radius: 16px; border: 1px solid var(--line); background: #fff; color: var(--ink);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    cursor: pointer; font-size: 19px; text-align: center; line-height: 1.25;
+    box-shadow: 0 1px 2px rgba(28, 26, 43, .03);
+    transition: background .15s, color .15s, border-color .15s, transform .12s, box-shadow .15s;
+  }
+  .tile:hover { border-color: var(--accent-2); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(111, 77, 245, .12); }
+  .tile .rt {
+    font-size: 12px; color: var(--muted); min-height: 15px; line-height: 1.2;
+    visibility: hidden; opacity: 0; transition: opacity .18s ease;
+  }
+  .tile .rt.reveal { visibility: visible; opacity: 1; }
+  .tile .main { font-size: 21px; }
+  .tile .idmain { font-size: 18px; line-height: 1.35; }
+  .tile .idmain.long { font-size: 15.5px; }
+  .tile.selected { background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-color: transparent; color: #fff; box-shadow: 0 10px 22px rgba(111, 77, 245, .3); }
+  .tile.selected .rt { color: rgba(255, 255, 255, .78); }
+  .tile.matched { background: var(--ok-bg); border-color: #b6e5cd; color: #1c6d48; cursor: default; box-shadow: none; }
+  .tile.matched .rt { color: #3f7b5f; }
+  .tile.matched:hover { transform: none; box-shadow: none; border-color: #b6e5cd; }
+  .tile.wrong { background: var(--bad-bg); border-color: #f3bcbc; color: #a8332e; animation: shake .34s; }
+  .tile .speaker { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: .28; }
+  .tile.selected .speaker, .tile.matched .speaker { opacity: .35; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  .hint { margin-top: 16px; text-align: center; font-size: 13px; color: var(--muted); }
+  .gamebar { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; gap: 10px; }
+  .gamebar .roundtag { font-size: 13px; color: var(--muted); }
+
+  /* ---------- result ---------- */
+  .result-head { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 24px; text-align: center; margin-bottom: 18px; }
+  .result-head h1 { margin: 0 0 4px; font-size: 24px; }
+  .result-head p { margin: 0; color: var(--muted); font-size: 14px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+  .stat { background: #fbfaff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 10px; }
+  .stat b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .stat small { font-size: 12px; color: var(--muted); }
+  .stat.good b { color: var(--ok); }
+  .stat.bad b { color: var(--bad); }
+  .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .reviewtable { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; }
+  .reviewtable h2 { font-size: 15px; margin: 0; padding: 16px 18px 10px; }
+  .reviewtable .row { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 11px 18px; border-top: 1px solid #f4f2fa; font-size: 14px; }
+  .reviewtable .row.err { background: #fff8f8; }
+  .reviewtable .rw { display: flex; flex-direction: column; line-height: 1.2; }
+  .reviewtable .rw .rt { font-size: 11px; color: var(--muted); }
+  .reviewtable .rs { color: var(--muted); font-size: 13px; }
+  .reviewtable .rs b { color: var(--ink); font-weight: 500; }
+  .reviewtable .scroll { max-height: 46vh; overflow-y: auto; }
+  .marked { display: inline-block; font-size: 11px; color: var(--bad); border: 1px solid #f3bcbc; background: var(--bad-bg); border-radius: 6px; padding: 1px 6px; margin-left: 6px; }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 14px 12px 130px; }
+    .board { gap: 9px; }
+    .tile { min-height: 56px; font-size: 16px; border-radius: 13px; padding: 8px 10px; }
+    .tile .rt { font-size: 11px; min-height: 13px; }
+    .tile .main { font-size: 17px; }
+    .tile .idmain { font-size: 14.5px; line-height: 1.35; }
+    .tile .idmain.long { font-size: 12.5px; }
+    .tile .speaker { display: none; }
+    .item { padding: 9px 12px; gap: 9px; }
+    .item .word { min-width: 82px; }
+    .item .mean { font-size: 13px; }
+    .item .freq { display: none; }
+    .list { max-height: 46vh; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .reviewtable .row { grid-template-columns: 96px 1fr; gap: 10px; padding: 10px 14px; }
+    .reviewtable h2 { padding: 14px 14px 8px; }
+    .hud-left b { font-size: 18px; }
+    .pill { padding: 7px 11px; font-size: 13px; }
+    .clock { width: 40px; height: 40px; font-size: 17px; }
+    .hud { padding: 13px 14px; border-radius: 16px; }
+    .panel-head { padding: 14px 14px 8px; }
+    .search { height: 44px; font-size: 15px; }
+    .chip { padding: 7px 11px; font-size: 12.5px; }
+    .chipgroup + .chipgroup { margin-top: 2px; }
+    .filters { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    .filters .field { width: 100%; }
+    .filters .field:first-child { grid-column: 1 / -1; }
+    .filters .field select { flex: 1; min-width: 0; width: 100%; }
+    .filters .btn.small { height: 38px; padding: 0 18px; }
+    .ankiline { font-size: 12px; }
+    .badge { font-size: 11px; padding: 4px 9px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .badges { justify-content: flex-start; }
+    .crumb { font-size: 12.5px; }
+    .result-head { padding: 18px 14px; }
+    .result-head h1 { font-size: 20px; }
+
+    /* bar aksi bawah dibuat satu baris ringkas */
+    .actionbar { padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); }
+    .actionbar-inner { flex-wrap: nowrap; gap: 8px; }
+    .grow { display: none; }
+    .selinfo { font-size: 12.5px; white-space: nowrap; }
+    .selinfo b { font-size: 15px; }
+    .field { margin-left: auto; gap: 5px; }
+    .field-label { display: none; }
+    .field-label-sm { display: inline; }
+    .field select { height: 36px; font-size: 13px; padding: 0 8px; }
+    #startBtn { height: 42px; padding: 0 16px; font-size: 14px; white-space: nowrap; }
+    .hint { font-size: 12px; margin-top: 12px; }
+    .gamebar { margin-top: 14px; }
+    .gamebar .roundtag { font-size: 12px; }
+    #quitBtn { height: 40px; padding: 0 14px; font-size: 13px; }
+  }
+
+  .tile, .chip, .btn, .item, .linkbtn { touch-action: manipulation; }
+</style>
+</head>
+<body>
+
+<!-- ============ SETUP ============ -->
+<section id="screenSetup">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumb">
+        <span>Latihan</span><span class="sep">&rsaquo;</span>
+        <span>Kaishi 1.5k</span><span class="sep">&rsaquo;</span>
+        <b>Cocokkan kata</b>
+      </div>
+      <div class="badges">
+        <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
+        <button class="badge badge-poin" id="poinBadge" type="button" title="Lihat progres & poin">★ 0</button>
+        <span class="badge" id="deckBadge">memuat…</span>
+        <span class="badge badge-anki" id="ankiBadge">Anki belum tersambung</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="searchrow">
+          <input id="search" class="search" type="search" placeholder="Cari kata, bacaan, atau arti… (mis. makan, たべる, 食べる)">
+        </div>
+        <div id="chipArea">
+          <div class="chipgroup">
+            <span class="grouplabel">Semua kata</span>
+            <div class="chips" id="presets">
+              <button class="chip" data-preset="all">Semua kata</button>
+              <button class="chip" data-preset="r20">20 acak</button>
+              <button class="chip" data-preset="r50">50 acak</button>
+              <button class="chip" data-preset="r100">100 acak</button>
+              <button class="chip" data-preset="top200">200 tersering</button>
+              <button class="chip" data-preset="kanji">Hanya kanji</button>
+              <button class="chip" data-preset="kana">Hanya kana</button>
+              <button class="chip" data-preset="none">Kosongkan</button>
+            </div>
+          </div>
+          <div class="chipgroup hidden" id="ankiGroup">
+            <span class="grouplabel">Dari kata yang sudah dipelajari</span>
+            <div class="filters">
+              <label class="field">Kategori
+                <select id="katSelect">
+                  <option value="learned">Semua dipelajari</option>
+                  <option value="recent1">Baru dipelajari (&lt; 1 hari)</option>
+                  <option value="recent">Baru dipelajari (≤ 3 hari)</option>
+                  <option value="young">Masih muda (interval &lt; 21 hari)</option>
+                  <option value="mature">Matang</option>
+                  <option value="lapsed">Pernah lupa</option>
+                  <option value="unlearned">Belum dipelajari</option>
+                </select>
+              </label>
+              <label class="field">Jumlah
+                <select id="katJumlah">
+                  <option value="0">Semua</option>
+                  <option value="20">20 acak</option>
+                  <option value="50">50 acak</option>
+                  <option value="100">100 acak</option>
+                  <option value="200">200 acak</option>
+                </select>
+              </label>
+              <button class="btn small" id="katApply">Pilih</button>
+            </div>
+          </div>
+        </div>
+        <div class="ankiline" id="ankiInfo"></div>
+        <div class="listhead">
+          <span id="filterInfo">—</span>
+          <button class="linkbtn" id="selectVisible">Pilih semua yang tampil</button>
+        </div>
+      </div>
+      <div class="list" id="wordList"></div>
+    </div>
+  </div>
+
+  <div class="actionbar">
+    <div class="actionbar-inner">
+      <div class="selinfo"><b id="selCount">0</b> kata dipilih</div>
+      <div class="grow"></div>
+      <label class="field"><span class="field-label">Kata per ronde</span><span class="field-label-sm">Per ronde</span>
+        <select id="perRound">
+          <option value="4">4</option>
+          <option value="6" selected>6</option>
+          <option value="8">8</option>
+          <option value="10">10</option>
+        </select>
+      </label>
+      <button class="btn primary" id="startBtn" disabled>Mulai</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section id="screenGame" class="hidden">
+  <div class="wrap">
+    <div class="hud">
+      <div class="hud-top">
+        <div class="hud-left">
+          <div class="clock">⏱</div>
+          <div>
+            <b id="timer">0s</b>
+            <small>Ronde <span id="roundNo">1</span>/<span id="roundTotal">1</span></small>
+          </div>
+        </div>
+        <div class="hud-right">
+          <span class="pill ok">✓ <span id="okCount">0</span></span>
+          <span class="pill bad">✗ <span id="badCount">0</span></span>
+          <span class="pill count"><span id="matchCounter">0/0</span></span>
+        </div>
+      </div>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+
+    <div class="board">
+      <div class="col" id="colJa"></div>
+      <div class="col" id="colId"></div>
+    </div>
+
+    <div class="hint">Klik kata Jepang untuk mendengar suaranya, lalu klik artinya.</div>
+
+    <div class="gamebar">
+      <span class="roundtag" id="roundTag"></span>
+      <button class="btn ghost" id="quitBtn">Selesai sekarang</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="screenResult" class="hidden">
+  <div class="wrap">
+    <div class="result-head">
+      <h1 id="resultTitle">Sesi selesai</h1>
+      <p id="resultSub"></p>
+      <div class="stats">
+        <div class="stat"><b id="stWords">0</b><small>kata</small></div>
+        <div class="stat good"><b id="stOk">0</b><small>cocok</small></div>
+        <div class="stat bad"><b id="stErr">0</b><small>salah</small></div>
+        <div class="stat"><b id="stTime">0s</b><small>waktu</small></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn primary" id="againBtn">Ulangi sesi</button>
+        <button class="btn" id="retryWrongBtn">Ulangi yang salah</button>
+        <button class="btn" id="backBtn">Pilih kata lain</button>
+      </div>
+    </div>
+
+    <div class="reviewtable">
+      <h2>Daftar kata di sesi ini</h2>
+      <div class="scroll" id="reviewList"></div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+<script src="deck.js"></script>
+<script src="progress.js" onerror="window.__progressMissing=true"></script>
+<script src="stats.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var DECK = window.KAISHI_DECK;
+  if (!DECK || !DECK.words) {
+    document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">File <b>deck.js</b> tidak ditemukan. Pastikan file tersebut ada di folder yang sama dengan index.html.</p>';
+    return;
+  }
+
+  /* ---------------- data ---------------- */
+  var ALL = DECK.words.map(function (e, i) {
+    return { id: i, w: e.w, r: e.r || '', m: e.m || '', f: e.f, s: e.s || '', sm: e.sm || '', a: e.a };
+  });
+
+  /* ---------------- progres dari Anki (progress.js) ---------------- */
+  var PROG = (window.KAISHI_PROGRESS && window.KAISHI_PROGRESS.cards) ? window.KAISHI_PROGRESS : null;
+  var PCARDS = PROG ? PROG.cards : {};
+
+  // kartu: [type, queue, ivl, reps, lapses, lastReview, nextDue, deckId]
+  function pcard(e) { return PCARDS[String(e.id)] || null; }
+  function isLearned(e) { var p = pcard(e); return !!p && p[3] > 0; }
+  function isLapsed(e) { var p = pcard(e); return !!p && p[4] > 0; }
+  // "baru dipelajari" = terakhir diulang dalam N hari terakhir
+  function withinDays(e, days) {
+    var p = pcard(e);
+    if (!p || !p[5]) return false;
+    return (Date.now() - p[5]) <= days * 24 * 3600 * 1000;
+  }
+  function isRecent(e) { return withinDays(e, 3); }
+  function isRecent1(e) { return withinDays(e, 1); }
+  // "masih muda" = sudah lewat tahap belajar, interval < 21 hari
+  function isYoung(e) {
+    var p = pcard(e);
+    return !!p && p[1] === 2 && p[2] < 21;
+  }
+  function ankiStatus(e) {
+    var p = pcard(e);
+    if (!p) return 'none';
+    var q = p[1];
+    if (q === 0) return 'baru';
+    if (q === 1 || q === 3) return 'belajar';
+    if (q === 2) return p[2] >= 21 ? 'matang' : 'muda';
+    if (q < 0) return 'ditunda';
+    return 'baru';
+  }
+  var ST_LABEL = { baru: 'baru', belajar: 'belajar', muda: 'muda', matang: 'matang', ditunda: 'ditunda' };
+
+  var KANJI = /[\u3400-\u4dbf\u4e00-\u9fff]/;
+
+  /* ---------------- elements ---------------- */
+  function $(id) { return document.getElementById(id); }
+  var screenSetup = $('screenSetup'), screenGame = $('screenGame'), screenResult = $('screenResult');
+  var elSearch = $('search'), elList = $('wordList'), elFilterInfo = $('filterInfo');
+  var elSelCount = $('selCount'), elStart = $('startBtn'), elPerRound = $('perRound');
+  var elTimer = $('timer'), elRoundNo = $('roundNo'), elRoundTotal = $('roundTotal');
+  var elOk = $('okCount'), elBad = $('badCount'), elCounter = $('matchCounter'), elFill = $('barFill');
+  var colJa = $('colJa'), colId = $('colId'), elRoundTag = $('roundTag');
+  var elDeckBadge = $('deckBadge');
+  var elResultTitle = $('resultTitle'), elResultSub = $('resultSub');
+  var elReviewList = $('reviewList');
+
+  elDeckBadge.textContent = ALL.length + ' kata siap';
+
+  /* ---------------- audio ---------------- */
+  var player = null;
+  var audioOk = true;
+
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ja-JP';
+      u.rate = 0.9;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* ignore */ }
+  }
+
+  function playAudio(entry) {
+    if (entry.a === null || entry.a === undefined) { speak(entry.w); return; }
+    var src = 'media/m' + entry.a + '.mp3';
+    try {
+      if (!player) { player = new Audio(); player.preload = 'auto'; }
+      player.pause();
+      player.src = src;
+      player.currentTime = 0;
+      var p = player.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(function () { audioOk = false; speak(entry.w); });
+      }
+    } catch (e) {
+      speak(entry.w);
+    }
+  }
+
+  /* ---------------- helpers ---------------- */
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function fmtTime(sec) {
+    sec = Math.max(0, Math.floor(sec));
+    if (sec < 60) return sec + 's';
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return m + 'm ' + (s < 10 ? '0' + s : s) + 's';
+  }
+
+  /* ---------------- setup screen ---------------- */
+  var selected = new Set();
+  var filtered = ALL;
+  var perRound = parseInt(localStorage.getItem('kaishi.perRound') || '6', 10);
+  if ([4, 6, 8, 10].indexOf(perRound) === -1) perRound = 6;
+  elPerRound.value = String(perRound);
+
+  function rowHtml(e) {
+    var hasRt = e.r && e.r !== e.w;
+    var st = PROG ? ankiStatus(e) : 'none';
+    var stHtml = (st !== 'none') ? '<span class="st st-' + st + '">' + ST_LABEL[st] + '</span>' : '';
+    return '<label class="item">' +
+      '<input type="checkbox" data-id="' + e.id + '"' + (selected.has(e.id) ? ' checked' : '') + '>' +
+      '<span class="word"><span class="rt jp">' + (hasRt ? escapeHtml(e.r) : '') + '</span>' +
+      '<span class="wk jp">' + escapeHtml(e.w) + '</span></span>' +
+      '<span class="mean">' + escapeHtml(e.m) + '</span>' +
+      stHtml +
+      (e.f ? '<span class="freq">#' + e.f + '</span>' : '') +
+      '</label>';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderList() {
+    if (!filtered.length) {
+      elList.innerHTML = '<div class="empty">Tidak ada kata yang cocok dengan pencarian.</div>';
+      elFilterInfo.textContent = '0 kata';
+      return;
+    }
+    var LIMIT = 5000;
+    var slice = filtered.slice(0, LIMIT);
+    var html = slice.map(rowHtml).join('');
+    if (filtered.length > LIMIT) {
+      html += '<div class="empty">… ' + (filtered.length - LIMIT) + ' kata lain disembunyikan. Persempit pencarian atau pakai tombol pilihan cepat.</div>';
+    }
+    elList.innerHTML = html;
+    elFilterInfo.textContent = filtered.length + ' kata ditampilkan' + (filtered.length !== ALL.length ? ' (dari ' + ALL.length + ')' : '');
+  }
+
+  function updateSelectionUi() {
+    elSelCount.textContent = selected.size;
+    elStart.disabled = selected.size < 2;
+    elStart.textContent = selected.size ? 'Mulai (' + selected.size + ')' : 'Mulai';
+  }
+
+  elList.addEventListener('change', function (ev) {
+    var t = ev.target;
+    if (!t || t.type !== 'checkbox') return;
+    var id = parseInt(t.getAttribute('data-id'), 10);
+    if (t.checked) selected.add(id); else selected.delete(id);
+    updateSelectionUi();
+  });
+
+  elSearch.addEventListener('input', function () {
+    var q = elSearch.value.trim().toLowerCase();
+    if (!q) { filtered = ALL; }
+    else {
+      filtered = ALL.filter(function (e) {
+        return e.w.indexOf(q) !== -1 || e.m.toLowerCase().indexOf(q) !== -1 ||
+          (e.r && e.r.indexOf(q) !== -1) || (e.s && e.s.toLowerCase().indexOf(q) !== -1);
+      });
+    }
+    renderList();
+  });
+
+  $('selectVisible').addEventListener('click', function () {
+    filtered.slice(0, 1200).forEach(function (e) { selected.add(e.id); });
+    renderList();
+    updateSelectionUi();
+  });
+
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2600);
+  }
+
+  document.getElementById('chipArea').addEventListener('click', function (ev) {
+    var btn = ev.target.closest('.chip');
+    if (!btn) return;
+    var p = btn.getAttribute('data-preset');
+    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function (c) { c.classList.remove('active'); });
+    btn.classList.add('active');
+
+    if (p === 'all') {
+      ALL.forEach(function (e) { selected.add(e.id); });
+    } else if (p === 'none') {
+      selected.clear();
+    } else if (p === 'r20' || p === 'r50' || p === 'r100') {
+      var n = parseInt(p.slice(1), 10);
+      selected.clear();
+      shuffle(ALL).slice(0, n).forEach(function (e) { selected.add(e.id); });
+    } else if (p === 'lr20' || p === 'lr50' || p === 'lr100' || p === 'lr200') {
+      var want = parseInt(p.slice(2), 10);
+      var learnedPool = ALL.filter(isLearned);
+      selected.clear();
+      shuffle(learnedPool).slice(0, want).forEach(function (e) { selected.add(e.id); });
+      if (learnedPool.length < want) {
+        toast('Hanya ada ' + learnedPool.length + ' kata yang sudah dipelajari — semuanya dipilih.');
+      }
+    } else if (p === 'top200') {
+      selected.clear();
+      ALL.slice(0, 200).forEach(function (e) { selected.add(e.id); });
+    } else if (p === 'kanji') {
+      selected.clear();
+      ALL.filter(function (e) { return KANJI.test(e.w); }).forEach(function (e) { selected.add(e.id); });
+    } else if (p === 'kana') {
+      selected.clear();
+      ALL.filter(function (e) { return !KANJI.test(e.w); }).forEach(function (e) { selected.add(e.id); });
+    }
+    renderList();
+    updateSelectionUi();
+  });
+
+  /* ---------------- filter kategori Anki (dropdown) ---------------- */
+  var KAT = {
+    learned: isLearned,
+    recent1: isRecent1,
+    recent: isRecent,
+    young: isYoung,
+    mature: function (e) { return ankiStatus(e) === 'matang'; },
+    lapsed: isLapsed,
+    unlearned: function (e) { return !isLearned(e); }
+  };
+  var KAT_LABEL = {
+    learned: 'Semua dipelajari',
+    recent1: 'Baru dipelajari (< 1 hari)',
+    recent: 'Baru dipelajari (≤ 3 hari)',
+    young: 'Masih muda (interval < 21 hari)',
+    mature: 'Matang',
+    lapsed: 'Pernah lupa',
+    unlearned: 'Belum dipelajari'
+  };
+
+  function applyKat() {
+    var key = $('katSelect').value;
+    var n = parseInt($('katJumlah').value, 10) || 0;
+    if (!KAT[key]) return;
+    var pool = ALL.filter(KAT[key]);
+    selected.clear();
+    (n > 0 ? shuffle(pool).slice(0, n) : pool).forEach(function (e) { selected.add(e.id); });
+    if (n > 0 && pool.length < n) {
+      toast('Hanya ada ' + pool.length + ' kata pada kategori ini — semuanya dipilih.');
+    }
+    renderList();
+    updateSelectionUi();
+  }
+
+  $('katApply').addEventListener('click', applyKat);
+  $('katSelect').addEventListener('change', applyKat);
+  $('katJumlah').addEventListener('change', applyKat);
+
+  elPerRound.addEventListener('change', function () {
+    perRound = parseInt(elPerRound.value, 10) || 6;
+    localStorage.setItem('kaishi.perRound', String(perRound));
+  });
+
+  /* ---------------- game ---------------- */
+  var G = {
+    pool: [], rounds: [], ri: 0, pairList: [],
+    selL: null, selR: null, locked: false,
+    matched: 0, ok: 0, err: 0, total: 0,
+    t0: 0, tick: null, wrongIds: new Set(), busy: false
+  };
+
+  function show(screen) {
+    [screenSetup, screenGame, screenResult].forEach(function (s) { s.classList.add('hidden'); });
+    if (screen === 'setup') screenSetup.classList.remove('hidden');
+    if (screen === 'game') screenGame.classList.remove('hidden');
+    if (screen === 'result') screenResult.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function buildRounds(pool, size) {
+    var rest = shuffle(pool);
+    var rounds = [];
+    while (rest.length) {
+      var round = [];
+      var used = Object.create(null);
+      for (var i = 0; i < rest.length && round.length < size;) {
+        var e = rest[i];
+        if (!used[e.m]) { used[e.m] = true; round.push(e); rest.splice(i, 1); }
+        else i++;
+      }
+      if (!round.length) round = rest.splice(0, size);
+      rounds.push(round);
+    }
+    // gabungkan ronde terakhir yang hanya berisi 1 pasang ke ronde sebelumnya
+    if (rounds.length > 1 && rounds[rounds.length - 1].length === 1) {
+      var last = rounds.pop();
+      rounds[rounds.length - 1] = rounds[rounds.length - 1].concat(last);
+    }
+    return rounds;
+  }
+
+  var ROUND_MS = 30000;
+
+  function startSession(pool) {
+    G.pool = pool;
+    G.rounds = buildRounds(pool, perRound);
+    G.ri = 0; G.matched = 0; G.ok = 0; G.err = 0;
+    G.total = pool.length; G.wrongIds = new Set(); G.awarded = false;
+    G.t0 = Date.now();
+    show('game');
+    renderRound();
+  }
+
+  // hitung mundur 30 detik per ronde; waktu habis -> langsung ronde berikutnya
+  function startRoundTimer() {
+    if (G.tick) clearInterval(G.tick);
+    G.roundEnd = Date.now() + ROUND_MS;
+    G.transition = false;
+    tickTimer();
+    G.tick = setInterval(tickTimer, 200);
+  }
+
+  function tickTimer() {
+    var left = Math.max(0, G.roundEnd - Date.now());
+    elTimer.textContent = Math.ceil(left / 1000) + 's';
+    elTimer.classList.toggle('low', left <= 10000);
+    if (left <= 0 && !G.transition && !G.locked) {
+      G.transition = true;
+      if (G.tick) { clearInterval(G.tick); G.tick = null; }
+      timeUp();
+    }
+  }
+
+  function timeUp() {
+    var missed = [];
+    (G.pairList || []).forEach(function (e) {
+      if (!isMatched(e)) { missed.push(e); G.wrongIds.add(e.id); }
+    });
+    if (missed.length) {
+      G.err += missed.length;
+      elBad.textContent = G.err;
+    }
+    toast(missed.length
+      ? 'Waktu habis — ' + missed.length + ' kata terlewat, lanjut ronde berikutnya.'
+      : 'Waktu habis, lanjut ronde berikutnya.');
+    setTimeout(nextRound, 450);
+  }
+
+  function renderRound() {
+    var pairs = G.rounds[G.ri];
+    G.pairList = pairs;
+    G.selL = null; G.selR = null; G.locked = false;
+    elRoundNo.textContent = G.ri + 1;
+    elRoundTotal.textContent = G.rounds.length;
+    elRoundTag.textContent = 'Ronde ' + (G.ri + 1) + ' dari ' + G.rounds.length + ' · ' + pairs.length + ' pasang';
+    elOk.textContent = G.ok;
+    elBad.textContent = G.err;
+    elCounter.textContent = G.matched + '/' + G.total;
+    elFill.style.width = (G.total ? (G.matched / G.total * 100) : 0) + '%';
+    startRoundTimer();
+
+    var lefts = shuffle(pairs);
+    var rights = shuffle(pairs);
+
+    colJa.innerHTML = '';
+    colId.innerHTML = '';
+
+    lefts.forEach(function (entry) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tile';
+      b.setAttribute('data-id', entry.id);
+      var hasRt = entry.r && entry.r !== entry.w;
+      // bacaan (hiragana) disembunyikan; hanya muncul saat salah memilih
+      b.innerHTML = '<span class="rt jp' + (hasRt ? '' : ' empty') + '">' +
+        (hasRt ? escapeHtml(entry.r) : '') + '</span>' +
+        '<span class="main jp">' + escapeHtml(entry.w) + '</span>' +
+        '<span class="speaker">🔊</span>';
+      b.addEventListener('click', function () { onLeft(b, entry); });
+      colJa.appendChild(b);
+    });
+
+    rights.forEach(function (entry) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tile';
+      b.setAttribute('data-id', entry.id);
+      var longMeaning = entry.m.length > 42;
+      b.innerHTML = '<span class="main idmain' + (longMeaning ? ' long' : '') + '">' + escapeHtml(entry.m) + '</span>';
+      b.addEventListener('click', function () { onRight(b, entry); });
+      colId.appendChild(b);
+    });
+  }
+
+  function onLeft(btn, entry) {
+    if (btn.classList.contains('matched')) { playAudio(entry); return; }
+    if (G.locked) return;
+    playAudio(entry);
+    if (G.selL && G.selL.btn === btn) {
+      btn.classList.remove('selected');
+      G.selL = null;
+      return;
+    }
+    if (G.selL) G.selL.btn.classList.remove('selected');
+    G.selL = { btn: btn, entry: entry };
+    btn.classList.add('selected');
+    checkPair();
+  }
+
+  function onRight(btn, entry) {
+    if (btn.classList.contains('matched') || G.locked) return;
+    if (G.selR && G.selR.btn === btn) {
+      btn.classList.remove('selected');
+      G.selR = null;
+      return;
+    }
+    if (G.selR) G.selR.btn.classList.remove('selected');
+    G.selR = { btn: btn, entry: entry };
+    btn.classList.add('selected');
+    checkPair();
+  }
+
+  function checkPair() {
+    if (!G.selL || !G.selR) return;
+    var L = G.selL, R = G.selR;
+    var correct = L.entry.m === R.entry.m;
+
+    if (correct) {
+      L.btn.classList.remove('selected');
+      R.btn.classList.remove('selected');
+      L.btn.classList.add('matched');
+      R.btn.classList.add('matched');
+      L.btn.style.pointerEvents = 'auto';
+      R.btn.style.pointerEvents = 'none';
+      G.selL = null; G.selR = null;
+      G.ok++; G.matched++;
+      elOk.textContent = G.ok;
+      elCounter.textContent = G.matched + '/' + G.total;
+      elFill.style.width = (G.total ? (G.matched / G.total * 100) : 0) + '%';
+
+      if (window.KaishiStats) {
+        window.KaishiStats.matchPair({
+          correct: true,
+          wordId: L.entry.id,
+          isNew: ankiStatus(L.entry) === 'baru'
+        });
+      }
+
+      if (G.matched >= G.total) {
+        setTimeout(finish, 500);
+        return;
+      }
+      if (G.pairList.every(function (e) { return isMatched(e); })) {
+        G.locked = true;
+        if (window.KaishiStats) window.KaishiStats.matchRound();
+        setTimeout(nextRound, 620);
+      }
+    } else {
+      G.locked = true;
+      G.err++;
+      if (window.KaishiStats) window.KaishiStats.matchPair({ correct: false, wordId: L.entry.id });
+      elBad.textContent = G.err;
+      G.wrongIds.add(L.entry.id);
+      G.wrongIds.add(R.entry.id);
+      L.btn.classList.add('wrong');
+      R.btn.classList.add('wrong');
+      // salah pilih -> bacaan (hiragana) kata Jepang yang dipilih ditampilkan
+      revealReading(L.btn);
+      var lb = L.btn, rb = R.btn;
+      setTimeout(function () {
+        lb.classList.remove('wrong', 'selected');
+        rb.classList.remove('wrong', 'selected');
+        if (G.selL && G.selL.btn === lb) G.selL = null;
+        if (G.selR && G.selR.btn === rb) G.selR = null;
+        G.locked = false;
+      }, 520);
+    }
+  }
+
+  function revealReading(tile) {
+    var rt = tile.querySelector('.rt');
+    if (!rt || !rt.textContent.trim()) return;
+    rt.classList.add('reveal');
+  }
+
+  function isMatched(entry) {
+    var nodes = colJa.querySelectorAll('.tile.matched');
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].getAttribute('data-id') === String(entry.id)) return true;
+    }
+    return false;
+  }
+
+  function nextRound() {
+    G.ri++;
+    if (G.ri >= G.rounds.length) { finish(); return; }
+    G.locked = false;
+    renderRound();
+  }
+
+  function finish() {
+    if (G.tick) { clearInterval(G.tick); G.tick = null; }
+    var secs = (Date.now() - G.t0) / 1000;
+    if (window.KaishiStats && !G.awarded) {
+      G.awarded = true;
+      window.KaishiStats.matchDone({ correct: G.ok, wrong: G.err });
+    }
+    elResultTitle.textContent = 'Sesi selesai 🎉';
+    elResultSub.textContent = G.matched + ' dari ' + G.total + ' kata berhasil dicocokkan.';
+    $('stWords').textContent = G.total;
+    $('stOk').textContent = G.ok;
+    $('stErr').textContent = G.err;
+    $('stTime').textContent = fmtTime(secs);
+
+    var rows = G.pool.map(function (e) {
+      var err = G.wrongIds.has(e.id);
+      return '<div class="row' + (err ? ' err' : '') + '">' +
+        '<div class="rw"><span class="rt jp">' + escapeHtml(e.r && e.r !== e.w ? e.r : '') + '</span>' +
+        '<span class="jp">' + escapeHtml(e.w) + '</span></div>' +
+        '<div><div>' + escapeHtml(e.m) + (err ? '<span class="marked">perlu diulang</span>' : '') + '</div>' +
+        (e.s ? '<div class="rs jp">' + escapeHtml(e.s) + '</div>' : '') +
+        (e.sm ? '<div class="rs">' + escapeHtml(e.sm) + '</div>' : '') +
+        '</div></div>';
+    }).join('');
+    $('reviewList').innerHTML = rows;
+    show('result');
+  }
+
+  $('quitBtn').addEventListener('click', function () {
+    if (confirm('Selesaikan sesi sekarang?')) finish();
+  });
+
+  elStart.addEventListener('click', function () {
+    if (selected.size < 2) return;
+    var pool = ALL.filter(function (e) { return selected.has(e.id); });
+    startSession(pool);
+  });
+
+  $('againBtn').addEventListener('click', function () { startSession(G.pool); });
+  $('retryWrongBtn').addEventListener('click', function () {
+    var wrong = G.pool.filter(function (e) { return G.wrongIds.has(e.id); });
+    if (wrong.length < 2) { alert('Tidak ada kata yang perlu diulang (atau hanya tersisa 1 kata).'); return; }
+    startSession(wrong);
+  });
+  $('backBtn').addEventListener('click', function () { show('setup'); renderList(); updateSelectionUi(); });
+
+  /* ---------------- init ---------------- */
+  function initAnki() {
+    var elAnki = document.getElementById('ankiBadge');
+    var elInfo = document.getElementById('ankiInfo');
+    if (!PROG) {
+      elAnki.textContent = 'Anki belum tersambung';
+      elInfo.innerHTML = 'Untuk melihat kata yang sudah dipelajari, jalankan <b>sinkron-anki.cmd</b> ' +
+        '(atau <b>python sinkron-anki.py</b>) di folder ini, lalu muat ulang halaman.';
+      document.getElementById('ankiGroup').classList.add('hidden');
+      return;
+    }
+    var learned = ALL.filter(isLearned).length;
+    var mature = ALL.filter(function (e) { return ankiStatus(e) === 'matang'; }).length;
+    var lapsed = ALL.filter(isLapsed).length;
+    var recent = ALL.filter(isRecent).length;
+    var young = ALL.filter(isYoung).length;
+    var when = new Date(PROG.generatedAt);
+    elAnki.textContent = learned + '/' + ALL.length + ' sudah dipelajari';
+    elAnki.classList.add('ok');
+    elInfo.innerHTML = 'Tersambung ke Anki · <b>' + learned + '</b> kata pernah diulang, ' +
+      '<b>' + recent + '</b> baru diulang (3 hari), <b>' + young + '</b> masih muda, ' +
+      '<b>' + mature + '</b> matang, <b>' + lapsed + '</b> pernah lupa · data ' +
+      when.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) +
+      ' · jalankan sinkron lagi setelah belajar di Anki.';
+
+    document.getElementById('ankiGroup').classList.remove('hidden');
+    // lengkapi label dropdown dengan jumlah kata per kategori
+    Array.prototype.forEach.call(document.querySelectorAll('#katSelect option'), function (o) {
+      var k = o.value;
+      if (!KAT_LABEL[k]) return;
+      o.textContent = KAT_LABEL[k] + ' — ' + ALL.filter(KAT[k]).length;
+    });
+  }
+
+  initAnki();
+  renderList();
+  updateSelectionUi();
+
+  // Mulai cepat: index.html?n=20 langsung memilih N kata acak dan memulai sesi.
+  var quick = parseInt(new URLSearchParams(location.search).get('n'), 10);
+  if (quick >= 2) {
+    shuffle(ALL).slice(0, quick).forEach(function (e) { selected.add(e.id); });
+    renderList();
+    updateSelectionUi();
+    var quickPool = ALL.filter(function (e) { return selected.has(e.id); });
+    startSession(quickPool);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f4fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236f4df5'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E5%AD%97%3C/text%3E%3C/svg%3E">
+<title>Kuis Kaishi — Soal N5–N1</title>
+<style>
+  :root {
+    --bg:#f5f4fb; --card:#fff; --ink:#1c1a2b; --muted:#7c7a92; --line:#eae7f4;
+    --accent:#6f4df5; --accent-2:#8b6bff; --accent-soft:#efe9ff;
+    --ok:#1e9d63; --ok-bg:#e4f7ee; --bad:#d2453f; --bad-bg:#fdeaea;
+    --shadow:0 1px 2px rgba(28,26,43,.04), 0 8px 24px rgba(28,26,43,.06);
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; min-height:100%; }
+  body { background:var(--bg); color:var(--ink); font-family:"Inter","Segoe UI",system-ui,-apple-system,"Noto Sans JP","Yu Gothic UI",sans-serif; -webkit-font-smoothing:antialiased; }
+  .jp { font-family:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic Pro",Meiryo,sans-serif; }
+  .hidden { display:none !important; }
+  .wrap { max-width:960px; margin:0 auto; padding:20px 18px 120px; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .crumb { font-size:14px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .crumb b { color:var(--accent); font-weight:600; }
+  .crumb a { color:var(--muted); text-decoration:none; }
+  .crumb a:hover { color:var(--accent); }
+  .badge { font-size:12px; color:var(--accent); background:var(--accent-soft); border-radius:999px; padding:5px 11px; font-weight:600; }
+
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); padding:18px; }
+  .grouplabel { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:var(--muted); text-transform:uppercase; display:block; margin:14px 0 8px; }
+  .grouplabel:first-child { margin-top:0; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; padding:8px 14px; font-size:13px; font-weight:500; cursor:pointer; transition:all .15s; touch-action:manipulation; }
+  .chip:hover { border-color:var(--accent-2); color:var(--accent); background:#faf8ff; }
+  .chip.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .chip small { opacity:.7; margin-left:4px; }
+
+  .row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:16px; }
+  .field { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+  .field select { height:38px; border-radius:10px; border:1px solid var(--line); background:#fff; padding:0 10px; font-size:14px; color:var(--ink); cursor:pointer; }
+  .grow { flex:1; }
+  .btn { height:46px; padding:0 22px; border-radius:13px; border:1px solid var(--line); background:#fff; color:var(--ink); font-size:15px; font-weight:600; cursor:pointer; transition:transform .12s, box-shadow .15s; touch-action:manipulation; }
+  .btn:hover { transform:translateY(-1px); }
+  .btn.primary { background:linear-gradient(180deg,var(--accent-2),var(--accent)); border-color:transparent; color:#fff; box-shadow:0 8px 18px rgba(111,77,245,.28); }
+  .btn.primary:disabled { opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn.ghost { background:#fff; }
+
+  /* ---- quiz ---- */
+  .qhead { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .qhead .pos { font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .qhead .lvbadge { font-size:11px; font-weight:700; border-radius:6px; padding:3px 8px; background:var(--accent-soft); color:var(--accent); }
+  .qhead .typebadge { font-size:11px; font-weight:600; border-radius:6px; padding:3px 8px; background:#f1f0f6; color:#5c5a72; }
+  .bar { flex:1; height:8px; border-radius:999px; background:#f1eefa; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent-2),var(--accent)); transition:width .25s; }
+
+  .qcard { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); padding:26px 22px; text-align:center; }
+  .qprompt { font-size:34px; line-height:1.35; margin:4px 0 6px; }
+  .qprompt.small { font-size:20px; line-height:1.6; }
+  .qprompt.mid { font-size:26px; }
+  ruby rt {
+    font-size:.58em; color:#3f3a52; font-weight:700; letter-spacing:0;
+    font-family:"Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
+    -webkit-text-stroke:.01em currentColor;
+  }
+  .opt ruby rt, .piece ruby rt { color:#4a4463; }
+  .rrow ruby rt { color:#4a4463; }
+  .feedback ruby rt { color:inherit; opacity:.92; }
+  .qsub { color:var(--muted); font-size:13px; }
+  .speak { margin-top:10px; font-size:13px; color:var(--accent); background:none; border:0; cursor:pointer; font-weight:600; }
+  .speak:hover { text-decoration:underline; }
+
+  .options { display:grid; gap:10px; margin-top:18px; }
+  .opt { text-align:left; padding:14px 16px; border-radius:14px; border:1px solid var(--line); background:#fff; font-size:16px; cursor:pointer; transition:all .15s; display:flex; gap:12px; align-items:center; touch-action:manipulation; }
+  .opt:hover:not(.locked) { border-color:var(--accent-2); background:#faf8ff; }
+  .opt .key { width:24px; height:24px; border-radius:7px; background:#f1f0f6; color:#6c6a80; font-size:12px; font-weight:700; display:grid; place-items:center; flex:none; }
+  .opt.correct { background:var(--ok-bg); border-color:#b6e5cd; color:#1c6d48; }
+  .opt.correct .key { background:#c9ebd8; color:#1c6d48; }
+  .opt.wrong { background:var(--bad-bg); border-color:#f3bcbc; color:#a8332e; }
+  .opt.wrong .key { background:#f6cdcd; color:#a8332e; }
+  .opt.locked { cursor:default; }
+
+  /* ---- susun kata ---- */
+  .answer { min-height:58px; border:1.5px dashed #d9d3ec; border-radius:14px; padding:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center; background:#fbfaff; }
+  .answer.empty::before { content:"Ketuk potongan di bawah untuk menyusun kalimat"; color:#a9a5bd; font-size:13px; }
+  .pool { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
+  .piece { padding:10px 14px; border-radius:12px; border:1px solid var(--line); background:#fff; font-size:17px; cursor:pointer; touch-action:manipulation; transition:all .12s; }
+  .piece:hover { border-color:var(--accent-2); }
+  .piece.used { opacity:.25; pointer-events:none; }
+  .piece.in-answer { background:var(--accent-soft); border-color:#cbbbfb; }
+
+  .feedback { margin-top:16px; border-radius:14px; padding:13px 16px; font-size:14px; line-height:1.55; display:none; text-align:left; }
+  .feedback.show { display:block; }
+  .feedback.good { background:var(--ok-bg); color:#1a6443; }
+  .feedback.bad { background:var(--bad-bg); color:#8f2f2b; }
+  .feedback b { font-weight:700; }
+  .feedback .why { margin-top:7px; padding-top:7px; border-top:1px solid rgba(0,0,0,.08); }
+  .feedback .explain { margin-top:6px; opacity:.92; }
+  .qfoot { display:flex; justify-content:space-between; align-items:center; margin-top:16px; gap:10px; }
+
+  .result-head { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); padding:24px; text-align:center; }
+  .result-head h1 { margin:0 0 4px; font-size:24px; }
+  .result-head p { margin:0; color:var(--muted); font-size:14px; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+  .stat { background:#fbfaff; border:1px solid var(--line); border-radius:14px; padding:14px 10px; }
+  .stat b { display:block; font-size:22px; }
+  .stat small { font-size:12px; color:var(--muted); }
+  .stat.good b { color:var(--ok); }
+  .stat.bad b { color:var(--bad); }
+  .review { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); margin-top:16px; overflow:hidden; }
+  .review h2 { font-size:15px; margin:0; padding:16px 18px 10px; }
+  .review .scroll { max-height:46vh; overflow:auto; }
+  .rrow { padding:12px 18px; border-top:1px solid #f4f2fa; font-size:14px; display:grid; grid-template-columns:1fr auto; gap:10px; }
+  .rrow.err { background:#fff8f8; }
+  .rrow .q { font-size:15px; }
+  .rrow .n { color:var(--muted); font-size:13px; margin-top:3px; }
+  .rrow .tag { font-size:11px; color:var(--bad); }
+  .actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+
+  .empty-soal { text-align:center; color:var(--muted); padding:40px 10px; font-size:14px; line-height:1.7; }
+
+  @media (max-width:720px) {
+    .wrap { padding:14px 12px 100px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .badges { justify-content: flex-start; }
+    .panel { padding:14px; border-radius:16px; }
+    .qcard { padding:18px 14px; border-radius:16px; }
+    .qprompt { font-size:26px; }
+    .qprompt.mid { font-size:21px; }
+    .qprompt.small { font-size:17px; }
+    .opt { font-size:15px; padding:12px 13px; }
+    .btn { height:44px; padding:0 18px; font-size:14px; }
+    .stats { grid-template-columns:repeat(3,1fr); gap:8px; }
+    .stat b { font-size:18px; }
+    .piece { font-size:15px; padding:9px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= SETUP ================= -->
+<section id="screenSetup">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumb">
+        <a href="index.html">Latihan</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Kuis</b>
+      </div>
+      <div class="badges">
+        <button class="badge badge-poin" id="poinBadge" type="button" title="Lihat progres & poin">★ 0</button>
+        <span class="badge" id="soalBadge">memuat…</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <span class="grouplabel">Level</span>
+      <div class="chips" id="levelChips"></div>
+      <p class="qsub" style="margin:8px 0 0">Level dihitung dari peringkat frekuensi kata di deck ini — perkiraan kesulitan, bukan sertifikasi JLPT resmi.</p>
+
+      <span class="grouplabel">Jenis soal</span>
+      <div class="chips" id="typeChips"></div>
+
+      <div class="row">
+        <label class="field">Jumlah soal
+          <select id="jumlah">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+          </select>
+        </label>
+        <label class="field">Urutan
+          <select id="urutan">
+            <option value="acak" selected>Acak</option>
+            <option value="naik">Level mudah → sulit</option>
+            <option value="sulit">Level sulit → mudah</option>
+          </select>
+        </label>
+        <div class="grow"></div>
+        <button class="btn primary" id="startBtn" disabled>Mulai kuis</button>
+      </div>
+      <p class="qsub" id="pickInfo" style="margin:12px 0 0"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section id="screenQuiz" class="hidden">
+  <div class="wrap">
+    <div class="qhead">
+      <span class="pos" id="pos">1/20</span>
+      <div class="bar"><i id="barFill"></i></div>
+      <span class="lvbadge" id="lvBadge">N5</span>
+      <span class="typebadge" id="typeBadge">Arti</span>
+    </div>
+
+    <div class="qcard">
+      <div id="promptBox"></div>
+      <button class="speak hidden" id="speakBtn">🔊 Dengarkan</button>
+      <div class="options" id="options"></div>
+      <div id="scramble" class="hidden">
+        <div class="answer empty" id="answerBox"></div>
+        <div class="pool" id="pool"></div>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="qfoot">
+        <button class="btn ghost" id="quitBtn">Keluar</button>
+        <button class="btn primary" id="nextBtn" disabled>Lanjut</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULT ================= -->
+<section id="screenResult" class="hidden">
+  <div class="wrap">
+    <div class="result-head">
+      <h1 id="resTitle">Selesai</h1>
+      <p id="resSub"></p>
+      <div class="stats">
+        <div class="stat"><b id="stTotal">0</b><small>soal</small></div>
+        <div class="stat good"><b id="stBenar">0</b><small>benar</small></div>
+        <div class="stat bad"><b id="stSalah">0</b><small>salah</small></div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="againBtn">Kuis lagi</button>
+        <button class="btn" id="wrongBtn">Ulangi yang salah</button>
+        <button class="btn" id="setupBtn">Atur ulang</button>
+      </div>
+    </div>
+    <div class="review">
+      <h2>Pembahasan</h2>
+      <div class="scroll" id="reviewList"></div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+<script src="deck.js"></script>
+<script src="soal.js" onerror="window.__noSoal=true"></script>
+<script src="stats.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var DECK = window.KAISHI_DECK;
+  var SOAL = window.KAISHI_SOAL;
+
+  if (!DECK) { document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">deck.js tidak ditemukan.</p>'; return; }
+
+  var LEVEL_NAME = { 5: 'N5', 4: 'N4', 3: 'N3', 2: 'N2', 1: 'N1' };
+  var TYPE_NAME = {
+    arti: 'Arti kata', kata: 'Kata dari arti', baca: 'Bacaan', cloze: 'Isi rumpang',
+    partikel: 'Partikel', teks: 'Bacaan kalimat', acak: 'Susun kalimat'
+  };
+  var LEVEL_DESC = { 5: 'paling umum', 4: 'umum', 3: 'menengah', 2: 'lanjut', 1: 'paling jarang' };
+
+  var ALL = (SOAL && SOAL.soal) ? SOAL.soal : [];
+
+  /* ---------- setup ---------- */
+  var selLevels = new Set([5, 4, 3, 2, 1]);
+  var selTypes = new Set(Object.keys(TYPE_NAME));
+
+  function countBy(pred) { return ALL.filter(pred).length; }
+
+  function renderChips() {
+    var lvBox = $('levelChips');
+    lvBox.innerHTML = '';
+    [5, 4, 3, 2, 1].forEach(function (lv) {
+      var n = countBy(function (s) { return s.lv === lv; });
+      var b = document.createElement('button');
+      b.className = 'chip' + (selLevels.has(lv) ? ' active' : '');
+      b.innerHTML = LEVEL_NAME[lv] + '<small>' + n + '</small>';
+      b.title = 'Level ' + LEVEL_NAME[lv] + ' (' + LEVEL_DESC[lv] + ') — ' + n + ' soal';
+      b.disabled = n === 0;
+      b.addEventListener('click', function () {
+        if (selLevels.has(lv)) selLevels.delete(lv); else selLevels.add(lv);
+        renderChips(); updatePick();
+      });
+      lvBox.appendChild(b);
+    });
+
+    var tBox = $('typeChips');
+    tBox.innerHTML = '';
+    Object.keys(TYPE_NAME).forEach(function (t) {
+      var n = countBy(function (s) { return s.t === t; });
+      if (!n) return;
+      var b = document.createElement('button');
+      b.className = 'chip' + (selTypes.has(t) ? ' active' : '');
+      b.innerHTML = TYPE_NAME[t] + '<small>' + n + '</small>';
+      b.addEventListener('click', function () {
+        if (selTypes.has(t)) selTypes.delete(t); else selTypes.add(t);
+        renderChips(); updatePick();
+      });
+      tBox.appendChild(b);
+    });
+  }
+
+  function pool() {
+    return ALL.filter(function (s) { return selLevels.has(s.lv) && selTypes.has(s.t); });
+  }
+
+  function updatePick() {
+    var n = pool().length;
+    $('pickInfo').textContent = n
+      ? n.toLocaleString('id-ID') + ' soal tersedia untuk pilihan ini.'
+      : 'Tidak ada soal untuk kombinasi ini — pilih level atau jenis lain.';
+    $('startBtn').disabled = n === 0;
+  }
+
+  /* ---------- quiz ---------- */
+  var Q = { list: [], i: 0, benar: 0, salah: 0, answered: false, wrongList: [], seed: 0 };
+
+  function shuffle(a) {
+    var x = a.slice();
+    for (var i = x.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = x[i]; x[i] = x[j]; x[j] = t; }
+    return x;
+  }
+
+  /* ---------- furigana (muncul setelah soal dijawab) ---------- */
+  var READ = {};
+  var RMAX = 1;
+  (function buildFurigana() {
+    DECK.words.forEach(function (w) {
+      if (!w.w || !w.r || w.r === w.w) return;
+      if (!/[\u3400-\u4dbf\u4e00-\u9fff]/.test(w.w)) return;
+      if (!READ[w.w]) {
+        READ[w.w] = w.r;
+        if (w.w.length > RMAX) RMAX = w.w.length;
+      }
+    });
+  })();
+
+  var KANA_RE = /[\u3040-\u30ff]/;
+
+  // Pisahkan okurigana supaya bacaan hanya menempel di kanji: 持ってくる -> 持[も]ってくる
+  function splitRuby(word, reading) {
+    var w = word, r = reading;
+    var pi = 0;
+    while (pi < w.length && pi < r.length &&
+           KANA_RE.test(w.charAt(pi)) && w.charAt(pi) === r.charAt(pi)) pi++;
+    var si = 0;
+    while (si < w.length - pi && si < r.length - pi &&
+           KANA_RE.test(w.charAt(w.length - 1 - si)) &&
+           w.charAt(w.length - 1 - si) === r.charAt(r.length - 1 - si)) si++;
+    var core = w.slice(pi, w.length - si);
+    var rd = r.slice(pi, r.length - si);
+    if (!core || !rd) return null;
+    return { pre: w.slice(0, pi), core: core, rd: rd, suf: w.slice(w.length - si) };
+  }
+
+  function rubyText(str) {
+    var s = String(str || '');
+    var out = '', i = 0, n = s.length;
+    while (i < n) {
+      var hit = null;
+      for (var L = Math.min(RMAX, n - i); L >= 1; L--) {
+        var sub = s.substr(i, L);
+        if (READ[sub]) { hit = [sub, READ[sub]]; break; }
+      }
+      if (hit) {
+        var parts = splitRuby(hit[0], hit[1]);
+        if (parts) {
+          out += esc(parts.pre) + '<ruby>' + esc(parts.core) + '<rt>' + esc(parts.rd) + '</rt></ruby>' + esc(parts.suf);
+        } else {
+          out += '<ruby>' + esc(hit[0]) + '<rt>' + esc(hit[1]) + '</rt></ruby>';
+        }
+        i += hit[0].length;
+      } else {
+        out += esc(s.charAt(i));
+        i += 1;
+      }
+    }
+    return out;
+  }
+
+  var HAS_KANJI = /[\u3400-\u4dbf\u4e00-\u9fff]/;
+
+  function applyFurigana(s) {
+    var p = document.querySelector('#promptBox .qprompt');
+    if (p && s.t !== 'kata' && s.q && HAS_KANJI.test(s.q)) {
+      p.innerHTML = rubyText(s.q);
+    }
+    if (s.o) {
+      var nodes = document.querySelectorAll('#options .opt .jp');
+      Array.prototype.forEach.call(nodes, function (el, i) {
+        var t = s.o[i];
+        if (t && HAS_KANJI.test(t)) el.innerHTML = rubyText(t);
+      });
+    }
+    if (s.t === 'acak') {
+      Array.prototype.forEach.call(document.querySelectorAll('.piece'), function (el) {
+        var t = el.textContent;
+        if (t && HAS_KANJI.test(t)) el.innerHTML = rubyText(t);
+      });
+    }
+  }
+
+  function buildSession(source) {
+    var n = parseInt($('jumlah').value, 10) || 20;
+    var urut = $('urutan').value;
+    var items = shuffle(source).slice(0, n);
+    if (urut === 'naik') items.sort(function (a, b) { return b.lv - a.lv; });
+    if (urut === 'sulit') items.sort(function (a, b) { return a.lv - b.lv; });
+    Q = { list: items, i: 0, benar: 0, salah: 0, answered: false, wrongList: [], awarded: false };
+    $('screenSetup').classList.add('hidden');
+    $('screenResult').classList.add('hidden');
+    $('screenQuiz').classList.remove('hidden');
+    window.scrollTo(0, 0);
+    renderQ();
+  }
+
+  function wordOf(s) { return DECK.words[s.w] || null; }
+
+  function playWord(s) {
+    var w = wordOf(s);
+    if (!w || w.a === null || w.a === undefined) return;
+    try { var a = new Audio('media/m' + w.a + '.mp3'); a.play().catch(function () {}); } catch (e) {}
+  }
+
+  function renderQ() {
+    var s = Q.list[Q.i];
+    if (!s) return finish();
+    Q.answered = false;
+    $('pos').textContent = (Q.i + 1) + '/' + Q.list.length;
+    $('barFill').style.width = (Q.i / Q.list.length * 100) + '%';
+    $('lvBadge').textContent = LEVEL_NAME[s.lv];
+    $('typeBadge').textContent = TYPE_NAME[s.t] || s.t;
+
+    var prompt = $('promptBox');
+    var opts = $('options');
+    var scr = $('scramble');
+    var fb = $('feedback');
+    var next = $('nextBtn');
+    var speak = $('speakBtn');
+
+    opts.innerHTML = '';
+    scr.classList.add('hidden');
+    opts.classList.remove('hidden');
+    fb.className = 'feedback';
+    next.disabled = true;
+    next.textContent = 'Lanjut';
+    speak.classList.add('hidden');
+
+    if (s.t === 'acak') {
+      prompt.innerHTML = '<div class="qprompt small">' + esc(s.q || 'Susun kalimat') + '</div>';
+      renderScramble(s);
+    } else {
+      var cls = 'qprompt';
+      if (s.t === 'teks' || s.t === 'cloze' || s.t === 'partikel') cls += ' small';
+      else if (s.t === 'kata') cls += ' mid';
+      prompt.innerHTML = '<div class="' + cls + ' jp">' + esc(s.q) + '</div>' +
+        (s.t === 'kata' ? '<div class="qsub">Pilih kata Jepang yang tepat</div>' : '');
+      var w = wordOf(s);
+      // audio hanya untuk soal "arti": pada soal bacaan/kata, suara akan membocorkan jawaban
+      if (w && w.a !== null && w.a !== undefined && s.t === 'arti') {
+        speak.classList.remove('hidden');
+        speak.onclick = function () { playWord(s); };
+      }
+      renderOptions(s);
+    }
+  }
+
+  function renderOptions(s) {
+    var box = $('options');
+    s.o.forEach(function (text, idx) {
+      var b = document.createElement('button');
+      b.className = 'opt';
+      b.innerHTML = '<span class="key">' + (idx + 1) + '</span><span class="jp">' + esc(text) + '</span>';
+      b.addEventListener('click', function () { answerMC(s, idx, b); });
+      box.appendChild(b);
+    });
+  }
+
+  function answerMC(s, idx, btn) {
+    if (Q.answered) return;
+    Q.answered = true;
+    var good = idx === s.a;
+    var nodes = $('options').querySelectorAll('.opt');
+    Array.prototype.forEach.call(nodes, function (n, i) {
+      n.classList.add('locked');
+      if (i === s.a) n.classList.add('correct');
+      else if (i === idx && !good) n.classList.add('wrong');
+    });
+    settle(s, good, idx);
+  }
+
+  /* ---------- susun kalimat ---------- */
+  var SCR = { picked: [], pieces: [] };
+
+  function renderScramble(s) {
+    $('scramble').classList.remove('hidden');
+    SCR = { picked: [], pieces: s.ch.slice() };
+    drawScramble(s);
+  }
+
+  function drawScramble(s) {
+    var ans = $('answerBox');
+    var poolEl = $('pool');
+    ans.innerHTML = '';
+    poolEl.innerHTML = '';
+    ans.classList.toggle('empty', SCR.picked.length === 0);
+
+    SCR.picked.forEach(function (p, i) {
+      var b = document.createElement('button');
+      b.className = 'piece in-answer jp';
+      b.textContent = p;
+      b.addEventListener('click', function () {
+        if (Q.answered) return;
+        SCR.picked.splice(i, 1);
+        drawScramble(s);
+      });
+      ans.appendChild(b);
+    });
+
+    var used = {};
+    SCR.picked.forEach(function (p) { used[p] = (used[p] || 0) + 1; });
+    SCR.pieces.forEach(function (p, i) {
+      var b = document.createElement('button');
+      var already = (used[p] || 0) > 0;
+      if (already) { used[p] -= 1; }
+      b.className = 'piece jp' + (already ? ' used' : '');
+      b.textContent = p;
+      b.addEventListener('click', function () {
+        if (Q.answered) return;
+        SCR.picked.push(p);
+        drawScramble(s);
+      });
+      poolEl.appendChild(b);
+    });
+
+    $('nextBtn').disabled = SCR.picked.length !== SCR.pieces.length;
+    if (SCR.picked.length === SCR.pieces.length && !Q.answered) checkScramble(s);
+  }
+
+  function checkScramble(s) {
+    Q.answered = true;
+    var joined = SCR.picked.join('').replace(/[。！？!?]+$/, '');
+    var target = String(s.sa).replace(/[。！？!?]+$/, '');
+    var good = joined === target;
+    var box = $('answerBox');
+    box.style.borderColor = good ? '#b6e5cd' : '#f3bcbc';
+    box.style.background = good ? 'var(--ok-bg)' : 'var(--bad-bg)';
+    settle(s, good, null);
+  }
+
+  /* ---------- penjelasan tata bahasa ---------- */
+  var PART_ROLE = {
+    'は': 'menandai topik kalimat',
+    'が': 'menandai subjek atau pelaku',
+    'を': 'menandai objek langsung dari kata kerja',
+    'に': 'menandai tujuan, waktu, atau sasaran',
+    'で': 'menandai tempat berlangsungnya tindakan atau alat',
+    'へ': 'menandai arah gerak',
+    'と': 'berarti “dan” atau menandai lawan bicara',
+    'も': 'berarti “juga”',
+    'の': 'menyatakan kepemilikan atau menerangkan kata benda',
+    'から': 'menandai titik awal atau sebab',
+    'まで': 'menandai batas akhir',
+    'より': 'menandai perbandingan',
+    'や': 'menyambung “dan” secara tidak lengkap'
+  };
+  var MEAN = {};
+  DECK.words.forEach(function (w) { if (w.w && w.m) MEAN[w.w] = w.m; });
+
+  function correctOrder(s) {
+    var chunks = (s.ch || []).slice();
+    var seq = String(s.sa || '');
+    return chunks.slice().sort(function (a, b) { return seq.indexOf(a) - seq.indexOf(b); });
+  }
+
+  function grammarNote(s, chosenIdx, good) {
+    if (s.t === 'partikel') {
+      if (!good && s.o && chosenIdx !== null && chosenIdx !== undefined) {
+        var p = s.o[chosenIdx];
+        return '「' + esc(p) + '」 ' + (PART_ROLE[p] || 'adalah partikel') +
+          ' — tidak berperan seperti itu di posisi ini.';
+      }
+    } else if (s.t === 'cloze') {
+      if (!good && s.o && chosenIdx !== null && chosenIdx !== undefined) {
+        var w = s.o[chosenIdx];
+        var m = MEAN[w];
+        return '「' + esc(w) + '」' + (m ? ' berarti ' + esc(m) : '') +
+          ' — tidak melengkapi kalimat ini.';
+      }
+    } else if (s.t === 'acak') {
+      if (!good) {
+        var right = correctOrder(s);
+        for (var i = 0; i < right.length; i++) {
+          if (SCR.picked[i] !== right[i]) {
+            return 'Pada urutan ke-' + (i + 1) + ' seharusnya 「' + esc(right[i]) +
+              '」, bukan 「' + esc(SCR.picked[i] || '—') + '」.';
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  var TYPE_BASE = { arti: 8, kata: 8, baca: 10, cloze: 12, partikel: 12, teks: 10, acak: 14 };
+
+  function settle(s, good, chosenIdx) {
+    if (good) { Q.benar++; } else { Q.salah++; Q.wrongList.push(s); }
+    if (window.KaishiStats) {
+      window.KaishiStats.quizAnswer({
+        correct: good,
+        wordId: s.w,
+        level: s.lv,
+        base: TYPE_BASE[s.t] || 8
+      });
+    }
+    var fb = $('feedback');
+    fb.className = 'feedback show ' + (good ? 'good' : 'bad');
+
+    var html = good ? '<b>Benar!</b>' : '<b>Kurang tepat.</b>';
+    if (!good && s.t !== 'acak' && s.o && chosenIdx !== null && chosenIdx !== undefined) {
+      html += ' Kamu memilih 「' + esc(s.o[chosenIdx]) + '」.';
+    }
+
+    var isGrammar = (s.t === 'partikel' || s.t === 'cloze' || s.t === 'acak');
+    var note = grammarNote(s, chosenIdx, good);
+    if (note) html += '<div class="why">' + note + '</div>';
+
+    if (!good) {
+      if (s.t === 'acak') html += '<div class="why">Jawaban: <b class="jp">' + esc(s.sa) + '</b></div>';
+      else if (s.o) html += '<div class="why">Jawaban: <b class="jp">' + esc(s.o[s.a]) + '</b></div>';
+    }
+
+    if (s.x && (isGrammar || !good)) html += '<div class="explain">' + esc(s.x) + '</div>';
+
+    if (!isGrammar && !good && s.n) html += '<div class="explain">' + esc(s.n) + '</div>';
+    else if (!isGrammar && good && s.n && s.t === 'teks') html += '<div class="explain">' + esc(s.n) + '</div>';
+
+    fb.innerHTML = html;
+    applyFurigana(s);
+    var next = $('nextBtn');
+    next.disabled = false;
+    next.textContent = (Q.i + 1 >= Q.list.length) ? 'Lihat hasil' : 'Lanjut';
+    next.focus();
+    $('barFill').style.width = ((Q.i + 1) / Q.list.length * 100) + '%';
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function finish() {
+    if (window.KaishiStats && !Q.awarded) {
+      Q.awarded = true;
+      window.KaishiStats.quizDone({ correct: Q.benar, wrong: Q.salah });
+    }
+    $('screenQuiz').classList.add('hidden');
+    $('screenResult').classList.remove('hidden');
+    window.scrollTo(0, 0);
+    var total = Q.benar + Q.salah;
+    var pct = total ? Math.round(Q.benar / total * 100) : 0;
+    $('resTitle').textContent = pct >= 80 ? 'Bagus sekali! 🎉' : (pct >= 60 ? 'Lumayan 👌' : 'Terus latihan 💪');
+    $('resSub').textContent = Q.benar + ' benar dari ' + total + ' soal (' + pct + '%)';
+    $('stTotal').textContent = total;
+    $('stBenar').textContent = Q.benar;
+    $('stSalah').textContent = Q.salah;
+
+    var rows = Q.list.map(function (s) {
+      var wrong = Q.wrongList.indexOf(s) !== -1;
+      var qtext = s.t === 'acak' ? rubyText(s.sa) : (s.t === 'kata' ? esc(s.q) : rubyText(s.q));
+      var answer = s.t === 'acak' ? rubyText(s.sa) : rubyText(s.o[s.a]);
+      return '<div class="rrow' + (wrong ? ' err' : '') + '">' +
+        '<div><div class="q jp">' + qtext + '</div>' +
+        '<div class="n">Jawaban: <b>' + answer + '</b>' + (s.n ? ' · ' + esc(s.n) : '') + '</div>' +
+        (s.x ? '<div class="n">' + esc(s.x) + '</div>' : '') + '</div>' +
+        '<div class="tag">' + (wrong ? '✗' : '✓') + ' ' + LEVEL_NAME[s.lv] + '</div></div>';
+    }).join('');
+    $('reviewList').innerHTML = rows;
+
+    $('wrongBtn').disabled = Q.wrongList.length === 0;
+    Q.lastPool = Q.list;
+  }
+
+  /* ---------- events ---------- */
+  $('startBtn').addEventListener('click', function () { buildSession(pool()); });
+  $('nextBtn').addEventListener('click', function () {
+    if (!Q.answered) return;
+    Q.i++;
+    if (Q.i >= Q.list.length) { finish(); return; }
+    renderQ();
+  });
+  $('quitBtn').addEventListener('click', function () { if (confirm('Keluar dari kuis dan lihat hasil sejauh ini?')) finish(); });
+  $('againBtn').addEventListener('click', function () { buildSession(pool()); });
+  $('wrongBtn').addEventListener('click', function () { if (Q.wrongList.length) buildSession(Q.wrongList); });
+  $('setupBtn').addEventListener('click', function () { setupScreen(); });
+
+  function setupScreen() {
+    $('screenResult').classList.add('hidden');
+    $('screenQuiz').classList.add('hidden');
+    $('screenSetup').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if ($('screenQuiz').classList.contains('hidden')) return;
+    if (e.key >= '1' && e.key <= '4' && !Q.answered) {
+      var nodes = $('options').querySelectorAll('.opt');
+      var idx = parseInt(e.key, 10) - 1;
+      if (nodes[idx]) nodes[idx].click();
+    } else if (e.key === 'Enter' && Q.answered) {
+      $('nextBtn').click();
+    }
+  });
+
+  /* ---------- init ---------- */
+  if (!SOAL || !ALL.length) {
+    $('soalBadge').textContent = 'soal belum ada';
+    document.querySelector('.panel').innerHTML =
+      '<div class="empty-soal">Berkas <b>soal.js</b> belum ada.<br>' +
+      'Jalankan <b>generate-soal.cmd</b> di folder ini untuk membuatnya,<br>' +
+      'lalu muat ulang halaman.</div>';
+    return;
+  }
+  $('soalBadge').textContent = ALL.length.toLocaleString('id-ID') + ' soal';
+  renderChips();
+  updatePick();
+})();
+</script>
+</body>
+</html>

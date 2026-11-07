@@ -1,0 +1,6 @@
+{
+  "_catatan": "Salin berkas ini menjadi ai-config.json lalu isi. Kunci API juga bisa ditaruh di api-key.txt atau variabel lingkungan AI_API_KEY.",
+  "base_url": "https://api.deepseek.com/v1",
+  "model": "deepseek-chat",
+  "api_key": ""
+}
