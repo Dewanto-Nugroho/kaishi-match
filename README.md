@@ -9,6 +9,28 @@ Aplikasi latihan bahasa Jepang dari deck **Kaishi 1.5k (versi Indonesia)**:
 
 Tanpa server web, tanpa database, tanpa akun. Cukup buka `index.html`.
 
+## Kenapa aplikasi ini dibuat
+
+Anki memang bagus untuk menjadwalkan ulangan, tetapi **kartu yang sudah dipelajari tetap
+perlu dipakai** agar tidak pudar. Setelah sebuah kata lolos dari tahap belajar, jarak
+ulangannya makin panjang (1 hari → 3 hari → 7 hari → …). Kalau kata itu tidak pernah
+muncul di antara jadwal tersebut, ingatan bisa melemah, kartu yang tadinya *muda* tidak
+kunjung menjadi *matang*, bahkan bisa turun kembali ke tahap belajar.
+
+Aplikasi ini dibuat sebagai **latihan tambahan di sela jadwal Anki**, dengan tujuan:
+
+1. **Kata yang sudah dipelajari selalu ter-review** — aplikasi membaca status asli dari
+   Anki (baru / muda / matang, dan kapan terakhir diulang), lalu bisa menampilkan hanya
+   kata yang baru dipelajari (≤ 1 hari / ≤ 3 hari) atau yang masih muda (interval < 21 hari).
+2. **Diperkuat dari berbagai sisi**, bukan hanya arti: audio asli dari deck, kalimat
+   contoh, furigana, soal bacaan, soal tata bahasa (partikel, isi rumpang, susun kalimat).
+3. **Lebih cepat menjadi *mature*** — makin sering sebuah kata dipakai dalam konteks
+   berbeda, makin kuat ingatannya, sehingga ulangan berikutnya di Anki terasa mudah dan
+   intervalnya naik lebih cepat.
+
+Singkatnya: Anki mengatur **kapan** kata diulang; aplikasi ini menjaga **seberapa kuat**
+kata itu melekat di antara jadwal-jadwal tersebut.
+
 ## Cara menjalankan
 
 1. Buka folder ini.
