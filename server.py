@@ -23,15 +23,43 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 START_PORT = 8080
 
 
+def ai_key_status():
+    """Cek kunci API: ada / kosong / belum ada konfigurasi."""
+    cfg_path = os.path.join(HERE, "ai-config.json")
+    key = os.environ.get("AI_API_KEY", "")
+    model = ""
+    if not key and os.path.exists(os.path.join(HERE, "api-key.txt")):
+        try:
+            with open(os.path.join(HERE, "api-key.txt"), encoding="utf-8") as f:
+                key = f.read().strip()
+        except OSError:
+            pass
+    if not key and os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, encoding="utf-8-sig") as f:
+                cfg = json.load(f)
+            key = (cfg.get("api_key") or "").strip()
+            model = cfg.get("model") or ""
+        except (OSError, ValueError):
+            return "broken", ""
+    if key:
+        return "ok", model
+    return ("empty" if os.path.exists(cfg_path) else "missing"), model
+
+
 def run_generate_teks(payload):
     """Jalankan generate-teks.py --sumber ai dari permintaan halaman web."""
     script = os.path.join(HERE, "generate-teks.py")
     if not os.path.exists(script):
         return {"ok": False, "error": "generate-teks.py tidak ditemukan"}
-    if not (os.path.exists(os.path.join(HERE, "ai-config.json"))
-            or os.path.exists(os.path.join(HERE, "api-key.txt"))
-            or os.environ.get("AI_API_KEY")):
-        return {"ok": False, "error": "ai-config.json / API key belum ada"}
+
+    status, model = ai_key_status()
+    if status == "missing":
+        return {"ok": False, "error": "ai-config.json belum ada. Salin ai-config.contoh.json, isi api_key, lalu restart server."}
+    if status == "empty":
+        return {"ok": False, "error": "api_key masih kosong di ai-config.json. Buka file itu, tempel kunci Gemini (aistudio.google.com/apikey), simpan, lalu restart jalankan-server.cmd."}
+    if status == "broken":
+        return {"ok": False, "error": "ai-config.json tidak bisa dibaca (JSON tidak valid)."}
 
     def num(v, default, lo, hi):
         try:

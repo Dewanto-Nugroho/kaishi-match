@@ -339,7 +339,7 @@ def build_local(words, maks, seed, per_word, progress=None):
 def load_ai_config(args):
     cfg = {"base_url": "https://api.deepseek.com/v1", "model": "deepseek-chat", "api_key": ""}
     if os.path.exists(AI_CONFIG):
-        with open(AI_CONFIG, encoding="utf-8") as f:
+        with open(AI_CONFIG, encoding="utf-8-sig") as f:
             cfg.update(json.load(f))
     if args.model:
         cfg["model"] = args.model
