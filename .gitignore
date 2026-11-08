@@ -9,8 +9,9 @@ api-key.txt
 
 # ---- berkas turunan / cadangan ----
 # cadangan otomatis yang dibuat generate-soal.py / generate-teks.py
-soal-*.js
-teks-*.js
+# (hanya berkas bercap tanggal, mis. teks-20261108-101500.js)
+soal-2*.js
+teks-2*.js
 
 # audio hasil ekstraksi: hak ciptanya milik sumber aslinya.
 # Setiap pengguna membuatnya sendiri dengan: ekstrak-media.cmd
