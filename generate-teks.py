@@ -26,6 +26,7 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DECK_JS = os.path.join(HERE, "deck.js")
+PROGRESS_JS = os.path.join(HERE, "progress.js")
 OUT = os.path.join(HERE, "teks.js")
 AI_CONFIG = os.path.join(HERE, "ai-config.json")
 CACHE = os.path.join(HERE, "teks-cache.json")
@@ -85,6 +86,59 @@ def build_vocab(words):
             if 2 <= len(form) <= 7:
                 v.add(form)
     return v
+
+
+# ------------------------------------------------------- filter progres Anki
+def load_progress():
+    """Baca progress.js (hasil sinkron-anki) -> {word_id: reps>0}."""
+    if not os.path.exists(PROGRESS_JS):
+        return None
+    try:
+        with open(PROGRESS_JS, encoding="utf-8") as f:
+            raw = f.read()
+        data = json.loads(raw[raw.index("{"): raw.rindex("}") + 1])
+        cards = data.get("cards") or {}
+        return {int(k): (v[3] > 0) for k, v in cards.items()}
+    except (ValueError, KeyError, IndexError, OSError):
+        return None
+
+
+def split_by_progress(words, studied, rng, mode, ratio, size=60):
+    """Bagi kosakata menurut progres belajar & ambil sampel sesuai mode."""
+    if not studied or mode == "semua":
+        return words, {"mode": "semua", "lama": sum(1 for w in words if studied and studied.get(w["id"])),
+                       "baru": sum(1 for w in words if studied and not studied.get(w["id"]))}
+
+    learned = [w for w in words if studied.get(w["id"])]
+    fresh = [w for w in words if not studied.get(w["id"])]
+
+    if mode == "dipelajari":
+        return learned, {"mode": "dipelajari", "lama": len(learned), "baru": 0}
+    if mode == "belum":
+        return fresh, {"mode": "belum", "lama": 0, "baru": len(fresh)}
+
+    # campur: sebagian besar kata yang sudah dipelajari + sisanya kata baru
+    n_old = int(round(size * ratio / 100))
+    n_new = size - n_old
+    ambil_lama = rng.sample(learned, min(n_old, len(learned))) if learned else []
+    ambil_baru = rng.sample(fresh, min(n_new, len(fresh))) if fresh else []
+    return ambil_lama + ambil_baru, {
+        "mode": "campur", "lama": len(ambil_lama), "baru": len(ambil_baru),
+        "total_lama": len(learned), "total_baru": len(fresh),
+    }
+
+
+def describe_pool(info, n):
+    m = info.get("mode")
+    if m == "dipelajari":
+        return "hanya kata yang SUDAH dipelajari (%d kata)" % n
+    if m == "belum":
+        return "hanya kata yang BELUM dipelajari (%d kata)" % n
+    if m == "campur":
+        return "campur — %d kata sudah dipelajari + %d kata baru (total %d)" % (
+            info.get("lama", 0), info.get("baru", 0), n)
+    return "semua kata (%d)" % n
+
 
 
 def segment(s, vocab, maxlen=7):
@@ -321,14 +375,28 @@ def generate_ai(words, args):
     hasil = [] if args.ulang else list(have)
     perlu = max(1, args.jumlah - len(hasil))
 
+    # filter level + progres Anki
+    base = [w for w in words if w["lv"] >= args.level]
+    if len(base) < 40:
+        base = words
+    studied = load_progress()
+    if args.kata != "semua" and studied is None:
+        print("! progress.js belum ada — jalankan sinkron-anki.cmd dulu.")
+        print("  Untuk sementara memakai semua kata.")
+        args.kata = "semua"
+    pool_all, info = split_by_progress(
+        base, studied, rng, args.kata, args.rasio,
+        size=min(len(base), 60 * max(1, args.jumlah)))
+    print("Kosakata : %s" % describe_pool(info, len(pool_all)))
+    if len(pool_all) < 20:
+        print("! kata yang memenuhi syarat terlalu sedikit (%d)." % len(pool_all))
+        print("  Coba --kata semua, kurangi --level, atau sinkronkan ulang Anki.")
+        return None
+
     for n in range(perlu):
-        # pilih kosakata acak sesuai level target
-        pool = [w for w in words if w["lv"] >= args.level]
-        if len(pool) < 40:
-            pool = words
-        sampel = rng.sample(pool, min(60, len(pool)))
+        sampel = rng.sample(pool_all, min(60, len(pool_all)))
         blok = "\n".join("- %s（%s）= %s" % (w["w"], w["r"], w["m"]) for w in sampel)
-        print("  menulis teks %d/%d (level %s)..." % (n + 1, perlu, LEVEL_NAMES[args.level]))
+        print("  menulis teks %d/%d (level %s, %d kata)..." % (n + 1, perlu, LEVEL_NAMES[args.level], len(sampel)))
         try:
             raw = call_ai(cfg, blok, LEVEL_NAMES[args.level])
         except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
@@ -389,6 +457,10 @@ def main():
     ap.add_argument("--sumber", choices=["lokal", "ai"], default="lokal")
     ap.add_argument("--jumlah", type=int, default=8)
     ap.add_argument("--level", type=int, default=4, help="4=N4, 3=N3, 5=N5 (untuk AI)")
+    ap.add_argument("--kata", choices=["semua", "dipelajari", "belum", "campur"], default="semua",
+                    help="pilih kosakata berdasarkan progres Anki (progress.js)")
+    ap.add_argument("--rasio", type=int, default=70,
+                    help="persentase kata yang sudah dipelajari saat --kata campur (default 70)")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--ulang", action="store_true")
     ap.add_argument("--model")
@@ -404,13 +476,23 @@ def main():
     print("Deck  : %s (%d kata)" % (deck.get("deck", "Kaishi"), len(words)))
 
     if args.sumber == "lokal":
-        vocab_map = {w["w"]: w for w in words}
-        vocab = build_vocab(words)
+        rng = random.Random(args.seed)
+        studied = load_progress()
+        if args.kata != "semua" and studied is None:
+            print("! progress.js belum ada — jalankan sinkron-anki.cmd dulu.")
+            print("  Untuk sementara memakai semua kata.")
+            args.kata = "semua"
+        pool, info = split_by_progress(
+            words, studied, rng, args.kata, args.rasio,
+            size=min(len(words), 60 * max(3, args.jumlah)))
+        print("Kosakata : %s" % describe_pool(info, len(pool)))
+
+        vocab_map = {w["w"]: w for w in pool}
+        vocab = build_vocab(pool)
         for k in list(vocab_map.keys()):
             if 2 <= len(k) <= 7:
                 vocab.add(k)
-        rng = random.Random(args.seed)
-        teks = teks_lokal(words, args.jumlah, rng, {v: vocab_map[v] for v in vocab if v in vocab_map})
+        teks = teks_lokal(pool, args.jumlah, rng, {v: vocab_map[v] for v in vocab if v in vocab_map})
         if not teks:
             print("! tidak ada kalimat yang bisa disusun.")
             return 1

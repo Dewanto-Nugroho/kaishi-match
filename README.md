@@ -181,6 +181,27 @@ generate-teks.cmd --sumber ai --jumlah 5 :: minta AI menulis artikel (butuh API 
 
 Hasilnya ditulis ke `teks.js` dan otomatis muncul di daftar bersama teks kurasi.
 
+### Pilih kata berdasarkan progres Anki
+
+Generator bisa memilih kosakata menurut status belajar Anda di Anki
+(memakai `progress.js` — jalankan `sinkron-anki.cmd` dulu):
+
+```bat
+generate-teks.cmd --kata dipelajari            :: hanya kata yang sudah pernah diulang
+generate-teks.cmd --kata belum                 :: hanya kata yang belum pernah diulang
+generate-teks.cmd --kata campur --rasio 70     :: 70% kata lama + 30% kata baru
+generate-teks.cmd --kata campur --rasio 30     :: 30% kata lama + 70% kata baru
+```
+
+Contoh keluaran:
+
+```
+Kosakata : campur — 126 kata sudah dipelajari + 54 kata baru (total 180)
+```
+
+Bisa dikombinasikan dengan filter lain, misalnya
+`generate-teks.cmd --sumber ai --kata campur --rasio 60 --level 4 --jumlah 5`.
+
 ## Membuat / memperbarui soal
 
 Soal disimpan di **`soal.js`** (±1,5 MB, 6.300 soal). Untuk membuat ulang:
