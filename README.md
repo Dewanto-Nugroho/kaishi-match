@@ -172,7 +172,27 @@ Buka **`teks.html`** (atau tombol **Baca ›** di halaman lain).
 - **Daftar kosakata** semua kata dalam teks + arti.
 - Setelah membaca ada **3 pertanyaan pemahaman** dengan pembahasan; jawaban benar memberi poin.
 
-Teks bawaan ada di **`teks-bank.js`** (kurasi manual, 5 teks). Untuk menambah teks baru:
+Teks bawaan ada di **`teks-bank.js`** (kurasi manual, 5 teks).
+
+### Tombol ＋ Buat teks (langsung di halaman)
+
+Di halaman Baca ada tombol **＋ Buat teks**:
+
+| Sumber | Cara kerja |
+|---|---|
+| **Langsung di browser** | Menyusun teks dari kalimat asli deck di memori browser — instan, tanpa internet, tanpa server. Hasil disimpan di `localStorage`, muncul dengan label *buatan sendiri*, dan bisa dihapus (✕). |
+| **AI** | Meminta server menjalankan `generate-teks.py --sumber ai`. Perlu `jalankan-server.cmd` (bukan `file://`) dan `ai-config.json` berisi kunci API. Hasilnya menulis `teks.js` lalu halaman dimuat ulang. |
+
+Di kedua mode tersedia pilihan **Kosakata**: semua / sudah dipelajari / belum / campur
+(dengan pengatur rasio), memakai data `progress.js`.
+
+Server menyediakan endpoint `POST /api/teks` untuk mode AI:
+
+```
+POST /api/teks   {"jumlah":3,"kata":"campur","rasio":70,"level":4}
+```
+
+### Lewat terminal (opsional)
 
 ```bat
 generate-teks.cmd                        :: susun dari kalimat deck (tanpa AI)

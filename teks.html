@@ -111,6 +111,24 @@
     .dist { gap:4px; }
     .dist b { font-size:13px; }
   }
+
+  /* tombol & modal buat teks */
+  .mk { border:0; cursor:pointer; font-family:inherit; }
+  .modal { position:fixed; inset:0; background:rgba(24,22,36,.45); display:none; align-items:center; justify-content:center; z-index:200; padding:16px; }
+  .modal.show { display:flex; }
+  .mcard { background:#fff; border-radius:20px; width:100%; max-width:440px; padding:22px; box-shadow:0 24px 60px rgba(20,18,40,.3); position:relative; max-height:90vh; overflow:auto; }
+  .mcard h3 { margin:0 0 4px; font-size:18px; }
+  .mhint { margin:0 0 16px; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .mx { position:absolute; top:12px; right:14px; border:0; background:#f1f0f6; border-radius:50%; width:28px; height:28px; cursor:pointer; color:#5c5a72; }
+  .mrow { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13.5px; color:#4b4960; margin-bottom:12px; }
+  .mrow select { height:36px; border-radius:9px; border:1px solid var(--line); background:#fff; padding:0 8px; font-size:13.5px; font-family:inherit; color:var(--ink); }
+  .mrow input[type=range] { flex:1; accent-color:var(--accent); }
+  .mrow b { font-variant-numeric:tabular-nums; min-width:38px; text-align:right; }
+  .mfoot { display:flex; gap:10px; justify-content:flex-end; margin-top:6px; }
+  .mstatus { margin-top:12px; font-size:13px; color:var(--muted); line-height:1.5; }
+  .mstatus.err { color:var(--bad); }
+  .del { position:absolute; top:10px; right:12px; border:0; background:#f1f0f6; color:#6c6a80; border-radius:7px; width:24px; height:24px; cursor:pointer; font-size:12px; }
+  .item { position:relative; }
 </style>
 </head>
 <body>
@@ -124,8 +142,9 @@
       </div>
       <div class="badges">
         <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
-        <button class="badge" id="poinBadge" type="button" style="border:0;cursor:pointer;font-family:inherit">★ 0</button>
+        <button class="badge mk" id="poinBadge" type="button" style="font-family:inherit">★ 0</button>
         <span class="badge" id="countBadge">memuat…</span>
+        <button class="badge mk" id="btnBuat" type="button" style="background:linear-gradient(180deg,var(--accent-2),var(--accent));color:#fff">＋ Buat teks</button>
       </div>
     </div>
     <div class="list" id="list"></div>
@@ -177,7 +196,52 @@
 
 <div class="sheet" id="sheet"></div>
 
+<!-- modal buat teks -->
+<div class="modal" id="modal">
+  <div class="mcard">
+    <button class="mx" id="mClose" aria-label="Tutup">✕</button>
+    <h3>Buat teks baru</h3>
+    <p class="mhint">Teks disusun dari kalimat asli deck, sesuai pilihan kosakata di bawah.</p>
+
+    <label class="mrow">Sumber
+      <select id="mSumber">
+        <option value="browser">Langsung di browser (offline)</option>
+        <option value="ai">AI (perlu jalankan-server + kunci API)</option>
+      </select>
+    </label>
+
+    <label class="mrow">Kosakata
+      <select id="mKata">
+        <option value="semua">Semua kata</option>
+        <option value="dipelajari">Sudah dipelajari</option>
+        <option value="belum">Belum dipelajari</option>
+        <option value="campur">Campur</option>
+      </select>
+    </label>
+
+    <label class="mrow" id="mRasioRow" style="display:none">Rasio kata lama
+      <input type="range" id="mRasio" min="10" max="90" step="10" value="70">
+      <b id="mRasioVal">70%</b>
+    </label>
+
+    <label class="mrow">Jumlah teks
+      <select id="mJumlah"><option>1</option><option selected>3</option><option>5</option></select>
+    </label>
+
+    <label class="mrow" id="mLevelRow" style="display:none">Level (AI)
+      <select id="mLevel"><option value="5">N5</option><option value="4">N4</option><option value="3">N3</option></select>
+    </label>
+
+    <div class="mfoot">
+      <button class="btn" id="mCancel">Batal</button>
+      <button class="btn primary" id="mGo">Buat</button>
+    </div>
+    <div class="mstatus" id="mStatus"></div>
+  </div>
+</div>
+
 <script src="deck.js"></script>
+<script src="progress.js" onerror="window.__noProgress=true"></script>
 <script src="teks-bank.js"></script>
 <script src="teks.js" onerror="window.__noTeks=true"></script>
 <script src="stats.js"></script>
@@ -239,9 +303,32 @@
   if (!TEXTS.length) {
     $('countBadge').textContent = 'belum ada teks';
     $('list').innerHTML = '<div class="item"><div class="t">Belum ada teks bacaan</div>' +
-      '<div class="meta">Jalankan <b>generate-teks.cmd</b> lalu muat ulang halaman.</div></div>';
-    return;
+      '<div class="meta">Klik <b>＋ Buat teks</b> untuk menyusun dari kalimat deck.</div></div>';
   }
+
+  /* ---------- teks buatan sendiri (localStorage) ---------- */
+  var LS_KEY = 'kaishi.teks.sendiri.v1';
+  var MINE = [];
+  try {
+    MINE = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    if (!Array.isArray(MINE)) MINE = [];
+  } catch (e) { MINE = []; }
+  MINE.forEach(function (t) { t.mine = true; t.sumber = 'lokal'; });
+  TEXTS = MINE.concat(TEXTS);
+
+  function saveMine() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(MINE.map(function (t) {
+      var c = Object.assign({}, t); delete c.mine; return c;
+    }))); } catch (e) {}
+  }
+
+  /* ---------- progres Anki ---------- */
+  var STUDIED = {};
+  if (window.KAISHI_PROGRESS && window.KAISHI_PROGRESS.cards) {
+    var cards = window.KAISHI_PROGRESS.cards;
+    Object.keys(cards).forEach(function (k) { STUDIED[k] = cards[k][3] > 0; });
+  }
+  function studied(w) { return STUDIED[w.id] === true; }
 
   /* ---------- util ---------- */
   function esc(s) {
@@ -313,10 +400,14 @@
     var html = TEXTS.map(function (t, i) {
       var pct = t.sebaran && Object.keys(t.sebaran).length ? t.sebaran : levelDist(t.paragraf);
       var len = t.paragraf.join('').length;
+      var label = t.sumber === 'ai' ? 'buatan AI'
+        : t.sumber === 'kurasi' ? 'contoh'
+        : t.mine ? 'buatan sendiri' : 'dari deck';
       return '<div class="item" data-i="' + i + '">' +
+        (t.mine ? '<button class="del" data-del="' + i + '" title="Hapus teks ini">✕</button>' : '') +
         '<div class="t jp"><span class="lv lv' + t.level + '">' + (LV_NAME[t.level] || '—') + '</span>' + esc(t.judul) + '</div>' +
         '<div class="meta">' + t.paragraf.length + ' paragraf · ' + len + ' karakter · ' +
-        (t.soal ? t.soal.length : 0) + ' pertanyaan · ' + (t.sumber === 'ai' ? 'buatan AI' : (t.sumber === 'kurasi' ? 'contoh' : 'dari deck')) + '</div>' +
+        (t.soal ? t.soal.length : 0) + ' pertanyaan · ' + label + '</div>' +
         '</div>';
     }).join('');
     $('list').innerHTML = html;
@@ -324,6 +415,19 @@
   }
 
   $('list').addEventListener('click', function (e) {
+    var del = e.target.closest('[data-del]');
+    if (del) {
+      e.stopPropagation();
+      var idx = parseInt(del.getAttribute('data-del'), 10);
+      var t = TEXTS[idx];
+      if (!t || !t.mine) return;
+      if (!confirm('Hapus teks "' + t.judul + '"?')) return;
+      MINE = MINE.filter(function (x) { return x !== t; });
+      TEXTS.splice(idx, 1);
+      saveMine();
+      renderList();
+      return;
+    }
     var it = e.target.closest('.item[data-i]');
     if (!it) return;
     open(parseInt(it.getAttribute('data-i'), 10));
@@ -513,6 +617,219 @@
     var el = $('sheet');
     if (!el.classList.contains('show')) return;
     if (!e.target.closest('#sheet') && !e.target.closest('[data-k]')) el.classList.remove('show');
+  });
+
+  /* ---------- buat teks baru ---------- */
+  function shuffle(a) {
+    var x = a.slice();
+    for (var i = x.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = x[i]; x[i] = x[j]; x[j] = t; }
+    return x;
+  }
+
+  function segTokens(str) {
+    var out = [], i = 0;
+    while (i < str.length) {
+      var hit = null;
+      for (var L = Math.min(MAXW, str.length - i); L >= 1; L--) {
+        var sub = str.substr(i, L);
+        if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+      }
+      if (hit) { out.push(hit); i += hit.length; } else { out.push(str.charAt(i)); i++; }
+    }
+    return out;
+  }
+
+  var ALLW = DECK.words.map(function (w, i) {
+    return { id: i, w: w.w, r: w.r || w.w, m: w.m || '', s: w.s || '', sm: w.sm || '', f: w.f };
+  });
+
+  function poolWords(opts) {
+    var learned = ALLW.filter(function (w) { return STUDIED[w.id] === true; });
+    var fresh = ALLW.filter(function (w) { return STUDIED[w.id] !== true; });
+    if (opts.kata === 'dipelajari') return learned;
+    if (opts.kata === 'belum') return fresh;
+    if (opts.kata === 'campur') {
+      var nOld = Math.round(ALLW.length * (opts.rasio || 70) / 100);
+      return shuffle(learned).slice(0, nOld).concat(shuffle(fresh).slice(0, Math.max(0, ALLW.length - nOld)));
+    }
+    return ALLW;
+  }
+
+  function pickOpts(pool, answer, key, n) {
+    var outs = [answer];
+    var tries = shuffle(pool);
+    for (var i = 0; i < tries.length && outs.length < n; i++) {
+      var v = tries[i][key];
+      if (!v || v === answer) continue;
+      if (outs.indexOf(v) !== -1) continue;
+      if (v.indexOf(answer) !== -1 || answer.indexOf(v) !== -1) continue;
+      outs.push(v);
+    }
+    return outs;
+  }
+
+  function buatLokal(n, opts) {
+    var pool = poolWords(opts);
+    var byWord = {};
+    pool.forEach(function (w) { byWord[w.w] = w; });
+    var sents = pool.filter(function (w) { return w.s && w.s.length >= 8; });
+
+    var freq = {};
+    sents.forEach(function (w) {
+      segTokens(w.s).forEach(function (t) {
+        if (byWord[t] && t.length >= 2) freq[t] = (freq[t] || 0) + 1;
+      });
+    });
+
+    var seeds = Object.keys(freq).filter(function (k) {
+      // buang kata yang terlalu pendek / hanya kana 2 huruf (mis. "さん", "それ")
+      return freq[k] >= 4 && (HAS_KANJI.test(k) || k.length >= 3);
+    });
+    seeds = shuffle(seeds);
+    var out = [];
+
+    for (var si = 0; si < seeds.length && out.length < n; si++) {
+      var seed = seeds[si];
+      var picked = sents.filter(function (w) { return w.s.indexOf(seed) !== -1; });
+      if (picked.length < 3) continue;
+      picked = shuffle(picked.slice(0, 5));
+
+      var paragraf = [];
+      if (picked.length >= 4) {
+        var half = Math.ceil(picked.length / 2);
+        paragraf.push(picked.slice(0, half).map(function (w) { return w.s; }).join(''));
+        paragraf.push(picked.slice(half).map(function (w) { return w.s; }).join(''));
+      } else {
+        paragraf.push(picked.map(function (w) { return w.s; }).join(''));
+      }
+      var arti = picked.map(function (w) { return w.sm; }).filter(Boolean).join(' ');
+      var soal = [];
+
+      // 1) arti kata
+      var target = picked.filter(function (w) { return HAS_KANJI.test(w.w); })[0] || picked[0];
+      var o1 = pickOpts(pool, target.m, 'm', 4);
+      if (o1.length === 4) {
+        var s1 = shuffle(o1);
+        soal.push({ q: '「' + target.w + '」はどういう意味ですか。', o: s1, a: s1.indexOf(target.m),
+          n: target.w + '（' + target.r + '）= ' + target.m });
+      }
+
+      // 2) arti kalimat
+      var kal = picked[Math.floor(Math.random() * picked.length)];
+      var o2 = pickOpts(pool, kal.sm, 'sm', 4);
+      if (o2.length === 4 && kal.sm) {
+        var s2 = shuffle(o2);
+        soal.push({ q: '「' + kal.s + '」の意味はどれですか。', o: s2, a: s2.indexOf(kal.sm),
+          n: kal.s + ' — ' + kal.sm });
+      }
+
+      // 3) isi rumpang
+      var celah = picked.filter(function (w) { return w.w && w.s.indexOf(w.w) !== -1; })[0];
+      if (celah) {
+        var o3 = pickOpts(pool.filter(function (w) { return celah.s.indexOf(w.w) === -1; }), celah.w, 'w', 4);
+        if (o3.length === 4) {
+          var s3 = shuffle(o3);
+          soal.push({ q: celah.s.replace(celah.w, '＿＿＿'), o: s3, a: s3.indexOf(celah.w),
+            n: celah.s + ' — ' + celah.sm });
+        }
+      }
+
+      if (soal.length < 2) continue;
+      var levels = picked.map(function (w) { return levelOf(w.f); });
+      out.push({
+        judul: seed + ' の話',
+        level: Math.max.apply(null, levels),
+        paragraf: paragraf,
+        arti: arti,
+        soal: soal,
+        sumber: 'lokal',
+        mine: true,
+        dibuat: Date.now()
+      });
+    }
+    return out;
+  }
+
+  /* ---------- modal ---------- */
+  function openModal() { $('modal').classList.add('show'); $('mStatus').textContent = ''; $('mStatus').className = 'mstatus'; }
+  function closeModal() { $('modal').classList.remove('show'); }
+
+  $('btnBuat').addEventListener('click', openModal);
+  $('mClose').addEventListener('click', closeModal);
+  $('mCancel').addEventListener('click', closeModal);
+  $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
+
+  $('mKata').addEventListener('change', function () {
+    $('mRasioRow').style.display = this.value === 'campur' ? 'flex' : 'none';
+  });
+  $('mRasio').addEventListener('input', function () { $('mRasioVal').textContent = this.value + '%'; });
+  $('mSumber').addEventListener('change', function () {
+    $('mLevelRow').style.display = this.value === 'ai' ? 'flex' : 'none';
+    if (this.value === 'ai' && location.protocol === 'file:') {
+      $('mStatus').className = 'mstatus err';
+      $('mStatus').textContent = 'Mode AI butuh server: jalankan jalankan-server.cmd lalu buka http://127.0.0.1:8080/teks.html';
+    } else {
+      $('mStatus').textContent = '';
+      $('mStatus').className = 'mstatus';
+    }
+  });
+
+  $('mGo').addEventListener('click', function () {
+    var opts = {
+      kata: $('mKata').value,
+      rasio: parseInt($('mRasio').value, 10),
+      jumlah: parseInt($('mJumlah').value, 10) || 3
+    };
+    var sumber = $('mSumber').value;
+    var st = $('mStatus');
+    st.className = 'mstatus';
+
+    if (sumber === 'browser') {
+      st.textContent = 'Menyusun teks…';
+      setTimeout(function () {
+        var baru = buatLokal(opts.jumlah, opts);
+        if (!baru.length) {
+          st.className = 'mstatus err';
+          st.textContent = 'Tidak ada kalimat yang cocok. Coba pilih "Semua kata".';
+          return;
+        }
+        MINE = baru.concat(MINE);
+        TEXTS = baru.concat(TEXTS);
+        saveMine();
+        renderList();
+        closeModal();
+      }, 30);
+      return;
+    }
+
+    // mode AI: minta server menjalankan generate-teks.py
+    if (location.protocol === 'file:') {
+      st.className = 'mstatus err';
+      st.textContent = 'Mode AI butuh server. Jalankan jalankan-server.cmd, buka http://127.0.0.1:8080/teks.html';
+      return;
+    }
+    st.textContent = 'Meminta AI menulis… (bisa 10–60 detik)';
+    fetch('/api/teks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jumlah: opts.jumlah, kata: opts.kata, rasio: opts.rasio,
+        level: parseInt($('mLevel').value, 10)
+      })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.j.ok) {
+          st.className = 'mstatus err';
+          st.textContent = 'Gagal: ' + (res.j && res.j.error ? res.j.error : 'periksa ai-config.json / kunci API');
+          return;
+        }
+        st.textContent = 'Berhasil — memuat ulang…';
+        setTimeout(function () { location.reload(); }, 600);
+      })
+      .catch(function () {
+        st.className = 'mstatus err';
+        st.textContent = 'Server tidak merespons. Pastikan jalankan-server.cmd masih terbuka.';
+      });
   });
 
   /* ---------- init ---------- */

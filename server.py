@@ -10,15 +10,53 @@ Tekan Ctrl+C untuk berhenti.
 import argparse
 import html
 import http.server
+import json
 import os
 import socket
 import socketserver
+import subprocess
 import sys
 import threading
 import webbrowser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 START_PORT = 8080
+
+
+def run_generate_teks(payload):
+    """Jalankan generate-teks.py --sumber ai dari permintaan halaman web."""
+    script = os.path.join(HERE, "generate-teks.py")
+    if not os.path.exists(script):
+        return {"ok": False, "error": "generate-teks.py tidak ditemukan"}
+    if not (os.path.exists(os.path.join(HERE, "ai-config.json"))
+            or os.path.exists(os.path.join(HERE, "api-key.txt"))
+            or os.environ.get("AI_API_KEY")):
+        return {"ok": False, "error": "ai-config.json / API key belum ada"}
+
+    def num(v, default, lo, hi):
+        try:
+            v = int(v)
+        except (TypeError, ValueError):
+            return default
+        return max(lo, min(hi, v))
+
+    args = [
+        sys.executable, script, "--sumber", "ai",
+        "--jumlah", str(num(payload.get("jumlah"), 3, 1, 10)),
+        "--kata", str(payload.get("kata") or "semua"),
+        "--rasio", str(num(payload.get("rasio"), 70, 10, 90)),
+        "--level", str(num(payload.get("level"), 4, 1, 5)),
+    ]
+    try:
+        p = subprocess.run(args, cwd=HERE, capture_output=True, text=True, timeout=600)
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "error": "timeout menunggu AI"}
+    except OSError as exc:
+        return {"ok": False, "error": "gagal menjalankan python: %s" % exc}
+    if p.returncode != 0:
+        msg = (p.stderr or p.stdout or "").strip().splitlines()
+        return {"ok": False, "error": msg[-1][:300] if msg else "gagal"}
+    return {"ok": True, "log": (p.stdout or "").strip()[-600:]}
 
 
 def lan_ips():
@@ -54,6 +92,26 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if " 200 " in msg or " 304 " in msg:
             return  # terlalu ramai untuk audio; hanya tampilkan yang gagal
         sys.stderr.write("  %s - %s\n" % (self.address_string(), msg))
+
+    def do_POST(self):
+        if self.path.split("?")[0] != "/api/teks":
+            self.send_error(404)
+            return
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            payload = json.loads(self.rfile.read(length) or b"{}")
+        except (ValueError, TypeError):
+            payload = {}
+        try:
+            result = run_generate_teks(payload)
+        except Exception as exc:  # jangan sampai server mati
+            result = {"ok": False, "error": str(exc)[:300]}
+        body = json.dumps(result, ensure_ascii=False).encode("utf-8")
+        self.send_response(200 if result.get("ok") else 500)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
 
 class Server(socketserver.ThreadingTCPServer):
