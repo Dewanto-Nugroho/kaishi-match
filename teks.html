@@ -232,6 +232,10 @@
       <select id="mLevel"><option value="5">N5</option><option value="4">N4</option><option value="3">N3</option></select>
     </label>
 
+    <label class="mrow" id="mParRow" style="display:none">Paragraf (AI)
+      <select id="mParagraf"><option>2</option><option selected>3</option><option>4</option></select>
+    </label>
+
     <div class="mfoot">
       <button class="btn" id="mCancel">Batal</button>
       <button class="btn primary" id="mGo">Buat</button>
@@ -686,6 +690,7 @@
       return freq[k] >= 4 && (HAS_KANJI.test(k) || k.length >= 3);
     });
     seeds = shuffle(seeds);
+    seeds.sort(function (a, b) { return (HAS_KANJI.test(b) ? 1 : 0) - (HAS_KANJI.test(a) ? 1 : 0); });
     var out = [];
 
     for (var si = 0; si < seeds.length && out.length < n; si++) {
@@ -764,8 +769,10 @@
   });
   $('mRasio').addEventListener('input', function () { $('mRasioVal').textContent = this.value + '%'; });
   $('mSumber').addEventListener('change', function () {
-    $('mLevelRow').style.display = this.value === 'ai' ? 'flex' : 'none';
-    if (this.value === 'ai' && location.protocol === 'file:') {
+    var ai = this.value === 'ai';
+    $('mLevelRow').style.display = ai ? 'flex' : 'none';
+    $('mParRow').style.display = ai ? 'flex' : 'none';
+    if (ai && location.protocol === 'file:') {
       $('mStatus').className = 'mstatus err';
       $('mStatus').textContent = 'Mode AI butuh server: jalankan jalankan-server.cmd lalu buka http://127.0.0.1:8080/teks.html';
     } else {
@@ -814,7 +821,8 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         jumlah: opts.jumlah, kata: opts.kata, rasio: opts.rasio,
-        level: parseInt($('mLevel').value, 10)
+        level: parseInt($('mLevel').value, 10),
+        paragraf: parseInt($('mParagraf').value, 10)
       })
     }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (res) {

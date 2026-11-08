@@ -177,7 +177,7 @@ def sebaran(text, by_form, cutoffs_words):
 
 
 # ------------------------------------------------------------------ lokal
-def teks_lokal(words, jumlah, rng, vocab_map):
+def teks_lokal(words, jumlah, rng, vocab_map, npar=3):
     """Susun bacaan pendek dari kalimat asli deck yang bertema sama."""
     # indeks kata -> entri, dan hitung kata yang sering muncul di banyak kalimat
     by_sentence = [w for w in words if w["s"] and len(w["s"]) >= 8]
@@ -188,6 +188,7 @@ def teks_lokal(words, jumlah, rng, vocab_map):
                 freq[tok] = freq.get(tok, 0) + 1
     seeds = [k for k, v in sorted(freq.items(), key=lambda x: -x[1]) if v >= 4]
     rng.shuffle(seeds)
+    seeds.sort(key=lambda k: 0 if KANJI.search(k) else 1)   # utamakan kata berkanji
 
     used_seed = set()
     out = []
@@ -203,7 +204,13 @@ def teks_lokal(words, jumlah, rng, vocab_map):
         picked = picked[:5]
         rng.shuffle(picked)
 
-        paragraf = ["".join(w["s"] for w in picked)]
+        # bagi kalimat ke beberapa paragraf
+        n = max(1, min(npar, len(picked)))
+        paragraf = []
+        for i in range(n):
+            bagian = picked[i::n]
+            if bagian:
+                paragraf.append("".join(w["s"] for w in bagian))
         judul = "%s について" % seed
         arti = " ".join(w["sm"] for w in picked if w["sm"])
         kata_ids = []
@@ -261,8 +268,9 @@ def teks_lokal(words, jumlah, rng, vocab_map):
 # ------------------------------------------------------------------ AI
 PROMPT = """Kamu penulis materi bacaan bahasa Jepang untuk pembelajar Indonesia.
 
-Tulis SATU teks bacaan pendek (4-6 paragraf, total 6-10 kalimat) dengan tema bebas yang
-ringan (seperti artikel kecil: kehidupan sehari-hari, sekolah, makanan, cuaca, kebiasaan).
+Tulis SATU teks bacaan pendek: tepat %d paragraf, masing-masing 2-3 kalimat
+(total sekitar %d-%d kalimat). Tema bebas yang ringan (seperti artikel kecil:
+kehidupan sehari-hari, sekolah, makanan, cuaca, kebiasaan).
 
 WAJIB memakai kosakata dari daftar berikut (boleh bentuk infleksi/okurigana, boleh partikel
 dan kata bantu apa pun):
@@ -281,11 +289,93 @@ Balas HANYA JSON:
  "soal":[{"q":"...","o":["..","..","..",".."],"a":0,"n":"penjelasan singkat"}]}"""
 
 
+def detect_provider(cfg):
+    p = (cfg.get("provider") or "").strip().lower()
+    if p in ("openai", "anthropic", "gemini"):
+        return p
+    url = (cfg.get("base_url") or "").lower()
+    if "anthropic.com" in url:
+        return "anthropic"
+    if "generativelanguage.googleapis.com" in url:
+        return "gemini"
+    return "openai"   # DeepSeek, OpenAI, OpenRouter, Groq, Ollama, LM Studio, dll.
+
+
+def parse_json(text):
+    s = text[text.find("{"): text.rfind("}") + 1]
+    return json.loads(s)
+
+
+def call_openai(cfg, prompt, timeout):
+    body = {
+        "model": cfg["model"],
+        "messages": [
+            {"role": "system", "content": "Kamu penulis materi bacaan. Jawab hanya JSON."},
+            {"role": "user", "content": prompt},
+        ],
+        "temperature": 0.8,
+        "response_format": {"type": "json_object"},
+    }
+    req = urllib.request.Request(
+        cfg["base_url"].rstrip("/") + "/chat/completions",
+        data=json.dumps(body).encode("utf-8"),
+        headers={"Content-Type": "application/json", "Authorization": "Bearer " + cfg["api_key"]},
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    return parse_json(data["choices"][0]["message"]["content"])
+
+
+def call_anthropic(cfg, prompt, timeout):
+    base = (cfg.get("base_url") or "https://api.anthropic.com").rstrip("/")
+    if base.endswith("/v1"):
+        base = base[:-3]
+    body = {
+        "model": cfg["model"],
+        "max_tokens": 2500,
+        "system": "Kamu penulis materi bacaan. Jawab hanya JSON.",
+        "messages": [{"role": "user", "content": prompt}],
+    }
+    req = urllib.request.Request(
+        base + "/v1/messages",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "x-api-key": cfg["api_key"],
+            "anthropic-version": "2023-06-01",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    text = "".join(b.get("text", "") for b in data.get("content", []))
+    return parse_json(text)
+
+
+def call_gemini(cfg, prompt, timeout):
+    base = (cfg.get("base_url") or "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
+    url = "%s/models/%s:generateContent?key=%s" % (base, cfg["model"], cfg["api_key"])
+    body = {
+        "contents": [{"parts": [{"text": "Kamu penulis materi bacaan. Jawab hanya JSON.\n\n" + prompt}]}],
+        "generationConfig": {"temperature": 0.8, "responseMimeType": "application/json"},
+    }
+    req = urllib.request.Request(
+        url, data=json.dumps(body).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        data = json.loads(r.read().decode("utf-8"))
+    text = data["candidates"][0]["content"]["parts"][0]["text"]
+    return parse_json(text)
+
+
 def load_ai_config(args):
-    cfg = {"base_url": "https://api.deepseek.com/v1", "model": "deepseek-chat", "api_key": ""}
+    cfg = {"provider": "openai", "base_url": "https://api.deepseek.com/v1",
+           "model": "deepseek-chat", "api_key": ""}
     if os.path.exists(AI_CONFIG):
         with open(AI_CONFIG, encoding="utf-8") as f:
             cfg.update(json.load(f))
+    if getattr(args, "provider", None):
+        cfg["provider"] = args.provider
     if args.model:
         cfg["model"] = args.model
     if args.base_url:
@@ -298,25 +388,14 @@ def load_ai_config(args):
     return cfg
 
 
-def call_ai(cfg, vocab_block, level_name, timeout=180):
-    body = {
-        "model": cfg["model"],
-        "messages": [
-            {"role": "system", "content": "Kamu penulis materi bacaan. Jawab hanya JSON."},
-            {"role": "user", "content": PROMPT % (vocab_block, level_name)},
-        ],
-        "temperature": 0.8,
-        "response_format": {"type": "json_object"},
-    }
-    req = urllib.request.Request(
-        cfg["base_url"].rstrip("/") + "/chat/completions",
-        data=json.dumps(body).encode("utf-8"),
-        headers={"Content-Type": "application/json", "Authorization": "Bearer " + cfg["api_key"]},
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        data = json.loads(r.read().decode("utf-8"))
-    text = data["choices"][0]["message"]["content"]
-    return json.loads(text[text.find("{"): text.rfind("}") + 1])
+def call_ai(cfg, vocab_block, level_name, paragraf=3, timeout=180):
+    prompt = PROMPT % (paragraf, paragraf * 2, paragraf * 3, vocab_block, level_name)
+    provider = detect_provider(cfg)
+    if provider == "anthropic":
+        return call_anthropic(cfg, prompt, timeout)
+    if provider == "gemini":
+        return call_gemini(cfg, prompt, timeout)
+    return call_openai(cfg, prompt, timeout)
 
 
 def valid_teks(raw, words):
@@ -364,6 +443,7 @@ def generate_ai(words, args):
     if not cfg["api_key"]:
         print("! API key belum ada. Isi ai-config.json / api-key.txt / variabel AI_API_KEY.")
         return None
+    print("Provider : %s (%s)" % (detect_provider(cfg), cfg.get("model")))
 
     cache = {}
     if os.path.exists(CACHE):
@@ -398,7 +478,7 @@ def generate_ai(words, args):
         blok = "\n".join("- %s（%s）= %s" % (w["w"], w["r"], w["m"]) for w in sampel)
         print("  menulis teks %d/%d (level %s, %d kata)..." % (n + 1, perlu, LEVEL_NAMES[args.level], len(sampel)))
         try:
-            raw = call_ai(cfg, blok, LEVEL_NAMES[args.level])
+            raw = call_ai(cfg, blok, LEVEL_NAMES[args.level], args.paragraf)
         except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
             print("  ! gagal: %s" % exc)
             continue
@@ -463,6 +543,10 @@ def main():
                     help="persentase kata yang sudah dipelajari saat --kata campur (default 70)")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--ulang", action="store_true")
+    ap.add_argument("--provider", choices=["openai", "anthropic", "gemini"],
+                    help="penyedia AI (default: terdeteksi dari base_url)")
+    ap.add_argument("--paragraf", type=int, default=3,
+                    help="jumlah paragraf teks yang diminta dari AI (default 3)")
     ap.add_argument("--model")
     ap.add_argument("--base-url")
     ap.add_argument("--dry-run", action="store_true")
@@ -492,7 +576,8 @@ def main():
         for k in list(vocab_map.keys()):
             if 2 <= len(k) <= 7:
                 vocab.add(k)
-        teks = teks_lokal(pool, args.jumlah, rng, {v: vocab_map[v] for v in vocab if v in vocab_map})
+        teks = teks_lokal(pool, args.jumlah, rng, {v: vocab_map[v] for v in vocab if v in vocab_map},
+                          args.paragraf)
         if not teks:
             print("! tidak ada kalimat yang bisa disusun.")
             return 1

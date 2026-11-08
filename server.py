@@ -46,6 +46,7 @@ def run_generate_teks(payload):
         "--kata", str(payload.get("kata") or "semua"),
         "--rasio", str(num(payload.get("rasio"), 70, 10, 90)),
         "--level", str(num(payload.get("level"), 4, 1, 5)),
+        "--paragraf", str(num(payload.get("paragraf"), 3, 1, 6)),
     ]
     try:
         p = subprocess.run(args, cwd=HERE, capture_output=True, text=True, timeout=600)

@@ -186,6 +186,9 @@ Di halaman Baca ada tombol **＋ Buat teks**:
 Di kedua mode tersedia pilihan **Kosakata**: semua / sudah dipelajari / belum / campur
 (dengan pengatur rasio), memakai data `progress.js`.
 
+Mode AI juga punya pilihan **Level** (N5–N3) dan **Paragraf** (2–4), mis.
+`generate-teks.cmd --sumber ai --paragraf 2` untuk teks dua paragraf pendek.
+
 Server menyediakan endpoint `POST /api/teks` untuk mode AI:
 
 ```
@@ -237,19 +240,41 @@ Saat menulis ulang, `soal.js` lama otomatis dicadangkan menjadi `soal-YYYYMMDD-H
 
 ### Memakai AI (opsional, sesuai skema A)
 
-1. Salin `ai-config.contoh.json` → `ai-config.json`, isi `base_url`, `model`, `api_key`
-   (atau taruh kunci di `api-key.txt` / variabel `AI_API_KEY`).
-   Bisa memakai DeepSeek, OpenAI, OpenRouter (termasuk model `:free`), Groq,
-   atau model lokal seperti Ollama di `http://localhost:11434/v1`.
-2. Jalankan:
+1. Salin `ai-config.contoh.json` → `ai-config.json`, lalu isi `provider`, `base_url`,
+   `model`, dan `api_key` (kunci juga bisa ditaruh di `api-key.txt` atau variabel `AI_API_KEY`).
+
+   **Kalau muncul pesan `ai-config.json / API key belum ada`**, artinya berkas itu belum
+   ada di folder aplikasi — itulah yang harus dibuat.
+
+2. Pilih penyedia (contoh lengkap ada di dalam `ai-config.contoh.json`):
+
+   | Penyedia | Gratis? | Pengaturan |
+   |---|---|---|
+   | **Gemini** (Google AI Studio) | ✅ tier gratis | `"provider":"gemini"`, `base_url: https://generativelanguage.googleapis.com/v1beta`, `model: gemini-2.5-flash` |
+   | **Groq** | ✅ tier gratis | `"provider":"openai"`, `base_url: https://api.groq.com/openai/v1` |
+   | **OpenRouter** (`:free`) | ✅ ada model gratis | `"provider":"openai"`, `base_url: https://openrouter.ai/api/v1` |
+   | **Ollama** (lokal) | ✅ gratis penuh | `"provider":"openai"`, `base_url: http://localhost:11434/v1`, `api_key: ollama` |
+   | **DeepSeek / OpenAI** | 💰 berbayar (murah) | `"provider":"openai"`, `https://api.deepseek.com/v1` / `https://api.openai.com/v1` |
+   | **Claude (Anthropic)** | ❌ API-nya berbayar | `"provider":"anthropic"`, `base_url: https://api.anthropic.com` |
+
+   Catatan: **Claude tidak punya API gratis** — yang gratis adalah aplikasi chat Claude.ai,
+   bukan API-nya. Untuk gratis, pakai Gemini/Groq/OpenRouter atau model lokal.
+
+3. Jalankan:
    ```bat
+   generate-teks.cmd --sumber ai --jumlah 3 --paragraf 3
    generate-soal.cmd --sumber ai
    generate-soal.cmd --sumber ai --range 0 99
    generate-soal.cmd --sumber ai --ulang --words 食べる,飲む
    generate-soal.cmd --sumber ai --dry-run
    ```
-3. Hasil disimpan bertahap (`soal-cache.json`), jadi kalau terputus cukup jalankan
-   lagi — kata yang sudah selesai tidak dikirim ulang (hemat token).
+
+   `generate-soal` memakai API gaya OpenAI (DeepSeek/OpenAI/OpenRouter/Groq/Ollama).
+   Untuk Gemini/Claude, gunakan `generate-teks` (sudah mendukung ketiganya) atau ubah
+   `ai-config.json` ke penyedia OpenAI-compatible dulu.
+
+4. Hasil disimpan bertahap (`soal-cache.json` / `teks-cache.json`), jadi kalau terputus
+   cukup jalankan lagi — yang sudah selesai tidak dikirim ulang (hemat token).
 
 Validasi otomatis: opsi harus 4 dan unik, jawaban harus ada di opsi, dan **bacaan
 selalu diambil dari data deck**, bukan dari jawaban AI.

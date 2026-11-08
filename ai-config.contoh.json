@@ -1,5 +1,38 @@
 {
-  "_catatan": "Salin berkas ini menjadi ai-config.json lalu isi. Kunci API juga bisa ditaruh di api-key.txt atau variabel lingkungan AI_API_KEY.",
+  "_catatan": "Salin menjadi ai-config.json lalu isi salah satu contoh di bawah. Kunci API juga bisa ditaruh di api-key.txt atau variabel AI_API_KEY.",
+
+  "_contoh_gemini_gratis": {
+    "provider": "gemini",
+    "base_url": "https://generativelanguage.googleapis.com/v1beta",
+    "model": "gemini-2.5-flash",
+    "api_key": "ISI_API_KEY_GEMINI"
+  },
+  "_contoh_groq_gratis": {
+    "provider": "openai",
+    "base_url": "https://api.groq.com/openai/v1",
+    "model": "llama-3.3-70b-versatile",
+    "api_key": "ISI_API_KEY_GROQ"
+  },
+  "_contoh_openrouter_gratis": {
+    "provider": "openai",
+    "base_url": "https://openrouter.ai/api/v1",
+    "model": "google/gemini-2.0-flash-exp:free",
+    "api_key": "ISI_API_KEY_OPENROUTER"
+  },
+  "_contoh_ollama_lokal": {
+    "provider": "openai",
+    "base_url": "http://localhost:11434/v1",
+    "model": "qwen2.5:7b",
+    "api_key": "ollama"
+  },
+  "_contoh_claude_berbayar": {
+    "provider": "anthropic",
+    "base_url": "https://api.anthropic.com",
+    "model": "claude-sonnet-4-5",
+    "api_key": "ISI_API_KEY_ANTHROPIC"
+  },
+
+  "provider": "openai",
   "base_url": "https://api.deepseek.com/v1",
   "model": "deepseek-chat",
   "api_key": ""
