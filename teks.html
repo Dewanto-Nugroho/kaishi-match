@@ -226,7 +226,11 @@
   /* ---------- data teks ---------- */
   var TEXTS = [];
   if (window.KAISHI_TEKS_BANK && window.KAISHI_TEKS_BANK.teks) {
-    TEXTS = TEXTS.concat(window.KAISHI_TEKS_BANK.teks);
+    TEXTS = TEXTS.concat(window.KAISHI_TEKS_BANK.teks.map(function (t) {
+      var c = Object.assign({}, t);
+      if (!c.sumber) c.sumber = 'kurasi';
+      return c;
+    }));
   }
   if (window.KAISHI_TEKS && window.KAISHI_TEKS.teks) {
     TEXTS = TEXTS.concat(window.KAISHI_TEKS.teks);
