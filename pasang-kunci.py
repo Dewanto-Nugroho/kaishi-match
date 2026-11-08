@@ -15,7 +15,7 @@ CONTOH = os.path.join(HERE, "ai-config.contoh.json")
 CONTOH_GEMINI = {
     "provider": "gemini",
     "base_url": "https://generativelanguage.googleapis.com/v1beta",
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.5-flash",
 }
 
 

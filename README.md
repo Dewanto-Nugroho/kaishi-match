@@ -164,6 +164,8 @@ Buka **`kuis.html`** (atau klik "Kuis N5–N1" di halaman Cocokkan Kata).
 Buka **`teks.html`** (atau tombol **Baca ›** di halaman lain).
 
 - Teks ditulis memakai **kosakata deck Kaishi**, jadi setiap kanji punya furigana dari data deck.
+  Teks buatan AI menulis furigana sendiri (`{漢字|かんじ}`), jadi kata di luar deck pun tetap
+  punya bacaan — termasuk di kalimat soal.
 - **Furigana bisa dinyalakan/dimatikan** kapan saja (tombol `ふ Furigana: ON/OFF`).
 - Kata yang bisa diklik → muncul bacaan, arti, level JLPT, dan tombol **🔊 Suara** (audio deck).
 - Garis bawah kata berwarna menurut level (N5 hijau → N1 merah), dan ada **sebaran level**
@@ -255,7 +257,7 @@ Konfigurasi yang dipasang otomatis:
 {
   "provider": "gemini",
   "base_url": "https://generativelanguage.googleapis.com/v1beta",
-  "model": "gemini-2.5-flash",
+  "model": "gemini-3.5-flash",
   "api_key": "AIza..."
 }
 ```
@@ -270,7 +272,7 @@ Kalau modelnya tidak tersedia di akun/region Anda, ganti `model` menjadi
 
 | Penyedia | Gratis? | Pengaturan |
 |---|---|---|
-| **Gemini** (Google AI Studio) | ✅ tier gratis | `"provider":"gemini"`, `base_url: https://generativelanguage.googleapis.com/v1beta`, `model: gemini-2.5-flash` |
+| **Gemini** (Google AI Studio) | ✅ tier gratis | `"provider":"gemini"`, `base_url: https://generativelanguage.googleapis.com/v1beta`, `model: gemini-3.5-flash` |
 | **Groq** | ✅ tier gratis | `"provider":"openai"`, `base_url: https://api.groq.com/openai/v1` |
 | **OpenRouter** (`:free`) | ✅ ada model gratis | `"provider":"openai"`, `base_url: https://openrouter.ai/api/v1` |
 | **Ollama** (lokal) | ✅ gratis penuh | `"provider":"openai"`, `base_url: http://localhost:11434/v1`, `api_key: ollama` |

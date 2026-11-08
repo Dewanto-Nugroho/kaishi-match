@@ -268,25 +268,45 @@ def teks_lokal(words, jumlah, rng, vocab_map, npar=3):
 # ------------------------------------------------------------------ AI
 PROMPT = """Kamu penulis materi bacaan bahasa Jepang untuk pembelajar Indonesia.
 
-Tulis SATU teks bacaan pendek: tepat %d paragraf, masing-masing 2-3 kalimat
-(total sekitar %d-%d kalimat). Tema bebas yang ringan (seperti artikel kecil:
-kehidupan sehari-hari, sekolah, makanan, cuaca, kebiasaan).
+Tulis SATU teks bacaan yang RUNTUT: tepat %d paragraf, masing-masing 2-3 kalimat
+(sekitar %d-%d kalimat). Satu topik yang mengalir dari awal ke akhir — bukan kumpulan
+kalimat lepas. Tema ringan sehari-hari (sekolah, makanan, cuaca, kebiasaan, keluarga).
+Level bahasa kira-kira %s.
 
-WAJIB memakai kosakata dari daftar berikut (boleh bentuk infleksi/okurigana, boleh partikel
-dan kata bantu apa pun):
+Kosakata yang sebaiknya dipakai (boleh bentuk infleksi/okurigana, tidak harus semuanya):
 
 %s
 
-Ketentuan:
-- Semua kata kanji yang muncul harus berasal dari daftar di atas.
-- Kalimat pendek dan natural, level kira-kira %s.
-- Sertakan 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan.
-- Pertanyaan dalam bahasa Jepang, pilihan boleh bahasa Jepang atau Indonesia (konsisten).
-- Jangan menulis furigana; cukup kanji biasa.
+ATURAN FURIGANA (penting):
+- Setiap kata berkanji ditulis dengan format {kanji|furigana}.
+  Contoh: {今朝|けさ}、{母|はは}は{本|ほん}を{読|よ}みました。
+- Kana, partikel, dan okurigana ditulis biasa di luar kurung.
+- Kata di luar daftar boleh dipakai bila perlu, tetap dengan furigana yang benar.
+
+Ketentuan lain:
+- Kalimat pendek, natural, dan saling berhubungan.
+- 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan, dalam bahasa Jepang.
 
 Balas HANYA JSON:
-{"judul":"...","paragraf":["...","..."],"arti":"terjemahan Indonesia dari seluruh teks",
+{"judul":"...","paragraf":["{今朝|けさ}、..."],"arti":"terjemahan Indonesia seluruh teks",
  "soal":[{"q":"...","o":["..","..","..",".."],"a":0,"n":"penjelasan singkat"}]}"""
+
+FURI_RE = re.compile(r"\{\s*([^{}|]{1,16}?)\s*\|\s*([^{}|]{1,24}?)\s*\}")
+
+
+def parse_furi(s):
+    """Ubah '{漢字|かんじ}' -> '漢字' sambil mengumpulkan kamus kanji->bacaan."""
+    kamus = {}
+
+    def rep(m):
+        base, rd = m.group(1), m.group(2)
+        if base != rd:
+            kamus[base] = rd
+        return base
+
+    plain = FURI_RE.sub(rep, s)
+    plain = plain.replace("{", "").replace("}", "")
+    return plain, kamus
 
 
 def detect_provider(cfg):
@@ -389,7 +409,7 @@ def load_ai_config(args):
 
 
 def call_ai(cfg, vocab_block, level_name, paragraf=3, timeout=180):
-    prompt = PROMPT % (paragraf, paragraf * 2, paragraf * 3, vocab_block, level_name)
+    prompt = PROMPT % (paragraf, paragraf * 2, paragraf * 3, level_name, vocab_block)
     provider = detect_provider(cfg)
     if provider == "anthropic":
         return call_anthropic(cfg, prompt, timeout)
@@ -399,13 +419,21 @@ def call_ai(cfg, vocab_block, level_name, paragraf=3, timeout=180):
 
 
 def valid_teks(raw, words):
-    judul = nk(raw.get("judul", ""))[:60]
-    par = [nk(p) for p in raw.get("paragraf", []) if nk(p)]
+    judul, jk = parse_furi(nk(raw.get("judul", ""))[:80])
+    judul = judul[:60]
+    kamus = dict(jk)
+    par = []
+    for p in raw.get("paragraf", []):
+        plain, km = parse_furi(nk(p))
+        if plain:
+            par.append(plain)
+            kamus.update(km)
     if not judul or not par:
         return None
-    if sum(len(p) for p in par) > 900:
+    if sum(len(p) for p in par) > 1200:
         par = par[:6]
-    arti = nk(raw.get("arti", ""))
+    arti, ak = parse_furi(nk(raw.get("arti", "")))
+    kamus.update(ak)
     soal = []
     for s in raw.get("soal", [])[:5]:
         try:
@@ -418,7 +446,17 @@ def valid_teks(raw, words):
         q = nk(s.get("q", ""))
         if not q:
             continue
-        soal.append({"q": q, "o": o, "a": a, "n": nk(s.get("n", ""))})
+        opts, km_o = [], {}
+        for x in o:
+            plain, km = parse_furi(x)
+            opts.append(plain)
+            km_o.update(km)
+        qp, km_q = parse_furi(q)
+        np_, km_n = parse_furi(nk(s.get("n", "")))
+        kamus.update(km_o)
+        kamus.update(km_q)
+        kamus.update(km_n)
+        soal.append({"q": qp, "o": opts, "a": a, "n": np_})
     if not soal:
         return None
     by_form = {}
@@ -432,6 +470,7 @@ def valid_teks(raw, words):
         "paragraf": par,
         "arti": arti,
         "kata": [],
+        "kamus": kamus,
         "sebaran": sebaran(text_all, by_form, {"vocab": vocab}),
         "soal": soal,
         "sumber": "ai",
@@ -474,13 +513,26 @@ def generate_ai(words, args):
         return None
 
     for n in range(perlu):
-        sampel = rng.sample(pool_all, min(60, len(pool_all)))
+        sampel = rng.sample(pool_all, min(120, len(pool_all)))
         blok = "\n".join("- %s（%s）= %s" % (w["w"], w["r"], w["m"]) for w in sampel)
         print("  menulis teks %d/%d (level %s, %d kata)..." % (n + 1, perlu, LEVEL_NAMES[args.level], len(sampel)))
-        try:
-            raw = call_ai(cfg, blok, LEVEL_NAMES[args.level], args.paragraf)
-        except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
-            print("  ! gagal: %s" % exc)
+        raw = None
+        for attempt in range(3):
+            try:
+                raw = call_ai(cfg, blok, LEVEL_NAMES[args.level], args.paragraf)
+                break
+            except urllib.error.HTTPError as exc:
+                if exc.code in (429, 500, 502, 503) and attempt < 2:
+                    wait = 4 * (attempt + 1)
+                    print("    server sibuk (%s), coba lagi dalam %d dtk..." % (exc.code, wait))
+                    time.sleep(wait)
+                    continue
+                print("  ! gagal: HTTP %s" % exc.code)
+                break
+            except (urllib.error.URLError, TimeoutError, ValueError, KeyError) as exc:
+                print("  ! gagal: %s" % exc)
+                break
+        if raw is None:
             continue
         item = valid_teks(raw, words)
         if not item:

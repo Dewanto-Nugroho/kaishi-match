@@ -4,7 +4,7 @@
   "_contoh_gemini_gratis": {
     "provider": "gemini",
     "base_url": "https://generativelanguage.googleapis.com/v1beta",
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.5-flash",
     "api_key": "ISI_API_KEY_GEMINI"
   },
   "_contoh_groq_gratis": {

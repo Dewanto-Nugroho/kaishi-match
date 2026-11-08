@@ -291,6 +291,9 @@
     if (k.length > MAXW) MAXW = k.length;
   });
 
+  // kamus aktif (bisa ditimpa kamus per-teks dari AI)
+  var VOC = WORD;
+
   /* ---------- data teks ---------- */
   var TEXTS = [];
   if (window.KAISHI_TEKS_BANK && window.KAISHI_TEKS_BANK.teks) {
@@ -360,10 +363,10 @@
       var hit = null;
       for (var L = Math.min(MAXW, n - i); L >= 1; L--) {
         var sub = str.substr(i, L);
-        if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+        if (VOC[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
       }
       if (!hit) { out += esc(str.charAt(i)); i += 1; continue; }
-      var rec = WORD[hit];
+      var rec = VOC[hit];
       var isKanjiForm = (hit === rec.w) && HAS_KANJI.test(hit);
       var inner;
       if (furi && isKanjiForm) {
@@ -388,9 +391,9 @@
         var hit = null;
         for (var L = Math.min(MAXW, s.length - i); L >= 1; L--) {
           var sub = s.substr(i, L);
-          if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+          if (VOC[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
         }
-        if (hit) { c[WORD[hit].lv]++; total++; i += hit.length; } else i++;
+        if (hit) { c[VOC[hit].lv]++; total++; i += hit.length; } else i++;
       }
     });
     var out = {};
@@ -443,6 +446,22 @@
   function open(i) {
     cur = TEXTS[i];
     answered = {};
+    // kamus per teks (furigana dari AI) menimpa kamus deck
+    VOC = WORD;
+    if (cur.kamus && Object.keys(cur.kamus).length) {
+      var overlay = Object.create(WORD);
+      Object.keys(cur.kamus).forEach(function (k) {
+        var base = WORD[k];
+        overlay[k] = {
+          w: k,
+          r: cur.kamus[k],
+          m: base ? base.m : '',
+          lv: base ? base.lv : 3,
+          a: base ? base.a : null
+        };
+      });
+      VOC = overlay;
+    }
     $('screenList').classList.add('hidden');
     $('screenRead').classList.remove('hidden');
     window.scrollTo(0, 0);
@@ -554,10 +573,10 @@
         var hit = null;
         for (var L = Math.min(MAXW, p.length - i); L >= 1; L--) {
           var sub = p.substr(i, L);
-          if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+          if (VOC[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
         }
         if (hit) {
-          var rec = WORD[hit];
+          var rec = VOC[hit];
           if (!list.some(function (x) { return x.w === rec.w; })) list.push(rec);
           i += hit.length;
         } else i++;
@@ -613,7 +632,7 @@
     var w = e.target.closest('[data-k]');
     if (!w) return;
     var key = w.getAttribute('data-k');
-    var rec = WORD[key];
+    var rec = VOC[key];
     if (rec) showSheet(null, null, { w: key, r: (key === rec.w ? rec.r : key), m: rec.m, lv: rec.lv, a: rec.a });
   });
 
@@ -636,7 +655,7 @@
       var hit = null;
       for (var L = Math.min(MAXW, str.length - i); L >= 1; L--) {
         var sub = str.substr(i, L);
-        if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+        if (VOC[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
       }
       if (hit) { out.push(hit); i += hit.length; } else { out.push(str.charAt(i)); i++; }
     }

@@ -12,6 +12,9 @@ api-key.txt
 # (hanya berkas bercap tanggal, mis. teks-20261108-101500.js)
 soal-2*.js
 teks-2*.js
+# hasil generate teks AI (milik Anda sendiri; teks kurasi ada di teks-bank.js)
+teks.js
+teks-cache.json
 
 # audio hasil ekstraksi: hak ciptanya milik sumber aslinya.
 # Setiap pengguna membuatnya sendiri dengan: ekstrak-media.cmd
