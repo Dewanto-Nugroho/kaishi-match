@@ -159,6 +159,28 @@ Buka **`kuis.html`** (atau klik "Kuis N5–N1" di halaman Cocokkan Kata).
 > frekuensi kata di dalam deck (N5 = 40% kata paling umum, N1 = 10% paling jarang),
 > jadi ini perkiraan kesulitan, bukan sertifikasi JLPT resmi.
 
+## Baca — teks bacaan dari kosakata deck
+
+Buka **`teks.html`** (atau tombol **Baca ›** di halaman lain).
+
+- Teks ditulis memakai **kosakata deck Kaishi**, jadi setiap kanji punya furigana dari data deck.
+- **Furigana bisa dinyalakan/dimatikan** kapan saja (tombol `ふ Furigana: ON/OFF`).
+- Kata yang bisa diklik → muncul bacaan, arti, level JLPT, dan tombol **🔊 Suara** (audio deck).
+- Garis bawah kata berwarna menurut level (N5 hijau → N1 merah), dan ada **sebaran level**
+  teks (mis. N5 62% · N4 4% · N2 31%).
+- **Terjemahan** Indonesia per teks bisa dibuka/tutup.
+- **Daftar kosakata** semua kata dalam teks + arti.
+- Setelah membaca ada **3 pertanyaan pemahaman** dengan pembahasan; jawaban benar memberi poin.
+
+Teks bawaan ada di **`teks-bank.js`** (kurasi manual, 5 teks). Untuk menambah teks baru:
+
+```bat
+generate-teks.cmd                        :: susun dari kalimat deck (tanpa AI)
+generate-teks.cmd --sumber ai --jumlah 5 :: minta AI menulis artikel (butuh API key)
+```
+
+Hasilnya ditulis ke `teks.js` dan otomatis muncul di daftar bersama teks kurasi.
+
 ## Membuat / memperbarui soal
 
 Soal disimpan di **`soal.js`** (±1,5 MB, 6.300 soal). Untuk membuat ulang:
@@ -235,6 +257,9 @@ perangkat, dan bisa direset dari halaman ini bila perlu.
 | `kuis.html` | halaman kuis N5–N1 |
 | `soal.js` | bank soal hasil generator (6.300 soal) |
 | `generate-soal.py` / `.cmd` | pembuat soal (lokal atau lewat AI) |
+| `teks.html` | pembaca teks: furigana on/off, arti per kata, sebaran level, soal pemahaman |
+| `teks-bank.js` | teks bacaan kurasi (5 teks) yang selalu tersedia |
+| `generate-teks.py` / `.cmd` | pembuat teks bacaan (lokal atau lewat AI) → `teks.js` |
 | `progress.js` | hasil sinkronisasi (dibuat otomatis; boleh dihapus kapan saja) |
 | `ekstrak-media.py` / `.cmd` | mengambil audio dari berkas `.apkg` milik Anda → folder `media/` |
 | `KREDIT.md` | sumber deck, audio, ilustrasi, dan catatan lisensi |

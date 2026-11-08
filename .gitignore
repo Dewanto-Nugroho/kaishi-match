@@ -8,8 +8,9 @@ ai-config.json
 api-key.txt
 
 # ---- berkas turunan / cadangan ----
-# cadangan otomatis yang dibuat generate-soal.py
+# cadangan otomatis yang dibuat generate-soal.py / generate-teks.py
 soal-*.js
+teks-*.js
 
 # audio hasil ekstraksi: hak ciptanya milik sumber aslinya.
 # Setiap pengguna membuatnya sendiri dengan: ekstrak-media.cmd

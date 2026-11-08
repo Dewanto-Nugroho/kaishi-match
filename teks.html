@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f4fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236f4df5'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E5%AD%97%3C/text%3E%3C/svg%3E">
+<title>Baca — Teks dari kosakata Kaishi</title>
+<style>
+  :root {
+    --bg:#f5f4fb; --card:#fff; --ink:#1c1a2b; --muted:#7c7a92; --line:#eae7f4;
+    --accent:#6f4df5; --accent-2:#8b6bff; --accent-soft:#efe9ff;
+    --ok:#1e9d63; --ok-bg:#e4f7ee; --bad:#d2453f; --bad-bg:#fdeaea;
+    --shadow:0 1px 2px rgba(28,26,43,.04), 0 8px 24px rgba(28,26,43,.06);
+    --n5:#1e9d63; --n4:#2f7fe0; --n3:#a35bd6; --n2:#d9a521; --n1:#d2453f;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; min-height:100%; }
+  body { background:var(--bg); color:var(--ink); font-family:"Inter","Segoe UI",system-ui,-apple-system,"Noto Sans JP","Yu Gothic UI",sans-serif; -webkit-font-smoothing:antialiased; }
+  .jp { font-family:"Noto Sans JP","Yu Gothic","Hiragino Kaku Gothic Pro",Meiryo,sans-serif; }
+  .hidden { display:none !important; }
+  .wrap { max-width:860px; margin:0 auto; padding:20px 18px 120px; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .crumb { font-size:14px; color:var(--muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .crumb a { color:var(--muted); text-decoration:none; }
+  .crumb a:hover { color:var(--accent); }
+  .crumb b { color:var(--accent); font-weight:600; }
+  .badges { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .badge { font-size:12px; background:var(--accent-soft); color:var(--accent); border-radius:999px; padding:5px 11px; font-weight:600; }
+  .badge-link { text-decoration:none; background:#fff; border:1px solid var(--line); }
+  .badge-link:hover { background:var(--accent-soft); border-color:transparent; }
+
+  /* daftar teks */
+  .list { display:grid; gap:12px; }
+  .item { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); padding:16px 18px; cursor:pointer; transition:transform .12s, border-color .15s; }
+  .item:hover { transform:translateY(-1px); border-color:var(--accent-2); }
+  .item .t { font-size:19px; font-weight:600; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .item .meta { font-size:12.5px; color:var(--muted); margin-top:5px; }
+  .lv { font-size:11px; font-weight:700; color:#fff; border-radius:6px; padding:2px 7px; }
+  .lv5 { background:var(--n5); } .lv4 { background:var(--n4); } .lv3 { background:var(--n3); }
+  .lv2 { background:var(--n2); } .lv1 { background:var(--n1); }
+
+  /* pembaca */
+  .reader { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); padding:22px 22px 26px; }
+  .reader h1 { font-size:24px; margin:0 0 6px; }
+  .reader .sub { color:var(--muted); font-size:13px; margin-bottom:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .tbtn { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:10px; padding:8px 13px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .tbtn.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .tbtn:hover:not(.on) { border-color:var(--accent-2); color:var(--accent); }
+
+  .text { font-size:22px; line-height:2.1; }
+  .text p { margin:0 0 16px; }
+  .text ruby rt { font-size:.5em; color:#4a4463; font-weight:700; }
+  .text .w { cursor:pointer; border-bottom:2px solid transparent; padding-bottom:1px; }
+  .text .w.l5 { border-bottom-color:rgba(30,157,99,.55); }
+  .text .w.l4 { border-bottom-color:rgba(47,127,224,.55); }
+  .text .w.l3 { border-bottom-color:rgba(163,91,214,.55); }
+  .text .w.l2 { border-bottom-color:rgba(217,165,33,.6); }
+  .text .w.l1 { border-bottom-color:rgba(210,69,63,.55); }
+  .text .w:hover { background:#f6f2ff; }
+  .text.plain .w { border-bottom-color:transparent; }
+
+  .terjemahan { margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); color:#4b4960; font-size:15px; line-height:1.8; }
+  .terjemahan h3 { font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted); margin:0 0 8px; }
+
+  .dist { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:20px 0 6px; }
+  .dist div { text-align:center; font-size:12px; color:var(--muted); }
+  .dist b { display:block; font-size:15px; color:var(--ink); }
+  .dist .dot { height:6px; border-radius:99px; margin-bottom:6px; }
+
+  /* soal */
+  .quiz { margin-top:26px; }
+  .quiz h2 { font-size:17px; margin:0 0 12px; }
+  .q { background:#fbfaff; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px; }
+  .q .qt { font-size:16px; margin-bottom:12px; line-height:1.6; }
+  .q .opts { display:grid; gap:8px; }
+  .o { text-align:left; border:1px solid var(--line); background:#fff; border-radius:11px; padding:11px 13px; font-size:15px; cursor:pointer; font-family:inherit; display:flex; gap:10px; align-items:center; }
+  .o:hover:not(.locked) { border-color:var(--accent-2); background:#faf8ff; }
+  .o .k { width:22px; height:22px; border-radius:6px; background:#f1f0f6; color:#6c6a80; font-size:11px; font-weight:700; display:grid; place-items:center; flex:none; }
+  .o.correct { background:var(--ok-bg); border-color:#b6e5cd; color:#1c6d48; }
+  .o.wrong { background:var(--bad-bg); border-color:#f3bcbc; color:#a8332e; }
+  .o.locked { cursor:default; }
+  .note { margin-top:10px; font-size:13px; color:var(--muted); display:none; }
+  .note.show { display:block; }
+  .quizbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:6px; }
+  .score { font-size:14px; color:#4b4960; }
+
+  .btn { height:44px; padding:0 20px; border-radius:12px; border:1px solid var(--line); background:#fff; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn.primary { background:linear-gradient(180deg,var(--accent-2),var(--accent)); border-color:transparent; color:#fff; }
+  .btn:hover { transform:translateY(-1px); }
+
+  /* popup kata */
+  .sheet { position:fixed; left:50%; bottom:18px; transform:translateX(-50%) translateY(12px); background:#1c1a2b; color:#fff; border-radius:16px; padding:14px 18px; min-width:260px; max-width:92vw; box-shadow:0 18px 40px rgba(20,18,40,.35); opacity:0; pointer-events:none; transition:.18s; z-index:80; }
+  .sheet.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+  .sheet .hw { font-size:22px; font-weight:700; }
+  .sheet .rd { font-size:12px; opacity:.7; margin-bottom:4px; }
+  .sheet .mn { font-size:14px; opacity:.95; }
+  .sheet .lvtag { font-size:11px; padding:2px 7px; border-radius:6px; margin-left:6px; vertical-align:middle; }
+  .sheet .btns { margin-top:10px; display:flex; gap:8px; }
+  .sheet .btns button { border:0; border-radius:9px; padding:7px 12px; font-size:12.5px; font-weight:600; cursor:pointer; background:rgba(255,255,255,.14); color:#fff; font-family:inherit; }
+
+  @media (max-width:720px) {
+    .wrap { padding:14px 12px 100px; }
+    .topbar { flex-direction:column; align-items:flex-start; gap:8px; }
+    .reader { padding:16px 14px 20px; }
+    .reader h1 { font-size:20px; }
+    .text { font-size:19px; line-height:2; }
+    .dist { gap:4px; }
+    .dist b { font-size:13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ DAFTAR ============ -->
+<section id="screenList">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumb">
+        <a href="index.html">Latihan</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Baca</b>
+      </div>
+      <div class="badges">
+        <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
+        <button class="badge" id="poinBadge" type="button" style="border:0;cursor:pointer;font-family:inherit">★ 0</button>
+        <span class="badge" id="countBadge">memuat…</span>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</section>
+
+<!-- ============ PEMBACA ============ -->
+<section id="screenRead" class="hidden">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="crumb">
+        <a href="#" id="backLink">‹ Daftar bacaan</a>
+      </div>
+      <div class="badges">
+        <button class="badge" id="poinBadge2" type="button" style="border:0;cursor:pointer;font-family:inherit">★ 0</button>
+      </div>
+    </div>
+
+    <div class="reader">
+      <h1 id="rTitle">—</h1>
+      <div class="sub">
+        <span class="lv" id="rLevel">—</span>
+        <span id="rLen">—</span>
+        <span id="rQ">—</span>
+      </div>
+
+      <div class="toolbar">
+        <button class="tbtn on" id="btnFuri">ふ Furigana: ON</button>
+        <button class="tbtn" id="btnArti">Terjemahan</button>
+        <button class="tbtn" id="btnKosakata">Daftar kosakata</button>
+      </div>
+
+      <div class="text" id="rText"></div>
+      <div class="terjemahan hidden" id="rArti"></div>
+
+      <div class="dist" id="rDist"></div>
+
+      <div class="quiz">
+        <h2>Pertanyaan</h2>
+        <div id="rQuiz"></div>
+        <div class="quizbar">
+          <span class="score" id="rScore"></span>
+          <button class="btn" id="btnReset">Ulangi soal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sheet" id="sheet"></div>
+
+<script src="deck.js"></script>
+<script src="teks-bank.js"></script>
+<script src="teks.js" onerror="window.__noTeks=true"></script>
+<script src="stats.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var DECK = window.KAISHI_DECK;
+  if (!DECK) { document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">deck.js tidak ditemukan.</p>'; return; }
+
+  /* ---------- level dari frekuensi (sama seperti generator) ---------- */
+  var ranks = DECK.words.map(function (w) { return w.f; }).filter(function (x) { return x; }).sort(function (a, b) { return a - b; });
+  function cut(p) { return ranks[Math.min(ranks.length - 1, Math.floor(ranks.length * p))]; }
+  var CUTS = [cut(0.40), cut(0.60), cut(0.78), cut(0.90)];
+  function levelOf(f) {
+    if (!f) return 1;
+    for (var i = 0; i < CUTS.length; i++) if (f <= CUTS[i]) return 5 - i;
+    return 1;
+  }
+  var LV_NAME = { 5: 'N5', 4: 'N4', 3: 'N3', 2: 'N2', 1: 'N1' };
+
+  /* ---------- kamus dari deck ---------- */
+  var WORD = {};   // form -> {w,r,m,lv,a}
+  DECK.words.forEach(function (w, i) {
+    var lv = levelOf(w.f);
+    var rec = { w: w.w, r: w.r || w.w, m: w.m || '', lv: lv, a: w.a, id: i };
+    if (!WORD[w.w]) WORD[w.w] = rec;
+    if (w.r && w.r !== w.w && !WORD[w.r]) WORD[w.r] = rec;
+  });
+  var MAXW = 1;
+  Object.keys(WORD).forEach(function (k) { if (k.length > MAXW) MAXW = k.length; });
+
+  // bacaan khusus untuk gabungan kata yang sering salah baca di deck
+  var EXTRA = {
+    '六時': { w: '六時', r: 'ろくじ', m: 'pukul enam', lv: 5, a: null },
+    '一日': { w: '一日', r: 'いちにち', m: 'sehari (penuh)', lv: 4, a: null },
+    '今日': { w: '今日', r: 'きょう', m: 'hari ini', lv: 5, a: null },
+    '昨日': { w: '昨日', r: 'きのう', m: 'kemarin', lv: 5, a: null },
+    '明日': { w: '明日', r: 'あした', m: 'besok', lv: 5, a: null }
+  };
+  Object.keys(EXTRA).forEach(function (k) {
+    WORD[k] = EXTRA[k];
+    if (k.length > MAXW) MAXW = k.length;
+  });
+
+  /* ---------- data teks ---------- */
+  var TEXTS = [];
+  if (window.KAISHI_TEKS_BANK && window.KAISHI_TEKS_BANK.teks) {
+    TEXTS = TEXTS.concat(window.KAISHI_TEKS_BANK.teks);
+  }
+  if (window.KAISHI_TEKS && window.KAISHI_TEKS.teks) {
+    TEXTS = TEXTS.concat(window.KAISHI_TEKS.teks);
+  }
+
+  if (!TEXTS.length) {
+    $('countBadge').textContent = 'belum ada teks';
+    $('list').innerHTML = '<div class="item"><div class="t">Belum ada teks bacaan</div>' +
+      '<div class="meta">Jalankan <b>generate-teks.cmd</b> lalu muat ulang halaman.</div></div>';
+    return;
+  }
+
+  /* ---------- util ---------- */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  var KANA_RE = /[\u3040-\u30ff]/;
+  var HAS_KANJI = /[\u3400-\u4dbf\u4e00-\u9fff]/;
+
+  function splitRuby(word, reading) {
+    var w = word, r = reading, pi = 0, si = 0;
+    while (pi < w.length && pi < r.length && KANA_RE.test(w.charAt(pi)) && w.charAt(pi) === r.charAt(pi)) pi++;
+    while (si < w.length - pi && si < r.length - pi && KANA_RE.test(w.charAt(w.length - 1 - si)) &&
+           w.charAt(w.length - 1 - si) === r.charAt(r.length - 1 - si)) si++;
+    var core = w.slice(pi, w.length - si), rd = r.slice(pi, r.length - si);
+    if (!core || !rd) return null;
+    return { pre: w.slice(0, pi), core: core, rd: rd, suf: w.slice(w.length - si) };
+  }
+
+  // render satu paragraf: kata dikenal -> <span data-w> (+ ruby kalau furigana ON)
+  function renderText(str, furi) {
+    var out = '', i = 0, n = str.length;
+    while (i < n) {
+      var hit = null;
+      for (var L = Math.min(MAXW, n - i); L >= 1; L--) {
+        var sub = str.substr(i, L);
+        if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+      }
+      if (!hit) { out += esc(str.charAt(i)); i += 1; continue; }
+      var rec = WORD[hit];
+      var isKanjiForm = (hit === rec.w) && HAS_KANJI.test(hit);
+      var inner;
+      if (furi && isKanjiForm) {
+        var p = splitRuby(rec.w, rec.r);
+        inner = p
+          ? esc(p.pre) + '<ruby>' + esc(p.core) + '<rt>' + esc(p.rd) + '</rt></ruby>' + esc(p.suf)
+          : (rec.r !== rec.w ? '<ruby>' + esc(rec.w) + '<rt>' + esc(rec.r) + '</rt></ruby>' : esc(rec.w));
+      } else {
+        inner = esc(hit);
+      }
+      out += '<span class="w l' + rec.lv + '" data-k="' + esc(hit) + '">' + inner + '</span>';
+      i += hit.length;
+    }
+    return out;
+  }
+
+  function levelDist(texts) {
+    var c = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }, total = 0;
+    texts.forEach(function (s) {
+      var i = 0;
+      while (i < s.length) {
+        var hit = null;
+        for (var L = Math.min(MAXW, s.length - i); L >= 1; L--) {
+          var sub = s.substr(i, L);
+          if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+        }
+        if (hit) { c[WORD[hit].lv]++; total++; i += hit.length; } else i++;
+      }
+    });
+    var out = {};
+    if (!total) return out;
+    Object.keys(c).forEach(function (k) { var p = Math.round(c[k] / total * 100); if (p) out[k] = p; });
+    return out;
+  }
+
+  /* ---------- daftar ---------- */
+  function renderList() {
+    var html = TEXTS.map(function (t, i) {
+      var pct = t.sebaran && Object.keys(t.sebaran).length ? t.sebaran : levelDist(t.paragraf);
+      var len = t.paragraf.join('').length;
+      return '<div class="item" data-i="' + i + '">' +
+        '<div class="t jp"><span class="lv lv' + t.level + '">' + (LV_NAME[t.level] || '—') + '</span>' + esc(t.judul) + '</div>' +
+        '<div class="meta">' + t.paragraf.length + ' paragraf · ' + len + ' karakter · ' +
+        (t.soal ? t.soal.length : 0) + ' pertanyaan · ' + (t.sumber === 'ai' ? 'buatan AI' : (t.sumber === 'kurasi' ? 'contoh' : 'dari deck')) + '</div>' +
+        '</div>';
+    }).join('');
+    $('list').innerHTML = html;
+    $('countBadge').textContent = TEXTS.length + ' teks';
+  }
+
+  $('list').addEventListener('click', function (e) {
+    var it = e.target.closest('.item[data-i]');
+    if (!it) return;
+    open(parseInt(it.getAttribute('data-i'), 10));
+  });
+
+  /* ---------- pembaca ---------- */
+  var cur = null, furi = true, answered = {};
+
+  function open(i) {
+    cur = TEXTS[i];
+    answered = {};
+    $('screenList').classList.add('hidden');
+    $('screenRead').classList.remove('hidden');
+    window.scrollTo(0, 0);
+    $('rTitle').textContent = cur.judul;
+    $('rLevel').className = 'lv lv' + cur.level;
+    $('rLevel').textContent = LV_NAME[cur.level] || '—';
+    $('rLen').textContent = cur.paragraf.join('').length + ' karakter';
+    $('rQ').textContent = (cur.soal || []).length + ' pertanyaan';
+    $('rArti').innerHTML = '<h3>Terjemahan</h3>' + esc(cur.arti || '');
+    $('rArti').classList.add('hidden');
+    $('btnArti').classList.remove('on');
+    $('btnFuri').classList.add('on');
+    $('btnFuri').textContent = 'ふ Furigana: ON';
+    furi = true;
+    drawText();
+    drawDist();
+    drawQuiz();
+  }
+
+  function drawText() {
+    $('rText').innerHTML = cur.paragraf.map(function (p) {
+      return '<p class="jp">' + renderText(p, furi) + '</p>';
+    }).join('');
+    $('rText').classList.toggle('plain', !furi);
+  }
+
+  function drawDist() {
+    var d = cur.sebaran && Object.keys(cur.sebaran).length ? cur.sebaran : levelDist(cur.paragraf);
+    var colors = { 5: 'var(--n5)', 4: 'var(--n4)', 3: 'var(--n3)', 2: 'var(--n2)', 1: 'var(--n1)' };
+    $('rDist').innerHTML = [5, 4, 3, 2, 1].map(function (lv) {
+      var p = d[lv] || 0;
+      return '<div><div class="dot" style="background:' + colors[lv] + ';opacity:' + (p ? 1 : .18) + '"></div>' +
+        '<b>' + p + '%</b>' + LV_NAME[lv] + '</div>';
+    }).join('');
+  }
+
+  function drawQuiz() {
+    $('rQuiz').innerHTML = (cur.soal || []).map(function (s, qi) {
+      return '<div class="q" data-q="' + qi + '">' +
+        '<div class="qt jp">' + (qi + 1) + '. ' + esc(s.q) + '</div>' +
+        '<div class="opts">' + s.o.map(function (o, oi) {
+          return '<button class="o" data-q="' + qi + '" data-o="' + oi + '">' +
+            '<span class="k">' + 'ABCD'.charAt(oi) + '</span><span class="jp">' + esc(o) + '</span></button>';
+        }).join('') + '</div>' +
+        '<div class="note" id="n' + qi + '">' + esc(s.n || '') + '</div>' +
+        '</div>';
+    }).join('');
+    $('rScore').textContent = '';
+  }
+
+  $('rQuiz').addEventListener('click', function (e) {
+    var b = e.target.closest('.o');
+    if (!b) return;
+    var qi = parseInt(b.getAttribute('data-q'), 10);
+    if (answered[qi]) return;
+    answered[qi] = true;
+    var s = cur.soal[qi];
+    var oi = parseInt(b.getAttribute('data-o'), 10);
+    var good = oi === s.a;
+    var box = b.closest('.q');
+    Array.prototype.forEach.call(box.querySelectorAll('.o'), function (n, i) {
+      n.classList.add('locked');
+      if (i === s.a) n.classList.add('correct');
+      else if (i === oi) n.classList.add('wrong');
+    });
+    var note = $('n' + qi);
+    note.textContent = (good ? '✓ Benar. ' : '✗ Kurang tepat. ') + (s.n || '');
+    note.classList.add('show');
+    answered[qi] = good;
+    if (window.KaishiStats) {
+      window.KaishiStats.quizAnswer({ correct: good, wordId: 'teks-' + qi, level: cur.level, base: 8 });
+    }
+    updateScore();
+  });
+
+  function updateScore() {
+    var total = (cur.soal || []).length;
+    var done = Object.keys(answered).length;
+    var right = Object.keys(answered).filter(function (k) { return answered[k] === true; }).length;
+    if (!done) { $('rScore').textContent = ''; return; }
+    if (done === total && total > 0) {
+      $('rScore').textContent = 'Selesai — ' + right + ' dari ' + total + ' benar.';
+      if (window.KaishiStats && !cur._done) {
+        cur._done = true;
+        window.KaishiStats.quizDone({ correct: right, wrong: total - right });
+      }
+    } else {
+      $('rScore').textContent = right + ' benar dari ' + done + '/' + total + ' soal dijawab.';
+    }
+  }
+
+  /* ---------- tombol ---------- */
+  $('btnFuri').addEventListener('click', function () {
+    furi = !furi;
+    this.classList.toggle('on', furi);
+    this.textContent = 'ふ Furigana: ' + (furi ? 'ON' : 'OFF');
+    drawText();
+  });
+  $('btnArti').addEventListener('click', function () {
+    var el = $('rArti');
+    el.classList.toggle('hidden');
+    this.classList.toggle('on', !el.classList.contains('hidden'));
+  });
+  $('btnKosakata').addEventListener('click', function () {
+    var list = [];
+    cur.paragraf.forEach(function (p) {
+      var i = 0;
+      while (i < p.length) {
+        var hit = null;
+        for (var L = Math.min(MAXW, p.length - i); L >= 1; L--) {
+          var sub = p.substr(i, L);
+          if (WORD[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+        }
+        if (hit) {
+          var rec = WORD[hit];
+          if (!list.some(function (x) { return x.w === rec.w; })) list.push(rec);
+          i += hit.length;
+        } else i++;
+      }
+    });
+    var html = '<div style="max-height:60vh;overflow:auto">' + list.map(function (r) {
+      return '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #f4f2fa">' +
+        '<span class="jp" style="min-width:90px;font-weight:600">' + esc(r.w) + '</span>' +
+        '<span style="min-width:80px;color:#7c7a92">' + esc(r.r) + '</span>' +
+        '<span style="flex:1">' + esc(r.m) + '</span>' +
+        '<span class="lv lv' + r.lv + '">' + LV_NAME[r.lv] + '</span></div>';
+    }).join('') + '</div>';
+    showSheet('Kosakata dalam teks (' + list.length + ')', html, null);
+  });
+  $('btnReset').addEventListener('click', function () {
+    answered = {};
+    (cur.soal || []).forEach(function (s) { delete s._ok; });
+    drawQuiz();
+    window.scrollTo({ top: $('rQuiz').offsetTop - 80, behavior: 'smooth' });
+  });
+  $('backLink').addEventListener('click', function (e) {
+    e.preventDefault();
+    $('screenRead').classList.add('hidden');
+    $('screenList').classList.remove('hidden');
+    window.scrollTo(0, 0);
+  });
+
+  /* ---------- popup kata ---------- */
+  var sheetTimer = null;
+  function showSheet(title, bodyHtml, word) {
+    var el = $('sheet');
+    el.innerHTML = (word
+      ? '<div class="hw jp">' + esc(word.w) + '<span class="lv lv' + word.lv + ' lvtag">' + LV_NAME[word.lv] + '</span></div>' +
+        '<div class="rd jp">' + esc(word.r) + '</div><div class="mn">' + esc(word.m) + '</div>'
+      : '<div class="mn" style="font-weight:600;margin-bottom:6px">' + esc(title) + '</div>' + bodyHtml) +
+      '<div class="btns">' +
+      (word && word.a != null ? '<button data-act="play">🔊 Suara</button>' : '') +
+      '<button data-act="close">Tutup</button></div>';
+    el.classList.add('show');
+    clearTimeout(sheetTimer);
+    el.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (b.getAttribute('data-act') === 'play' && word && word.a != null) {
+          try { new Audio('media/m' + word.a + '.mp3').play().catch(function () {}); } catch (e) {}
+        } else {
+          el.classList.remove('show');
+        }
+      });
+    });
+  }
+
+  $('rText').addEventListener('click', function (e) {
+    var w = e.target.closest('[data-k]');
+    if (!w) return;
+    var key = w.getAttribute('data-k');
+    var rec = WORD[key];
+    if (rec) showSheet(null, null, { w: key, r: (key === rec.w ? rec.r : key), m: rec.m, lv: rec.lv, a: rec.a });
+  });
+
+  document.addEventListener('click', function (e) {
+    var el = $('sheet');
+    if (!el.classList.contains('show')) return;
+    if (!e.target.closest('#sheet') && !e.target.closest('[data-k]')) el.classList.remove('show');
+  });
+
+  /* ---------- init ---------- */
+  renderList();
+})();
+</script>
+</body>
+</html>
