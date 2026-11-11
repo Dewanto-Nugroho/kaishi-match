@@ -283,6 +283,8 @@
 
     onChange: function (fn) { listeners.push(fn); },
 
+    show: function () { show(); },
+
     reset: function () { S = blank(); notify(); }
   };
 
@@ -425,19 +427,19 @@
   }
 
   function render() {
-    var el = document.getElementById('poinBadge');
-    if (!el) return;
     var sm = API.summary();
-    el.innerHTML = '<span style="opacity:.75">★</span> ' + sm.total.toLocaleString('id-ID')
+    var html = '<span style="opacity:.75">★</span> ' + sm.total.toLocaleString('id-ID')
       + ' <span style="opacity:.6">· Lv ' + sm.level.level + '</span>';
+    var els = document.querySelectorAll('#poinBadge, #poinBadge2, .js-poin-badge');
+    for (var i = 0; i < els.length; i++) els[i].innerHTML = html;
   }
 
   function mount() {
     buildModal();
-    var el = document.getElementById('poinBadge');
-    if (el) {
-      el.addEventListener('click', function (e) { e.preventDefault(); show(); });
-      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') show(); });
+    var els = document.querySelectorAll('#poinBadge, #poinBadge2, .js-poin-badge');
+    for (var i = 0; i < els.length; i++) {
+      els[i].addEventListener('click', function (e) { e.preventDefault(); show(); });
+      els[i].addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') show(); });
     }
     render();
     API.onChange(render);

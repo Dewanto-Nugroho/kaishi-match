@@ -1,0 +1,5 @@
+{
+  "_petunjuk": "Salin file ini menjadi ngrok-config.json atau jalankan pasang-ngrok.cmd",
+  "authtoken": "tempel_authtoken_ngrok_di_sini",
+  "domain": "nama-domain-anda.ngrok-free.app"
+}

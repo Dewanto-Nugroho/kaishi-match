@@ -277,20 +277,341 @@
   }
 
   .tile, .chip, .btn, .item, .linkbtn { touch-action: manipulation; }
+
+  /* ---------- beranda ---------- */
+  .crumb a { color: var(--muted); text-decoration: none; font-weight: 500; }
+  .crumb a:hover { color: var(--accent); }
+  .hero {
+    background: linear-gradient(135deg, #ffffff 0%, #f7f4ff 100%);
+    border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow);
+    padding: 24px 26px; display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .hero-brand { display: flex; align-items: center; gap: 16px; }
+  .hero-logo {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    color: #fff; font-size: 30px; font-weight: 700; display: grid; place-items: center;
+    box-shadow: 0 8px 20px rgba(111, 77, 245, .28); flex: none;
+  }
+  .hero-title h1 { margin: 0 0 4px; font-size: 23px; letter-spacing: -.01em; }
+  .hero-title p { margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+
+  .home-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
+  }
+  .hstat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column;
+    justify-content: space-between; gap: 4px; text-align: left;
+  }
+  .hstat.clickable { cursor: pointer; transition: transform .12s, border-color .15s; }
+  .hstat.clickable:hover { transform: translateY(-1px); border-color: var(--accent-2); }
+  .hstat-top { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .hstat-val { font-size: 21px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .hstat-sub { font-size: 12px; color: var(--muted); }
+  .hstat-bar { height: 6px; border-radius: 99px; background: #f1eefa; overflow: hidden; margin-top: 6px; }
+  .hstat-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius: 99px; }
+
+  .sec-title {
+    font-size: 13px; font-weight: 700; letter-spacing: .03em; color: var(--muted);
+    text-transform: uppercase; margin: 0 0 10px 2px;
+  }
+  .menu-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px;
+  }
+  .mcard-menu {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column;
+    justify-content: space-between; gap: 16px; transition: transform .15s, border-color .15s, box-shadow .15s;
+  }
+  .mcard-menu:hover {
+    transform: translateY(-2px); border-color: #d5c9ff;
+    box-shadow: 0 12px 28px rgba(28, 26, 43, .09);
+  }
+  .mcard-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .mcard-icon {
+    width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center;
+    font-size: 20px; font-weight: 800; flex: none;
+  }
+  .mcard-icon.match { background: #efe9ff; color: var(--accent); }
+  .mcard-icon.quiz { background: #e6f4ff; color: #1d6fd8; }
+  .mcard-icon.read { background: #e4f7ee; color: var(--ok); }
+  .mcard-tag {
+    font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 4px 10px;
+    background: #f4f2fa; color: #5c5a72;
+  }
+  .mcard-body h2 { margin: 12px 0 6px; font-size: 19px; color: var(--ink); }
+  .mcard-body p { margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .mcard-meta {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;
+  }
+  .mcard-pill {
+    font-size: 11.5px; color: #4b4960; background: #fbfaff; border: 1px solid var(--line);
+    border-radius: 8px; padding: 3px 8px;
+  }
+  .mcard-actions { display: flex; flex-direction: column; gap: 9px; }
+  .mcard-mainbtn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; height: 44px; border-radius: 12px; border: 0;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent));
+    color: #fff; font-size: 14.5px; font-weight: 600; text-decoration: none;
+    cursor: pointer; box-shadow: 0 6px 16px rgba(111, 77, 245, .24);
+    transition: transform .12s, filter .15s; font-family: inherit;
+  }
+  .mcard-mainbtn:hover { filter: brightness(1.03); transform: translateY(-1px); }
+  .mcard-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+  .qbtn {
+    flex: 1; min-width: max-content; border: 1px solid var(--line); background: #fbfaff;
+    color: #4b4960; border-radius: 9px; padding: 6px 10px; font-size: 12px; font-weight: 600;
+    cursor: pointer; text-decoration: none; text-align: center; font-family: inherit;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .qbtn:hover { border-color: var(--accent-2); color: var(--accent); background: #f5f1ff; }
+
+  .home-bottom { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; }
+  .hpanel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: var(--shadow); padding: 18px 20px; display: flex; flex-direction: column;
+    justify-content: space-between; gap: 12px;
+  }
+  .hpanel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .hpanel-head h3 { margin: 0; font-size: 15.5px; }
+  .anki-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .acat {
+    border: 1px solid var(--line); background: #fbfaff; border-radius: 12px; padding: 10px 12px;
+    text-align: left; cursor: pointer; font-family: inherit; transition: all .15s;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .acat:hover:not(:disabled) { border-color: var(--accent-2); background: #f5f1ff; transform: translateY(-1px); }
+  .acat:disabled { opacity: .5; cursor: default; }
+  .acat b { font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .acat span { font-size: 12px; color: var(--muted); }
+
+  .wotd-box {
+    background: #fbfaff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .wotd-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .wotd-word { font-size: 28px; font-weight: 700; line-height: 1.2; }
+  .wotd-read { font-size: 13px; color: var(--accent); font-weight: 600; }
+  .wotd-mean { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .wotd-sen { font-size: 13.5px; color: #4b4960; margin-top: 4px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .wotd-sen small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+
+  @media (max-width: 860px) {
+    .menu-grid { grid-template-columns: 1fr; }
+    .home-stats { grid-template-columns: repeat(2, 1fr); }
+    .home-bottom { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .hero { padding: 16px; }
+    .hero-logo { width: 46px; height: 46px; font-size: 24px; border-radius: 13px; }
+    .hero-title h1 { font-size: 19px; }
+    .anki-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 </head>
 <body>
 
+<!-- ============ BERANDA ============ -->
+<section id="screenHome">
+  <div class="wrap" style="padding-bottom: 60px;">
+    <div class="hero">
+      <div class="hero-brand">
+        <div class="hero-logo jp">字</div>
+        <div class="hero-title">
+          <h1>Kaishi 1.5k — Bahasa Jepang</h1>
+          <p>Latihan kosakata, tata bahasa N5–N1, dan bacaan untuk memperkuat kartu Anki Anda.</p>
+        </div>
+      </div>
+      <div class="badges">
+        <button class="badge badge-poin js-poin-badge" type="button" title="Lihat progres & poin">★ 0</button>
+        <span class="badge" id="homeDeckBadge">1.488 kata</span>
+        <span class="badge badge-anki" id="homeAnkiBadge">Anki belum tersambung</span>
+      </div>
+    </div>
+
+    <!-- Ringkasan Progres -->
+    <div class="home-stats">
+      <div class="hstat clickable" id="homeStatPoin" title="Klik untuk rincian progres & pencapaian">
+        <div class="hstat-top"><span>LEVEL & POIN</span><span>★ Rincian ›</span></div>
+        <div class="hstat-val" id="hsLevel">Lv 1 · 0</div>
+        <div class="hstat-sub" id="hsTodayPoin">Hari ini: +0 poin</div>
+        <div class="hstat-bar"><i id="hsLevelBar" style="width:0%"></i></div>
+      </div>
+      <div class="hstat clickable" id="homeStatStreak" title="Klik untuk rincian streak">
+        <div class="hstat-top"><span>KONSISTENSI</span><span>🔥</span></div>
+        <div class="hstat-val" id="hsStreak">0 hari</div>
+        <div class="hstat-sub" id="hsStreakSub">Rekor terbaik: 0 hari</div>
+      </div>
+      <div class="hstat clickable" id="homeStatTime" title="Klik untuk rincian waktu belajar">
+        <div class="hstat-top"><span>WAKTU BELAJAR</span><span>⏱</span></div>
+        <div class="hstat-val" id="hsTimeToday">0m</div>
+        <div class="hstat-sub" id="hsTimeTotal">Total: 0m · 0 sesi hari ini</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-top"><span>PROGRES ANKI</span><span id="hsAnkiPct">0%</span></div>
+        <div class="hstat-val" id="hsAnkiLearned">0 / 1488</div>
+        <div class="hstat-sub" id="hsAnkiSub">Jalankan sinkron-anki.cmd</div>
+        <div class="hstat-bar"><i id="hsAnkiBar" style="width:0%;background:linear-gradient(90deg,#44c486,#1e9d63)"></i></div>
+      </div>
+    </div>
+
+    <!-- Menu Utama -->
+    <div class="sec-title">Pilih Menu Latihan</div>
+    <div class="menu-grid">
+      <!-- 1. Cocokkan Kata -->
+      <div class="mcard-menu">
+        <div>
+          <div class="mcard-head">
+            <div class="mcard-icon match jp">あ↔A</div>
+            <span class="mcard-tag">1.488 Kata · Audio</span>
+          </div>
+          <div class="mcard-body">
+            <h2>Cocokkan Kata</h2>
+            <p>Pasangkan kata Jepang dengan artinya sebelum waktu 30 detik habis. Mendukung filter kartu dari Anki.</p>
+          </div>
+          <div class="mcard-meta">
+            <span class="mcard-pill">🔊 Suara asli deck</span>
+            <span class="mcard-pill">⏱ 30 dtk/ronde</span>
+            <span class="mcard-pill">🎯 Filter Anki</span>
+          </div>
+        </div>
+        <div class="mcard-actions">
+          <button type="button" class="mcard-mainbtn" id="goMatchSetup">Pilih Kata &amp; Mulai ›</button>
+          <div class="mcard-quick">
+            <button type="button" class="qbtn" data-quick-match="r20">⚡ 20 Acak</button>
+            <button type="button" class="qbtn" data-quick-match="recent" id="qMatchRecent">🌱 Baru Dipelajari</button>
+            <button type="button" class="qbtn" data-quick-match="top50">🔥 50 Tersering</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Kuis N5-N1 -->
+      <div class="mcard-menu">
+        <div>
+          <div class="mcard-head">
+            <div class="mcard-icon quiz jp">問</div>
+            <span class="mcard-tag">6.300 Soal · N5–N1</span>
+          </div>
+          <div class="mcard-body">
+            <h2>Kuis N5–N1</h2>
+            <p>Latihan pilihan ganda &amp; susun kalimat: arti kata, bacaan kanji, isi rumpang, partikel, dan arti kalimat.</p>
+          </div>
+          <div class="mcard-meta">
+            <span class="mcard-pill">7 jenis soal</span>
+            <span class="mcard-pill">ふ Furigana otomatis</span>
+            <span class="mcard-pill">💡 Pembahasan</span>
+          </div>
+        </div>
+        <div class="mcard-actions">
+          <a class="mcard-mainbtn" href="kuis.html">Buka Kuis N5–N1 ›</a>
+          <div class="mcard-quick">
+            <a class="qbtn" href="kuis.html?start=1">⚡ 20 Soal Acak</a>
+            <a class="qbtn" href="kuis.html?lv=5&amp;start=1">🟢 Level N5</a>
+            <a class="qbtn" href="kuis.html?tipe=grammar&amp;start=1">🧩 Tata Bahasa</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Baca Teks -->
+      <div class="mcard-menu">
+        <div>
+          <div class="mcard-head">
+            <div class="mcard-icon read jp">読</div>
+            <span class="mcard-tag">Cerita &amp; Artikel</span>
+          </div>
+          <div class="mcard-body">
+            <h2>Baca Teks</h2>
+            <p>Baca wacana pendek dari kosakata Kaishi. Klik kata untuk melihat arti &amp; mendengar pengucapannya.</p>
+          </div>
+          <div class="mcard-meta">
+            <span class="mcard-pill">ふ Furigana ON/OFF</span>
+            <span class="mcard-pill">📊 Sebaran level</span>
+            <span class="mcard-pill">✨ Generator AI/Lokal</span>
+          </div>
+        </div>
+        <div class="mcard-actions">
+          <a class="mcard-mainbtn" href="teks.html">Buka Daftar Bacaan ›</a>
+          <div class="mcard-quick">
+            <a class="qbtn" href="teks.html?open=0">📖 Baca Langsung</a>
+            <a class="qbtn" href="teks.html#buat">＋ Buat Teks Baru</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bagian Bawah: Filter Cepat Anki & Kata Acak -->
+    <div class="home-bottom">
+      <div class="hpanel">
+        <div class="hpanel-head">
+          <h3>Latihan Cepat Menurut Status Anki</h3>
+          <span class="badge badge-anki" id="homeAnkiTime" style="font-size:11px">Belum disinkronkan</span>
+        </div>
+        <p style="margin:0;font-size:13px;color:var(--muted)" id="homeAnkiDesc">
+          Klik salah satu kategori di bawah untuk langsung berlatih mencocokkan kata dari progres Anki Anda (maks. 20 kata acak per sesi).
+        </p>
+        <div class="anki-grid" id="homeAnkiGrid">
+          <button type="button" class="acat" data-anki-quick="recent1">
+            <b id="haRecent1">0</b><span>Baru (&lt; 1 hari)</span>
+          </button>
+          <button type="button" class="acat" data-anki-quick="recent">
+            <b id="haRecent">0</b><span>Baru (≤ 3 hari)</span>
+          </button>
+          <button type="button" class="acat" data-anki-quick="young">
+            <b id="haYoung">0</b><span>Masih muda</span>
+          </button>
+          <button type="button" class="acat" data-anki-quick="mature">
+            <b id="haMature">0</b><span>Matang (≥ 21h)</span>
+          </button>
+          <button type="button" class="acat" data-anki-quick="lapsed">
+            <b id="haLapsed">0</b><span>Pernah lupa</span>
+          </button>
+          <button type="button" class="acat" data-anki-quick="unlearned">
+            <b id="haUnlearned">0</b><span>Belum dipelajari</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hpanel">
+        <div class="hpanel-head">
+          <h3>Kenali Kata Hari Ini</h3>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="qbtn" id="wotdSpeak" title="Putar audio kata">🔊 Suara</button>
+            <button type="button" class="qbtn" id="wotdNext" title="Ganti kata acak lain">↻ Kata lain</button>
+          </div>
+        </div>
+        <div class="wotd-box" id="wotdBox">
+          <div class="wotd-top">
+            <div>
+              <div class="wotd-read jp" id="wotdRead"></div>
+              <div class="wotd-word jp" id="wotdWord">—</div>
+            </div>
+            <span class="st st-baru" id="wotdStatus">baru</span>
+          </div>
+          <div class="wotd-mean" id="wotdMean">—</div>
+          <div class="wotd-sen" id="wotdSenBox">
+            <span class="jp" id="wotdSen"></span>
+            <small id="wotdSenMean"></small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ SETUP ============ -->
-<section id="screenSetup">
+<section id="screenSetup" class="hidden">
   <div class="wrap">
     <div class="topbar">
       <div class="crumb">
-        <span>Latihan</span><span class="sep">&rsaquo;</span>
+        <a href="#beranda" id="homeBreadLink">🏠 Beranda</a><span class="sep">&rsaquo;</span>
         <span>Kaishi 1.5k</span><span class="sep">&rsaquo;</span>
         <b>Cocokkan kata</b>
       </div>
       <div class="badges">
+        <a class="badge badge-link" href="#beranda" id="homeBadgeLink">‹ Beranda</a>
         <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
         <a class="badge badge-link" href="teks.html">Baca ›</a>
         <button class="badge badge-poin" id="poinBadge" type="button" title="Lihat progres & poin">★ 0</button>
@@ -423,6 +744,7 @@
         <button class="btn primary" id="againBtn">Ulangi sesi</button>
         <button class="btn" id="retryWrongBtn">Ulangi yang salah</button>
         <button class="btn" id="backBtn">Pilih kata lain</button>
+        <button class="btn ghost" id="homeResultBtn">🏠 Beranda</button>
       </div>
     </div>
 
@@ -489,7 +811,7 @@
 
   /* ---------------- elements ---------------- */
   function $(id) { return document.getElementById(id); }
-  var screenSetup = $('screenSetup'), screenGame = $('screenGame'), screenResult = $('screenResult');
+  var screenHome = $('screenHome'), screenSetup = $('screenSetup'), screenGame = $('screenGame'), screenResult = $('screenResult');
   var elSearch = $('search'), elList = $('wordList'), elFilterInfo = $('filterInfo');
   var elSelCount = $('selCount'), elStart = $('startBtn'), elPerRound = $('perRound');
   var elTimer = $('timer'), elRoundNo = $('roundNo'), elRoundTotal = $('roundTotal');
@@ -500,6 +822,7 @@
   var elReviewList = $('reviewList');
 
   elDeckBadge.textContent = ALL.length + ' kata siap';
+  if ($('homeDeckBadge')) $('homeDeckBadge').textContent = ALL.length + ' kata siap';
 
   /* ---------------- audio ---------------- */
   var player = null;
@@ -723,7 +1046,11 @@
   };
 
   function show(screen) {
-    [screenSetup, screenGame, screenResult].forEach(function (s) { s.classList.add('hidden'); });
+    if (screen !== 'game' && G.tick) { clearInterval(G.tick); G.tick = null; }
+    [screenHome, screenSetup, screenGame, screenResult].forEach(function (s) {
+      if (s) s.classList.add('hidden');
+    });
+    if (screen === 'home' && screenHome) { screenHome.classList.remove('hidden'); renderHomeStats(); }
     if (screen === 'setup') screenSetup.classList.remove('hidden');
     if (screen === 'game') screenGame.classList.remove('hidden');
     if (screen === 'result') screenResult.classList.remove('hidden');
@@ -996,31 +1323,209 @@
     startSession(wrong);
   });
   $('backBtn').addEventListener('click', function () { show('setup'); renderList(); updateSelectionUi(); });
+  if ($('homeResultBtn')) {
+    $('homeResultBtn').addEventListener('click', function () { show('home'); });
+  }
+
+  /* ---------------- beranda ---------------- */
+  function fmtDuration(sec) {
+    sec = Math.max(0, Math.round(sec || 0));
+    var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+    if (h > 0) return h + 'j ' + m + 'm';
+    if (m > 0) return m + 'm';
+    return sec + 'd';
+  }
+
+  function renderHomeStats() {
+    if (!window.KaishiStats) return;
+    var sm = window.KaishiStats.summary();
+    var lv = sm.level;
+    var todayP = sm.today.p || 0;
+    var todaySess = (sm.today.q || 0) + (sm.today.m || 0);
+    if ($('hsLevel')) $('hsLevel').textContent = 'Lv ' + lv.level + ' · ' + sm.total.toLocaleString('id-ID');
+    if ($('hsTodayPoin')) $('hsTodayPoin').textContent = 'Hari ini: +' + todayP.toLocaleString('id-ID') + ' poin';
+    if ($('hsLevelBar')) $('hsLevelBar').style.width = lv.pct + '%';
+    if ($('hsStreak')) $('hsStreak').textContent = (sm.streak.cur || 0) + ' hari';
+    if ($('hsStreakSub')) $('hsStreakSub').textContent = 'Rekor terbaik: ' + (sm.streak.best || 0) + ' hari';
+    if ($('hsTimeToday')) $('hsTimeToday').textContent = fmtDuration(sm.today.s || 0);
+    if ($('hsTimeTotal')) $('hsTimeTotal').textContent = 'Total: ' + fmtDuration(sm.seconds || 0) + ' · ' + todaySess + ' sesi hari ini';
+  }
+
+  ['homeStatPoin', 'homeStatStreak', 'homeStatTime'].forEach(function (id) {
+    var el = $(id);
+    if (el) {
+      el.addEventListener('click', function () {
+        if (window.KaishiStats && window.KaishiStats.show) window.KaishiStats.show();
+      });
+    }
+  });
+  if (window.KaishiStats && window.KaishiStats.onChange) {
+    window.KaishiStats.onChange(renderHomeStats);
+  }
+
+  // Kata Hari Ini / Acak di Beranda
+  var curWotd = null;
+  function pickWotd(randomPick) {
+    var pool = ALL.filter(function (e) { return e.s && e.m; });
+    if (!pool.length) pool = ALL;
+    if (!randomPick) {
+      var d = new Date();
+      var seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+      curWotd = pool[seed % pool.length];
+    } else {
+      curWotd = pool[Math.floor(Math.random() * pool.length)];
+    }
+    if (!curWotd) return;
+    if ($('wotdWord')) $('wotdWord').textContent = curWotd.w;
+    if ($('wotdRead')) $('wotdRead').textContent = (curWotd.r && curWotd.r !== curWotd.w) ? curWotd.r : '';
+    if ($('wotdMean')) $('wotdMean').textContent = curWotd.m;
+    var st = PROG ? ankiStatus(curWotd) : 'baru';
+    var stEl = $('wotdStatus');
+    if (stEl) {
+      stEl.className = 'st st-' + st;
+      stEl.textContent = ST_LABEL[st] || 'baru';
+    }
+    if ($('wotdSen')) $('wotdSen').textContent = curWotd.s || '';
+    if ($('wotdSenMean')) $('wotdSenMean').textContent = curWotd.sm || '';
+    if ($('wotdSenBox')) $('wotdSenBox').style.display = curWotd.s ? 'block' : 'none';
+  }
+
+  if ($('wotdSpeak')) {
+    $('wotdSpeak').addEventListener('click', function () {
+      if (curWotd) playAudio(curWotd);
+    });
+  }
+  if ($('wotdNext')) {
+    $('wotdNext').addEventListener('click', function () {
+      pickWotd(true);
+    });
+  }
+
+  // Navigasi Beranda <-> Pilih Kata Cocokkan
+  if ($('goMatchSetup')) {
+    $('goMatchSetup').addEventListener('click', function () {
+      show('setup');
+      renderList();
+      updateSelectionUi();
+    });
+  }
+  ['homeBreadLink', 'homeBadgeLink'].forEach(function (id) {
+    var el = $(id);
+    if (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        show('home');
+      });
+    }
+  });
+
+  // Pintasan cepat Cocokkan Kata dari Beranda
+  Array.prototype.forEach.call(document.querySelectorAll('[data-quick-match]'), function (btn) {
+    btn.addEventListener('click', function () {
+      var mode = btn.getAttribute('data-quick-match');
+      var pool = [];
+      if (mode === 'r20') {
+        pool = shuffle(ALL).slice(0, 20);
+      } else if (mode === 'top50') {
+        pool = shuffle(ALL.slice(0, 50)).slice(0, 20);
+      } else if (mode === 'recent') {
+        var rec = ALL.filter(isRecent);
+        if (rec.length < 2) rec = ALL.filter(isLearned);
+        if (rec.length < 2) rec = ALL;
+        pool = shuffle(rec).slice(0, 20);
+      }
+      if (pool.length < 2) pool = shuffle(ALL).slice(0, 20);
+      selected.clear();
+      pool.forEach(function (e) { selected.add(e.id); });
+      updateSelectionUi();
+      startSession(pool);
+    });
+  });
+
+  // Klik kategori Anki di Beranda -> langsung mulai latihan kategori tsb (maks 20 kata)
+  Array.prototype.forEach.call(document.querySelectorAll('[data-anki-quick]'), function (btn) {
+    btn.addEventListener('click', function () {
+      var key = btn.getAttribute('data-anki-quick');
+      if (!KAT[key]) return;
+      var matches = ALL.filter(KAT[key]);
+      if (matches.length < 2) {
+        toast('Kategori ini belum memiliki cukup kata (minimal 2 kata).');
+        return;
+      }
+      var picked = shuffle(matches).slice(0, 20);
+      selected.clear();
+      picked.forEach(function (e) { selected.add(e.id); });
+      updateSelectionUi();
+      startSession(picked);
+    });
+  });
 
   /* ---------------- init ---------------- */
   function initAnki() {
     var elAnki = document.getElementById('ankiBadge');
+    var elHomeAnki = document.getElementById('homeAnkiBadge');
     var elInfo = document.getElementById('ankiInfo');
+    var unlearnedCount = ALL.filter(function (e) { return !isLearned(e); }).length;
+
     if (!PROG) {
       elAnki.textContent = 'Anki belum tersambung';
+      if (elHomeAnki) elHomeAnki.textContent = 'Anki belum tersambung';
       elInfo.innerHTML = 'Untuk melihat kata yang sudah dipelajari, jalankan <b>sinkron-anki.cmd</b> ' +
         '(atau <b>python sinkron-anki.py</b>) di folder ini, lalu muat ulang halaman.';
       document.getElementById('ankiGroup').classList.add('hidden');
+      if ($('hsAnkiLearned')) $('hsAnkiLearned').textContent = '0 / ' + ALL.length;
+      if ($('hsAnkiSub')) $('hsAnkiSub').textContent = 'Jalankan sinkron-anki.cmd';
+      if ($('haUnlearned')) $('haUnlearned').textContent = ALL.length;
+      if ($('homeAnkiDesc')) {
+        $('homeAnkiDesc').innerHTML = 'Progres Anki belum disinkronkan. Jalankan <b>sinkron-anki.cmd</b> di folder ini agar status kartu terbaca otomatis.';
+      }
       return;
     }
     var learned = ALL.filter(isLearned).length;
     var mature = ALL.filter(function (e) { return ankiStatus(e) === 'matang'; }).length;
     var lapsed = ALL.filter(isLapsed).length;
+    var recent1 = ALL.filter(isRecent1).length;
     var recent = ALL.filter(isRecent).length;
     var young = ALL.filter(isYoung).length;
     var when = new Date(PROG.generatedAt);
+    var whenStr = when.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+    var pct = Math.round(learned / ALL.length * 100);
+
     elAnki.textContent = learned + '/' + ALL.length + ' sudah dipelajari';
     elAnki.classList.add('ok');
+    if (elHomeAnki) {
+      elHomeAnki.textContent = learned + '/' + ALL.length + ' dipelajari';
+      elHomeAnki.classList.add('ok');
+    }
+    if ($('hsAnkiPct')) $('hsAnkiPct').textContent = pct + '%';
+    if ($('hsAnkiLearned')) $('hsAnkiLearned').textContent = learned + ' / ' + ALL.length;
+    if ($('hsAnkiSub')) $('hsAnkiSub').textContent = mature + ' matang · ' + young + ' muda · ' + recent + ' baru';
+    if ($('hsAnkiBar')) $('hsAnkiBar').style.width = pct + '%';
+    if ($('homeAnkiTime')) {
+      $('homeAnkiTime').textContent = 'Sinkron: ' + whenStr;
+      $('homeAnkiTime').classList.add('ok');
+    }
+
+    var counts = {
+      recent1: recent1, recent: recent, young: young,
+      mature: mature, lapsed: lapsed, unlearned: unlearnedCount
+    };
+    if ($('haRecent1')) $('haRecent1').textContent = recent1;
+    if ($('haRecent')) $('haRecent').textContent = recent;
+    if ($('haYoung')) $('haYoung').textContent = young;
+    if ($('haMature')) $('haMature').textContent = mature;
+    if ($('haLapsed')) $('haLapsed').textContent = lapsed;
+    if ($('haUnlearned')) $('haUnlearned').textContent = unlearnedCount;
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-anki-quick]'), function (btn) {
+      var k = btn.getAttribute('data-anki-quick');
+      btn.disabled = (counts[k] || 0) < 2;
+    });
+
     elInfo.innerHTML = 'Tersambung ke Anki · <b>' + learned + '</b> kata pernah diulang, ' +
       '<b>' + recent + '</b> baru diulang (3 hari), <b>' + young + '</b> masih muda, ' +
       '<b>' + mature + '</b> matang, <b>' + lapsed + '</b> pernah lupa · data ' +
-      when.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) +
-      ' · jalankan sinkron lagi setelah belajar di Anki.';
+      whenStr + ' · jalankan sinkron lagi setelah belajar di Anki.';
 
     document.getElementById('ankiGroup').classList.remove('hidden');
     // lengkapi label dropdown dengan jumlah kata per kategori
@@ -1032,17 +1537,24 @@
   }
 
   initAnki();
+  renderHomeStats();
+  pickWotd(false);
   renderList();
   updateSelectionUi();
 
   // Mulai cepat: index.html?n=20 langsung memilih N kata acak dan memulai sesi.
-  var quick = parseInt(new URLSearchParams(location.search).get('n'), 10);
+  var params = new URLSearchParams(location.search);
+  var quick = parseInt(params.get('n'), 10);
   if (quick >= 2) {
     shuffle(ALL).slice(0, quick).forEach(function (e) { selected.add(e.id); });
     renderList();
     updateSelectionUi();
     var quickPool = ALL.filter(function (e) { return selected.has(e.id); });
     startSession(quickPool);
+  } else if (location.hash === '#pilih' || params.get('mode') === 'pilih') {
+    show('setup');
+  } else {
+    show('home');
   }
 })();
 </script>

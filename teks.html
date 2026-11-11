@@ -138,9 +138,11 @@
   <div class="wrap">
     <div class="topbar">
       <div class="crumb">
-        <a href="index.html">Latihan</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Baca</b>
+        <a href="index.html">🏠 Beranda</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Baca</b>
       </div>
       <div class="badges">
+        <a class="badge badge-link" href="index.html">‹ Beranda</a>
+        <a class="badge badge-link" href="index.html#pilih">Cocokkan ›</a>
         <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
         <button class="badge mk" id="poinBadge" type="button" style="font-family:inherit">★ 0</button>
         <span class="badge" id="countBadge">memuat…</span>
@@ -156,10 +158,11 @@
   <div class="wrap">
     <div class="topbar">
       <div class="crumb">
-        <a href="#" id="backLink">‹ Daftar bacaan</a>
+        <a href="index.html">🏠 Beranda</a> <span>›</span> <a href="#" id="backLink">Daftar bacaan</a> <span>›</span> <b>Baca</b>
       </div>
       <div class="badges">
-        <button class="badge" id="poinBadge2" type="button" style="border:0;cursor:pointer;font-family:inherit">★ 0</button>
+        <a class="badge badge-link" href="index.html">‹ Beranda</a>
+        <button class="badge badge-poin" id="poinBadge2" type="button">★ 0</button>
       </div>
     </div>
 
@@ -861,6 +864,13 @@
 
   /* ---------- init ---------- */
   renderList();
+  var tParams = new URLSearchParams(location.search);
+  if (location.hash === '#buat') {
+    openModal();
+  } else if (tParams.get('open') !== null) {
+    var openIdx = parseInt(tParams.get('open'), 10);
+    if (!isNaN(openIdx) && TEXTS[openIdx]) open(openIdx);
+  }
 })();
 </script>
 </body>

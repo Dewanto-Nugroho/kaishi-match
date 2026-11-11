@@ -144,9 +144,11 @@
   <div class="wrap">
     <div class="topbar">
       <div class="crumb">
-        <a href="index.html">Latihan</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Kuis</b>
+        <a href="index.html">🏠 Beranda</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Kuis</b>
       </div>
       <div class="badges">
+        <a class="badge" href="index.html" style="text-decoration:none;background:#fff;border:1px solid var(--line)">‹ Beranda</a>
+        <a class="badge" href="index.html#pilih" style="text-decoration:none;background:#fff;border:1px solid var(--line)">Cocokkan ›</a>
         <a class="badge" href="teks.html" style="text-decoration:none;background:#fff;border:1px solid var(--line)">Baca ›</a>
         <button class="badge badge-poin" id="poinBadge" type="button" title="Lihat progres & poin">★ 0</button>
         <span class="badge" id="soalBadge">memuat…</span>
@@ -227,6 +229,7 @@
         <button class="btn primary" id="againBtn">Kuis lagi</button>
         <button class="btn" id="wrongBtn">Ulangi yang salah</button>
         <button class="btn" id="setupBtn">Atur ulang</button>
+        <a class="btn ghost" href="index.html" style="display:inline-flex;align-items:center;text-decoration:none">🏠 Beranda</a>
       </div>
     </div>
     <div class="review">
@@ -720,8 +723,25 @@
     return;
   }
   $('soalBadge').textContent = ALL.length.toLocaleString('id-ID') + ' soal';
+
+  var qParams = new URLSearchParams(location.search);
+  var pLv = parseInt(qParams.get('lv'), 10);
+  if (pLv >= 1 && pLv <= 5) {
+    selLevels = new Set([pLv]);
+  }
+  var pTipe = qParams.get('tipe');
+  if (pTipe === 'grammar') {
+    selTypes = new Set(['cloze', 'partikel', 'acak']);
+  } else if (pTipe && TYPE_NAME[pTipe]) {
+    selTypes = new Set([pTipe]);
+  }
+
   renderChips();
   updatePick();
+
+  if (qParams.get('start') === '1' && pool().length > 0) {
+    buildSession(pool());
+  }
 })();
 </script>
 </body>

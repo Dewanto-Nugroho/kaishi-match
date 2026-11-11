@@ -6,6 +6,9 @@ progress.js
 # kunci API untuk generator soal (salin dari ai-config.contoh.json)
 ai-config.json
 api-key.txt
+ngrok-config.json
+ngrok.yml
+ngrok.exe
 
 # ---- berkas turunan / cadangan ----
 # cadangan otomatis yang dibuat generate-soal.py / generate-teks.py
@@ -16,11 +19,12 @@ teks-2*.js
 teks.js
 teks-cache.json
 
-# audio hasil ekstraksi: hak ciptanya milik sumber aslinya.
-# Setiap pengguna membuatnya sendiri dengan: ekstrak-media.cmd
-media/
+# audio hasil ekstraksi (diikutkan agar suara berbunyi di cloud hosting)
+# media/
 
 # ---- sisa proses ----
+__pycache__/
+*.pyc
 .sync-*/
 .anki-copy-*.anki2
 *.log

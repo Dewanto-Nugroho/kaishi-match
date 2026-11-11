@@ -20,7 +20,7 @@ import threading
 import webbrowser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-START_PORT = 8080
+START_PORT = int(os.environ.get("PORT", 8080))
 
 
 def ai_key_status():
@@ -193,7 +193,7 @@ def main():
     print("  Tekan Ctrl+C untuk berhenti.")
     print()
 
-    if not args.no_browser:
+    if not args.no_browser and not os.environ.get("PORT") and not os.environ.get("RENDER"):
         threading.Timer(0.6, lambda: webbrowser.open(local_url)).start()
 
     try:

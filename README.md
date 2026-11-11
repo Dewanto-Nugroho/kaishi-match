@@ -69,6 +69,19 @@ Catatan:
 - Setelah HP terhubung, bisa ditambahkan ke layar utama (*Add to Home Screen*) agar seperti aplikasi.
 - Ingin hanya bisa dibuka dari komputer sendiri? `python server.py --localhost`.
 
+## Membuka dari Luar Rumah / Paket Data (Ngrok — Domain Tetap)
+
+Jika Anda ingin membuka web ini dari HP saat **di luar rumah** atau menggunakan **paket data seluler**:
+
+1. Pastikan punya akun gratis di <https://dashboard.ngrok.com/signup>.
+2. Dapatkan **Authtoken** (<https://dashboard.ngrok.com/get-started/your-authtoken>) dan **Static Domain** gratis (<https://dashboard.ngrok.com/domains>).
+3. Klik dua kali **`pasang-ngrok.cmd`** (atau jalankan `jalankan-online.cmd` langsung, akan dipandu otomatis).
+4. Klik dua kali **`jalankan-online.cmd`**. Akan muncul link tetap Anda:
+   ```
+   AKSES DARI HP : https://nama-domain-anda.ngrok-free.app/
+   ```
+5. Buka link tersebut di browser HP. Pada kunjungan pertama, ketuk tombol biru **Visit Site**. Link ini tidak akan berubah meski PC di-restart.
+
 ## Cara bermain
 
 1. **Pilih kata** di layar pertama:
