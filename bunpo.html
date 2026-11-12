@@ -25,11 +25,6 @@
     --bad: #d2453f;
     --bad-bg: #fdeaea;
     --shadow: 0 1px 2px rgba(28,26,43,.04), 0 8px 24px rgba(28,26,43,.06);
-    --n5: #1e9d63;
-    --n4: #2f7fe0;
-    --n3: #a35bd6;
-    --n2: #d9a521;
-    --n1: #d2453f;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
@@ -54,7 +49,6 @@
   .badge { font-size: 12px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 5px 12px; font-weight: 600; }
   .badge-link { text-decoration: none; background: #fff; border: 1px solid var(--line); color: var(--ink); }
   .badge-link:hover { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
-  .badge-warn { background: #fff1e5; color: var(--warn); border: 1px solid #fed7aa; }
 
   /* ---------- Hero Banner ---------- */
   .hero {
@@ -78,9 +72,7 @@
   }
   .hero h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px; color: var(--ink); display: flex; align-items: center; gap: 10px; }
   .hero p { margin: 0; font-size: 14px; color: #5c586e; line-height: 1.6; }
-  .hero-stats {
-    display: flex; gap: 12px; flex-wrap: wrap;
-  }
+  .hero-stats { display: flex; gap: 12px; flex-wrap: wrap; }
   .hstat-chip {
     background: #fff; border: 1px solid #fed7aa; border-radius: 14px; padding: 10px 14px;
     text-align: center; min-width: 90px;
@@ -102,7 +94,7 @@
   }
   .search-input:focus { border-color: var(--warn); box-shadow: 0 0 0 3px rgba(217, 119, 6, .12); background: #fff; }
   .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; }
-  .ctrl-actions { display: flex; gap: 8px; align-items: center; }
+  .ctrl-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .btn-toggle {
     height: 40px; padding: 0 14px; border-radius: 11px; border: 1px solid var(--line);
     background: #fff; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer;
@@ -135,13 +127,29 @@
     box-shadow: var(--shadow); padding: 22px; margin-bottom: 18px; transition: transform .12s, border-color .15s;
   }
   .card:hover { border-color: #eeddff; }
-  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
   .card-title-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .badge-pill { font-size: 11px; font-weight: 700; border-radius: 6px; padding: 3px 8px; text-transform: uppercase; letter-spacing: .03em; }
   .pill-orange { background: #fff1e5; color: #c2410c; }
   .pill-purple { background: var(--accent-soft); color: var(--accent); }
   .pill-green { background: var(--ok-bg); color: #15803d; }
   .pill-blue { background: #e0f2fe; color: #0369a1; }
+
+  /* ---------- Topic Quiz Button on Cards ---------- */
+  .card-foot {
+    margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line);
+    display: flex; justify-content: flex-end; align-items: center;
+  }
+  .btn-topic-quiz {
+    background: #fbf8ff; border: 1px solid #e0d4fc; color: var(--accent);
+    border-radius: 10px; padding: 7px 14px; font-size: 12.5px; font-weight: 700;
+    cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
+    transition: all .15s;
+  }
+  .btn-topic-quiz:hover {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+    transform: translateY(-1px); box-shadow: 0 4px 12px rgba(111, 77, 245, .22);
+  }
 
   /* ---------- Formula Box ---------- */
   .formula-box {
@@ -223,11 +231,11 @@
     border: 1px solid #e9d5ff; border-radius: 20px; padding: 22px; margin-bottom: 24px; box-shadow: var(--shadow);
   }
   .tester-form { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
-  .tester-select, .tester-input {
+  .tester-select {
     height: 44px; border-radius: 11px; border: 1px solid #d8b4fe; background: #fff;
     padding: 0 14px; font-size: 15px; font-family: inherit; color: var(--ink); outline: none;
+    cursor: pointer; flex: 1; min-width: 220px;
   }
-  .tester-select { cursor: pointer; flex: 1; min-width: 200px; }
   .tester-result-box {
     margin-top: 16px; background: #fff; border: 1px solid #e9d5ff; border-radius: 14px;
     padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
@@ -237,6 +245,115 @@
   .tester-res-change { font-size: 13px; color: var(--muted); }
   .tester-res-word { font-size: 24px; font-weight: 800; color: #6b21a8; }
   .tester-res-mean { font-size: 14px; color: #4a475d; }
+
+  /* ---------- Bottom Topic Selector Banner ---------- */
+  .cta-banner {
+    background: linear-gradient(135deg, #6f4df5 0%, #8b6bff 100%);
+    border-radius: 22px; padding: 24px 26px; color: #fff;
+    margin-top: 32px; box-shadow: 0 10px 26px rgba(111,77,245,.28);
+  }
+  .cta-banner h3 { margin: 0 0 6px; font-size: 20px; font-weight: 800; }
+  .cta-banner p { margin: 0 0 16px; font-size: 14px; opacity: .92; line-height: 1.5; }
+  .cta-picker {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    background: rgba(255,255,255,.14); padding: 12px; border-radius: 14px;
+  }
+  .cta-select {
+    flex: 1; min-width: 240px; height: 44px; border-radius: 10px; border: 0;
+    background: #fff; color: var(--ink); padding: 0 14px; font-size: 14px;
+    font-weight: 600; font-family: inherit; cursor: pointer; outline: none;
+  }
+  .cta-btn {
+    height: 44px; padding: 0 20px; border-radius: 10px; border: 0;
+    background: #fbbf24; color: #1c1a2b; font-size: 14px; font-weight: 800;
+    cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
+    transition: transform .12s, background .15s;
+  }
+  .cta-btn:hover { background: #f59e0b; transform: translateY(-1px); }
+
+  /* ---------- Topic Quiz Modal ---------- */
+  .qmodal-backdrop {
+    position: fixed; inset: 0; background: rgba(20, 18, 34, .58);
+    backdrop-filter: blur(4px); z-index: 100; display: grid; place-items: center;
+    padding: 16px; overflow-y: auto;
+  }
+  .qmodal {
+    background: #fff; border: 1px solid var(--line); border-radius: 22px;
+    width: 100%; max-width: 620px; box-shadow: 0 24px 48px rgba(18, 15, 32, .28);
+    overflow: hidden; animation: qpop .18s ease-out;
+  }
+  @keyframes qpop {
+    from { opacity: 0; transform: scale(.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .qmodal-head {
+    background: #faf8ff; border-bottom: 1px solid var(--line);
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .qmodal-tag {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    background: var(--accent-soft); color: var(--accent); padding: 3px 8px; border-radius: 6px;
+  }
+  .qmodal-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-top: 4px; }
+  .qmodal-close {
+    border: 0; background: #eeeaf8; color: #5c5875; width: 32px; height: 32px;
+    border-radius: 50%; cursor: pointer; font-size: 15px; font-weight: 700; flex: none;
+  }
+  .qmodal-close:hover { background: #e0d8f5; color: var(--ink); }
+
+  .qmodal-body { padding: 20px 22px; }
+  .qmeta-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 13px; color: var(--muted); margin-bottom: 12px; font-weight: 600;
+  }
+  .qprogress-track {
+    height: 6px; background: #f1f0f6; border-radius: 99px; overflow: hidden; margin-bottom: 18px;
+  }
+  .qprogress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    width: 0%; transition: width .25s ease;
+  }
+  .qprompt-box {
+    background: #fbfaff; border: 1px solid #ebe5f8; border-radius: 14px;
+    padding: 16px; margin-bottom: 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  }
+  .qprompt-text { font-size: 16.5px; line-height: 1.65; color: var(--ink); font-weight: 600; }
+  .qprompt-text .jp { font-size: 19px; color: #2e1065; font-weight: 700; }
+  .qprompt-text small { color: var(--muted); font-weight: 500; font-size: 13.5px; }
+
+  .qopts-list { display: grid; gap: 10px; }
+  .qopt-btn {
+    text-align: left; border: 1.5px solid var(--line); background: #fff; color: var(--ink);
+    border-radius: 12px; padding: 12px 15px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 12px;
+    transition: all .14s;
+  }
+  .qopt-btn:hover:not(:disabled) { border-color: var(--accent-2); background: #faf8ff; }
+  .qopt-key {
+    width: 26px; height: 26px; border-radius: 7px; background: #f3f1f9; color: #5c5875;
+    font-size: 12px; font-weight: 800; display: grid; place-items: center; flex: none;
+  }
+  .qopt-btn.correct { background: var(--ok-bg); border-color: #6ee7b7; color: #065f46; }
+  .qopt-btn.correct .qopt-key { background: var(--ok); color: #fff; }
+  .qopt-btn.wrong { background: var(--bad-bg); border-color: #fca5a5; color: #991b1b; }
+  .qopt-btn.wrong .qopt-key { background: var(--bad); color: #fff; }
+  .qopt-btn:disabled { cursor: default; }
+
+  .qexp-box {
+    margin-top: 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
+    padding: 12px 15px; font-size: 13.5px; color: #78350f; line-height: 1.55;
+  }
+  .qmodal-foot {
+    padding: 14px 22px 18px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .qbtn-next {
+    height: 42px; padding: 0 20px; border-radius: 11px; border: 0;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: #fff;
+    font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+    margin-left: auto;
+  }
+  .qbtn-next:disabled { opacity: .4; cursor: not-allowed; }
 
   /* ---------- Furigana Style ---------- */
   ruby { ruby-position: over; }
@@ -273,9 +390,9 @@
   <!-- Hero Banner -->
   <div class="hero">
     <div class="hero-left">
-      <span class="hero-tag">📖 Modul Belajar &amp; Referensi</span>
+      <span class="hero-tag">📖 Modul Belajar &amp; Latihan Fokus</span>
       <h1>文法 Bunpo (Tata Bahasa Jepang)</h1>
-      <p>Panduan komprehensif tata bahasa praktis bahasa Jepang: mulai dari aturan perubahan &amp; pola kalimat <b>Bentuk ~て (Te-form)</b> hingga fungsi seluruh <b>Partikel Utama (助詞)</b> dan tips perbandingannya.</p>
+      <p>Panduan komprehensif tata bahasa praktis bahasa Jepang: aturan perubahan &amp; pola kalimat <b>Bentuk ~て (Te-form)</b>, <b>16 Partikel Utama (助詞)</b>, dan komparasinya. Klik <b>"📝 Latihan Soal Materi Ini"</b> di setiap kartu untuk menguji khusus materi yang dipilih saja!</p>
     </div>
     <div class="hero-stats">
       <div class="hstat-chip">
@@ -287,8 +404,8 @@
         <small>Pola Bentuk ~て</small>
       </div>
       <div class="hstat-chip">
-        <b>16</b>
-        <small>Partikel Utama</small>
+        <b>25</b>
+        <small>Topik Latihan Fokus</small>
       </div>
     </div>
   </div>
@@ -297,14 +414,14 @@
   <div class="ctrlbar">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Cari partikel, pola kalimat, atau arti (misal: te kudasai, wa, ni vs de, golongan 1)...">
+      <input type="text" id="searchInput" class="search-input" placeholder="Cari partikel, pola kalimat, atau arti (misal: te wa ikemasen, te kudasai, wa vs ga)...">
     </div>
     <div class="ctrl-actions">
-      <button type="button" class="btn-toggle" id="btnToggleFuri" title="Sembunyikan atau tampilkan furigana">
+      <button type="button" class="btn-toggle active" id="btnToggleFuri" title="Sembunyikan atau tampilkan furigana">
         <span>ふ</span> Furigana: <b id="furiStatus">ON</b>
       </button>
-      <a href="kuis.html?tipe=grammar&start=1" class="btn-toggle" style="text-decoration:none;background:#fef3c7;border-color:#fcd34d;color:#92400e;">
-        🧩 Latihan di Kuis ›
+      <a href="#ujiMateriSec" class="btn-toggle" style="text-decoration:none;background:#fef3c7;border-color:#fcd34d;color:#92400e;">
+        🎯 Pilih Kuis Per Materi ›
       </a>
     </div>
   </div>
@@ -321,11 +438,14 @@
   <!-- ================= TAB: TESTER KONJUGASI ================= -->
   <div class="tab-content" id="tabTesterSec">
     <div class="tester-card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <span style="font-size:24px">🧪</span>
-        <h3 style="margin:0;font-size:18px;color:#581c87;font-weight:800">Alat Praktik: Cek Perubahan Bentuk ~て</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:24px">🧪</span>
+          <h3 style="margin:0;font-size:18px;color:#581c87;font-weight:800">Alat Praktik: Cek Perubahan Bentuk ~て</h3>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_konjugasi">📝 Latihan Soal Konjugasi ~て ›</button>
       </div>
-      <p style="margin:0 0 12px;font-size:13.5px;color:#6b21a8">Pilih kata kerja dari daftar atau coba amati bagaimana bentuk kamus (bentuk dasar) berubah menjadi bentuk ~て.</p>
+      <p style="margin:0 0 12px;font-size:13.5px;color:#6b21a8">Pilih kata kerja dari daftar untuk melihat bagaimana bentuk kamus berubah menjadi bentuk ~て menurut golongannya.</p>
       
       <div class="tester-form">
         <select id="testerSelect" class="tester-select">
@@ -342,7 +462,7 @@
           <optgroup label="Golongan 1 (Godan - く ➔ いて, ぐ ➔ いで, す ➔ して)">
             <option value="かく|書く|kaite|書いて|menulis|Golongan 1|く ➔ いて">書く (kaku) — menulis</option>
             <option value="いく|行く|itte|行って|pergi (Pengecualian khusus!)|Golongan 1 (Pengecualian)|く ➔ って (khusus 行く)">行く (iku) — pergi (Pengecualian!)</option>
-            <option value="およぐ|泳ぐ|oyoide|泳いで|berenang|Golongan 1|ぐ ➔ いde">泳ぐ (oyogu) — berenang</option>
+            <option value="およぐ|泳ぐ|oyoide|泳いで|berenang|Golongan 1|ぐ ➔ いで">泳ぐ (oyogu) — berenang</option>
             <option value="はなす|話す|hanashite|話して|berbicara|Golongan 1|す ➔ して">話す (hanasu) — berbicara</option>
           </optgroup>
           <optgroup label="Golongan 2 (Ichidan - Hilang る ➔ て)">
@@ -380,41 +500,19 @@
       <span class="badge-count">Pondasi Tata Bahasa</span>
     </div>
 
-    <!-- Intro Card -->
-    <div class="card search-item">
-      <div class="card-head">
-        <div class="card-title-group">
-          <span class="badge-pill pill-purple">Pondasi Dasar</span>
-          <h3 style="margin:0;font-size:18px">Apa itu Bentuk ~て (Te-form / て形)?</h3>
-        </div>
-      </div>
-      <p style="margin:0;font-size:14px;color:#4a475d;line-height:1.6">
-        Bentuk <b>~て (Te-form)</b> adalah salah satu perubahan kata kerja dan kata sifat yang <b>paling penting dan paling sering digunakan</b> dalam percakapan sehari-hari bahasa Jepang. Bentuk ini berfungsi sebagai jembatan untuk:
-      </p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0">
-        <div style="background:#faf8ff;border:1px solid #ebe5f8;border-radius:10px;padding:9px 12px;font-size:13px">
-          🙏 <b>Memohon / Menyuruh:</b> ~てください
-        </div>
-        <div style="background:#faf8ff;border:1px solid #ebe5f8;border-radius:10px;padding:9px 12px;font-size:13px">
-          ⏳ <b>Sedang berlangsung:</b> ~ています
-        </div>
-        <div style="background:#faf8ff;border:1px solid #ebe5f8;border-radius:10px;padding:9px 12px;font-size:13px">
-          ✨ <b>Izin &amp; Larangan:</b> ~てもいい / ~てはいけない
-        </div>
-        <div style="background:#faf8ff;border:1px solid #ebe5f8;border-radius:10px;padding:9px 12px;font-size:13px">
-          🔗 <b>Menghubungkan kalimat:</b> ~て、~て
-        </div>
-      </div>
-    </div>
-
     <!-- Aturan Per Golongan -->
     <div class="card search-item">
       <div class="card-head">
         <div class="card-title-group">
           <span class="badge-pill pill-orange">Aturan Konjugasi</span>
-          <h3 style="margin:0;font-size:18px">Aturan Perubahan Kata Kerja Menurut Golongan</h3>
+          <h3 style="margin:0;font-size:18px">Aturan Perubahan Kata Kerja Menurut Golongan (1, 2, 3)</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_konjugasi">📝 Latihan Soal Konjugasi ~て ›</button>
       </div>
+
+      <p style="margin:0 0 12px;font-size:14px;color:#4a475d;line-height:1.6">
+        Bentuk <b>~て (Te-form)</b> adalah pondasi untuk membuat kalimat permohonan (~てください), sedang berlangsung (~ています), izin (~てもいい), larangan (~てはいけない), dan menghubungkan kalimat.
+      </p>
 
       <!-- 1. Golongan 1 (Godan) -->
       <h4 style="margin:16px 0 6px;color:#4338ca;font-size:16px">1. Golongan 1 — Godan Doushi (五段動詞)</h4>
@@ -514,8 +612,6 @@
 
       <!-- 3. Golongan 3 (Tak Beraturan) -->
       <h4 style="margin:24px 0 6px;color:#c2410c;font-size:16px">3. Golongan 3 — Fukisoku Doushi (不規則動詞 - Tak Beraturan)</h4>
-      <p style="margin:0;font-size:13.5px;color:var(--muted)">Hanya ada 2 kata kerja dasar tak beraturan dalam bahasa Jepang (wajib dihafal):</p>
-
       <div class="te-grid">
         <div class="te-tile" style="background:#fff7ed;border-color:#ffedd5">
           <div class="te-tile-head">
@@ -565,12 +661,16 @@
           </div>
         </div>
       </div>
+
+      <div class="card-foot">
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_konjugasi">📝 Latihan Soal Konjugasi ~て (6 Soal) ›</button>
+      </div>
     </div>
 
     <!-- Pola Kalimat Bentuk Te -->
     <div class="sec-heading">
       <h2>✨ Pola Kalimat Utama dengan Bentuk ~て</h2>
-      <span class="badge-count">8 Pola Wajib N5–N4</span>
+      <span class="badge-count">Klik tombol latihan di tiap pola</span>
     </div>
 
     <!-- Pola 1: ~てください -->
@@ -580,6 +680,7 @@
           <span class="badge-pill pill-orange">Pola 1</span>
           <h3 style="margin:0;font-size:18px">〜てください (~ te kudasai) — Tolong / Silakan</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_kudasai">📝 Latihan Soal 〜てください ›</button>
       </div>
       <p style="margin:0;font-size:13.5px;color:#4a475d">Digunakan untuk meminta bantuan atau mempersilakan orang lain melakukan sesuatu secara sopan.</p>
       <div class="formula-box"><b>Rumus:</b> Kata Kerja Bentuk ~て + ください</div>
@@ -608,6 +709,7 @@
           <span class="badge-pill pill-purple">Pola 2</span>
           <h3 style="margin:0;font-size:18px">〜ています (~ te imasu) — Sedang / Status Keadaan</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_imasu">📝 Latihan Soal 〜ています ›</button>
       </div>
       <p style="margin:0;font-size:13.5px;color:#4a475d">Pola ini memiliki 2 fungsi utama: (1) aksi yang sedang berlangsung saat ini, dan (2) status kondisi yang masih menetap (seperti tempat tinggal, pekerjaan, status nikah).</p>
       <div class="formula-box"><b>Rumus:</b> Kata Kerja Bentuk ~て + います / いますか</div>
@@ -636,6 +738,7 @@
           <span class="badge-pill pill-green">Pola 3</span>
           <h3 style="margin:0;font-size:18px">〜てもいいですか (~ te mo ii desu ka) — Bolehkah saya...?</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_mo_ii">📝 Latihan Soal 〜てもいいですか ›</button>
       </div>
       <p style="margin:0;font-size:13.5px;color:#4a475d">Digunakan untuk meminta izin melakukan sesuatu secara sopan.</p>
       <div class="formula-box"><b>Rumus:</b> Kata Kerja Bentuk ~て + もいいですか</div>
@@ -664,6 +767,7 @@
           <span class="badge-pill pill-orange">Pola 4</span>
           <h3 style="margin:0;font-size:18px">〜てはいけません (~ te wa ikemasen) — Dilarang / Tidak boleh...</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_wa_ikemasen">📝 Latihan Soal 〜てはいけません ›</button>
       </div>
       <p style="margin:0;font-size:13.5px;color:#4a475d">Menyatakan larangan tegas terhadap suatu tindakan (aturan umum atau larangan dari otoritas/tempat).</p>
       <div class="formula-box"><b>Rumus:</b> Kata Kerja Bentuk ~て + はいけません</div>
@@ -692,6 +796,7 @@
           <span class="badge-pill pill-blue">Pola 5</span>
           <h3 style="margin:0;font-size:18px">〜てから (~ te kara) — Setelah / Sehabis...</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_kara">📝 Latihan Soal 〜てから ›</button>
       </div>
       <p style="margin:0;font-size:13.5px;color:#4a475d">Menyatakan bahwa tindakan kedua baru dilakukan setelah tindakan pertama benar-benar selesai.</p>
       <div class="formula-box"><b>Rumus:</b> Kata Kerja (1) Bentuk ~て + から、Kata Kerja (2)</div>
@@ -699,7 +804,7 @@
         <div class="example-item">
           <div class="example-main">
             <div class="ex-jp jp"><ruby>手<rt>て</rt></ruby>を<ruby>洗<rt>あら</rt></ruby>ってから、ご飯を<ruby>食<rt>た</rt></ruby>べます。</div>
-            <div class="ex-id">Setelah mencuci tangan, baru makan nasi. (Te o aratte kara, gohan o tabemasu.)</div>
+            <div class="ex-id">Setelah mencuci tangan, makan nasi. (Te o aratte kara, gohan o tabemasu.)</div>
           </div>
           <button type="button" class="btn-audio" data-speech="手を洗ってから、ご飯を食べます。">🔊</button>
         </div>
@@ -713,6 +818,7 @@
           <span class="badge-pill pill-purple">Pola 6</span>
           <h3 style="margin:0;font-size:18px">〜て、〜て (Urutan Kejadian) — ...lalu / dan...</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_urutan">📝 Latihan Soal Urutan 〜て ›</button>
       </div>
       <p style="margin:0;font-size:13.5px;color:#4a475d">Menyambung rangkaian beberapa kata kerja berurutan secara kronologis. Waktu kalimat (lampau / sekarang) ditentukan oleh kata kerja yang paling akhir.</p>
       <div class="formula-box"><b>Rumus:</b> KK(1) ~て、KK(2) ~て、KK(3) Akhir</div>
@@ -734,6 +840,7 @@
           <span class="badge-pill pill-green">Pola 7 &amp; 8</span>
           <h3 style="margin:0;font-size:18px">〜てみます (Mencoba) &amp; 〜てしまいます (Tuntas / Menyesal)</h3>
         </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="te_mimasu_shimau">📝 Latihan Soal 〜てみます/しまいます ›</button>
       </div>
       <div class="formula-box">
         <b>~てみます:</b> KK ~て + みます ➔ Mencoba melakukan sesuatu untuk pertama kali / melihat hasilnya.<br>
@@ -762,10 +869,10 @@
   <div class="tab-content" id="tabPartikelSec">
     <div class="sec-heading">
       <h2>📍 Partikel Bahasa Jepang Lengkap (助詞 - Joshi)</h2>
-      <span class="badge-count">16 Partikel Penting</span>
+      <span class="badge-count">Klik tombol latihan di tiap partikel</span>
     </div>
 
-    <p style="margin:0 0 16px;font-size:14px;color:var(--muted)">Partikel diletakkan setelah kata benda untuk menunjukkan fungsi grammatikalnya (topik, subjek, objek, tempat, sarana, dll.). Klik 🔊 untuk mendengar contoh kalimat.</p>
+    <p style="margin:0 0 16px;font-size:14px;color:var(--muted)">Setiap partikel memiliki latihan soalnya sendiri. Klik <b>"📝 Latihan Soal Partikel ..."</b> pada kartu partikel yang ingin Anda latih.</p>
 
     <div class="part-grid">
 
@@ -778,15 +885,18 @@
           </div>
           <div class="part-name">Partikel は <span class="part-romaji">(dibaca "wa")</span></div>
           <div class="part-desc">Menandai <b>topik utama</b> pembicaraan ("Adapun / mengenai hal ini..."). Tekanan informasi berada pada keterangan setelah partikel は.</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>私<rt>わたし</rt></ruby>は<ruby>学生<rt>がくせい</rt></ruby>です。</div>
-              <div class="ex-id">Saya adalah mahasiswa. (Watashi wa gakusei desu.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>私<rt>わたし</rt></ruby>は<ruby>学生<rt>がくせい</rt></ruby>です。</div>
+                <div class="ex-id">Saya adalah mahasiswa. (Watashi wa gakusei desu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="私は学生です。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="私は学生です。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_wa">📝 Latihan Partikel は ›</button>
         </div>
       </div>
 
@@ -799,22 +909,25 @@
           </div>
           <div class="part-name">Partikel が <span class="part-romaji">(ga)</span></div>
           <div class="part-desc">Menandai <b>subjek pelaku gramatikal</b>, menjawab kata tanya (siapa/apa), penanda objek kesukaan/kemampuan (好き, 上手), dan keberadaan (います / あります).</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>猫<rt>ねこ</rt></ruby>がいます。</div>
+                <div class="ex-id">Ada kucing. (Neko ga imasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="猫がいます。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>日本語<rt>にほんご</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。</div>
+                <div class="ex-id">Saya suka bahasa Jepang. (Nihongo ga suki desu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="日本語が好きです。">🔊</button>
+            </div>
+          </div>
         </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>猫<rt>ねこ</rt></ruby>がいます。</div>
-              <div class="ex-id">Ada kucing. (Neko ga imasu.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="猫がいます。">🔊</button>
-          </div>
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>日本語<rt>にほんご</rt></ruby>が<ruby>好<rt>す</rt></ruby>きです。</div>
-              <div class="ex-id">Saya suka bahasa Jepang. (Nihongo ga suki desu.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="日本語が好きです。">🔊</button>
-          </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_ga">📝 Latihan Partikel が ›</button>
         </div>
       </div>
 
@@ -827,22 +940,25 @@
           </div>
           <div class="part-name">Partikel を <span class="part-romaji">(dibaca "o")</span></div>
           <div class="part-desc">Menandai <b>objek langsung</b> yang dikenai tindakan oleh kata kerja transitif (makan apa, baca apa), atau tempat yang dilewati (melintasi jembatan/taman).</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">りんごを<ruby>食<rt>た</rt></ruby>べます。</div>
+                <div class="ex-id">Makan apel. (Ringo o tabemasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="りんごを食べます。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>公園<rt>こうえん</rt></ruby>を<ruby>散歩<rt>さんぽ</rt></ruby>します。</div>
+                <div class="ex-id">Jalan-jalan melintasi taman. (Kouen o sanpo shimasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="公園を散歩します。">🔊</button>
+            </div>
+          </div>
         </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">りんごを<ruby>食<rt>た</rt></ruby>べます。</div>
-              <div class="ex-id">Makan apel. (Ringo o tabemasu.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="りんごを食べます。">🔊</button>
-          </div>
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>公園<rt>こうえん</rt></ruby>を<ruby>散歩<rt>さんぽ</rt></ruby>します。</div>
-              <div class="ex-id">Jalan-jalan melintasi taman. (Kouen o sanpo shimasu.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="公園を散歩します。">🔊</button>
-          </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_o">📝 Latihan Partikel を ›</button>
         </div>
       </div>
 
@@ -855,22 +971,25 @@
           </div>
           <div class="part-name">Partikel に <span class="part-romaji">(ni)</span></div>
           <div class="part-desc">Partikel serbaguna: (1) Waktu spesifik (jam 7), (2) Titik tujuan gerak (pergi ke mana), (3) Lokasi keberadaan benda diam (ada di mana), (4) Penerima aksi (kepada teman).</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">7<ruby>時<rt>じ</rt></ruby>に<ruby>起<rt>お</rt></ruby>きます。</div>
+                <div class="ex-id">Bangun pada jam 7. (Shichiji ni okimasu.) [Waktu]</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="七時に起きます。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>友達<rt>ともだち</rt></ruby>に<ruby>本<rt>ほん</rt></ruby>をあげます。</div>
+                <div class="ex-id">Memberikan buku kepada teman. (Tomodachi ni hon o agemasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="友達に本をあげます。">🔊</button>
+            </div>
+          </div>
         </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">7<ruby>時<rt>じ</rt></ruby>に<ruby>起<rt>お</rt></ruby>きます。</div>
-              <div class="ex-id">Bangun pada jam 7. (Shichiji ni okimasu.) [Waktu]</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="七時に起きます。">🔊</button>
-          </div>
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>友達<rt>ともだち</rt></ruby>に<ruby>本<rt>ほん</rt></ruby>をあげます。</div>
-              <div class="ex-id">Memberikan buku kepada teman. (Tomodachi ni hon o agemasu.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="友達に本をあげます。">🔊</button>
-          </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_ni">📝 Latihan Partikel に ›</button>
         </div>
       </div>
 
@@ -882,23 +1001,26 @@
             <span class="badge-pill pill-orange">Tempat Aksi &amp; Sarana</span>
           </div>
           <div class="part-name">Partikel で <span class="part-romaji">(de)</span></div>
-          <div class="part-desc">(1) <b>Tempat berlangsungnya aktivitas</b> (belajar di perpustakaan), (2) <b>Sarana / alat / kendaraan</b> (naik bus, pakai sumpit), (3) Penyebab (karena sakit), (4) Batasan total.</div>
+          <div class="part-desc">(1) <b>Tempat berlangsungnya aktivitas</b> (belajar di perpustakaan), (2) <b>Sarana / alat / kendaraan</b> (naik bus, pakai sumpit), (3) Penyebab, (4) Batasan total.</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>図書館<rt>としょかん</rt></ruby>で<ruby>勉強<rt>べんきょう</rt></ruby>します。</div>
+                <div class="ex-id">Belajar di perpustakaan. (Toshokan de benkyou shimasu.) [Aksi]</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="図書館で勉強します。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">バスで<ruby>行<rt>い</rt></ruby>きます。</div>
+                <div class="ex-id">Pergi dengan naik bus. (Basu de ikimasu.) [Sarana]</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="バスで行きます。">🔊</button>
+            </div>
+          </div>
         </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>図書館<rt>としょかん</rt></ruby>で<ruby>勉強<rt>べんきょう</rt></ruby>します。</div>
-              <div class="ex-id">Belajar di perpustakaan. (Toshokan de benkyou shimasu.) [Aksi]</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="図書館で勉強します。">🔊</button>
-          </div>
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">バスで<ruby>行<rt>い</rt></ruby>きます。</div>
-              <div class="ex-id">Pergi dengan naik bus. (Basu de ikimasu.) [Sarana]</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="バスで行きます。">🔊</button>
-          </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_de">📝 Latihan Partikel で ›</button>
         </div>
       </div>
 
@@ -911,15 +1033,18 @@
           </div>
           <div class="part-name">Partikel へ <span class="part-romaji">(dibaca "e")</span></div>
           <div class="part-desc">Menunjukkan <b>arah pergerakan</b> menuju suatu lokasi (menekankan proses / arah menuju ke sana, sering disandingkan dengan 行く, 来る, 帰る).</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>日本<rt>にほん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>きます。</div>
-              <div class="ex-id">Pergi menuju Jepang. (Nihon e ikimasu.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>日本<rt>にほん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>きます。</div>
+                <div class="ex-id">Pergi menuju Jepang. (Nihon e ikimasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="日本へ行きます。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="日本へ行きます。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_e">📝 Latihan Partikel へ ›</button>
         </div>
       </div>
 
@@ -932,22 +1057,25 @@
           </div>
           <div class="part-name">Partikel と <span class="part-romaji">(to)</span></div>
           <div class="part-desc">(1) 'Dan' menghubungkan kata benda secara lengkap/tuntas, (2) 'Bersama dengan' rekan, (3) Penanda kutipan langsung atau isi pikiran (と言いました, と思います).</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">ペンとノートを<ruby>買<rt>か</rt></ruby>いました。</div>
+                <div class="ex-id">Membeli pulpen dan buku catatan. (Pen to nooto o kaimashita.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="ペンとノートを買いました。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>友達<rt>ともだち</rt></ruby>と<ruby>遊<rt>あそ</rt></ruby>びます。</div>
+                <div class="ex-id">Bermain bersama teman. (Tomodachi to asobimasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="友達と遊びます。">🔊</button>
+            </div>
+          </div>
         </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">ペンとノートを<ruby>買<rt>か</rt></ruby>いました。</div>
-              <div class="ex-id">Membeli pulpen dan buku catatan. (Pen to nooto o kaimashita.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="ペンとノートを買いました。">🔊</button>
-          </div>
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>友達<rt>ともだち</rt></ruby>と<ruby>遊<rt>あそ</rt></ruby>びます。</div>
-              <div class="ex-id">Bermain bersama teman. (Tomodachi to asobimasu.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="友達と遊びます。">🔊</button>
-          </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_to">📝 Latihan Partikel と ›</button>
         </div>
       </div>
 
@@ -960,15 +1088,18 @@
           </div>
           <div class="part-name">Partikel も <span class="part-romaji">(mo)</span></div>
           <div class="part-desc">Menyatakan <b>'juga'</b> atau <b>'pun'</b>. Menggantikan kedudukan partikel は, が, atau を.</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>私<rt>わたし</rt></ruby>もインドネシア<ruby>人<rt>じん</rt></ruby>です。</div>
-              <div class="ex-id">Saya juga orang Indonesia. (Watashi mo Indonesia-jin desu.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>私<rt>わたし</rt></ruby>もインドネシア<ruby>人<rt>じん</rt></ruby>です。</div>
+                <div class="ex-id">Saya juga orang Indonesia. (Watashi mo Indonesia-jin desu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="私もインドネシア人です。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="私もインドネシア人です。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_mo">📝 Latihan Partikel も ›</button>
         </div>
       </div>
 
@@ -981,15 +1112,18 @@
           </div>
           <div class="part-name">Partikel から &amp; まで <span class="part-romaji">(kara ~ made)</span></div>
           <div class="part-desc"><b>から</b> menyatakan titik awal (dari jam berapa / tempat mana) atau alasan (karena). <b>まで</b> menyatakan batas akhir (sampai).</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">9<ruby>時<rt>じ</rt></ruby>から5<ruby>時<rt>じ</rt></ruby>まで<ruby>働<rt>はたら</rt></ruby>きます。</div>
-              <div class="ex-id">Bekerja dari jam 9 sampai jam 5. (Kuji kara goji made hatarakimasu.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">9<ruby>時<rt>じ</rt></ruby>から5<ruby>時<rt>じ</rt></ruby>まで<ruby>働<rt>はたら</rt></ruby>きます。</div>
+                <div class="ex-id">Bekerja dari jam 9 sampai jam 5. (Kuji kara goji made hatarakimasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="九時から五時まで働きます。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="九時から五時まで働きます。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_kara_made">📝 Latihan から &amp; まで ›</button>
         </div>
       </div>
 
@@ -1002,15 +1136,18 @@
           </div>
           <div class="part-name">Partikel より <span class="part-romaji">(yori)</span></div>
           <div class="part-desc">Berarti <b>'daripada'</b>, digunakan dalam kalimat perbandingan komparatif (A lebih ... daripada B).</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>電車<rt>でんしゃ</rt></ruby>はバスより<ruby>速<rt>はや</rt></ruby>いです。</div>
-              <div class="ex-id">Kereta lebih cepat daripada bus. (Densha wa basu yori hayai desu.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>電車<rt>でんしゃ</rt></ruby>はバスより<ruby>速<rt>はや</rt></ruby>いです。</div>
+                <div class="ex-id">Kereta lebih cepat daripada bus. (Densha wa basu yori hayai desu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="電車はバスより速いです。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="電車はバスより速いです。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_yori">📝 Latihan Partikel より ›</button>
         </div>
       </div>
 
@@ -1023,15 +1160,18 @@
           </div>
           <div class="part-name">Partikel の <span class="part-romaji">(no)</span></div>
           <div class="part-desc">(1) Menyatakan <b>kepemilikan</b> (punya saya), (2) Menghubungkan dua kata benda (penjelas/asal), (3) Menggantikan kata benda yang sudah disebut.</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">これは<ruby>私<rt>わたし</rt></ruby>の<ruby>本<rt>ほん</rt></ruby>です。</div>
-              <div class="ex-id">Ini adalah buku milik saya. (Kore wa watashi no hon desu.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">これは<ruby>私<rt>わたし</rt></ruby>の<ruby>本<rt>ほん</rt></ruby>です。</div>
+                <div class="ex-id">Ini adalah buku milik saya. (Kore wa watashi no hon desu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="これは私の本です。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="これは私の本です。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_no">📝 Latihan Partikel の ›</button>
         </div>
       </div>
 
@@ -1044,15 +1184,18 @@
           </div>
           <div class="part-name">Partikel や <span class="part-romaji">(ya)</span></div>
           <div class="part-desc">Menyebutkan beberapa contoh kata benda secara <b>tidak lengkap</b> (ada benda lain selain yang disebutkan). Kerap dipasangkan dengan など (nado).</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">りんごやバナナなどを<ruby>買<rt>か</rt></ruby>いました。</div>
-              <div class="ex-id">Membeli apel, pisang, dan lain-lain. (Ringo ya banana nado o kaimashita.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">りんごやバナナなどを<ruby>買<rt>か</rt></ruby>いました。</div>
+                <div class="ex-id">Membeli apel, pisang, dan lain-lain. (Ringo ya banana nado o kaimashita.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="りんごやバナナなどを買いました。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="りんごやバナナなどを買いました。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_ya">📝 Latihan Partikel や ›</button>
         </div>
       </div>
 
@@ -1065,15 +1208,18 @@
           </div>
           <div class="part-name">Partikel か <span class="part-romaji">(ka)</span></div>
           <div class="part-desc">(1) Diletakkan di akhir kalimat sebagai <b>tanda tanya (?)</b>, (2) Diletakkan di antara kata benda yang berarti <b>'atau'</b>.</div>
-        </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">これは<ruby>何<rt>なん</rt></ruby>ですか。</div>
-              <div class="ex-id">Apakah ini? (Kore wa nan desu ka.)</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">これは<ruby>何<rt>なん</rt></ruby>ですか。</div>
+                <div class="ex-id">Apakah ini? (Kore wa nan desu ka.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="これは何ですか。">🔊</button>
             </div>
-            <button type="button" class="btn-audio" data-speech="これは何ですか。">🔊</button>
           </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_ka">📝 Latihan Partikel か ›</button>
         </div>
       </div>
 
@@ -1085,23 +1231,26 @@
             <span class="badge-pill pill-purple">Partikel Akhir Kalimat</span>
           </div>
           <div class="part-name">Partikel ね &amp; よ <span class="part-romaji">(ne &amp; yo)</span></div>
-          <div class="part-desc"><b>ね (ne):</b> Meminta persetujuan/konfirmasi ("...kan ya?").<br><b>よ (yo):</b> Memberi penekanan atau informasi baru kepada lawan bicara ("...lho!", "...tau!").</div>
+          <div class="part-desc"><b>ね (ne):</b> Meminta persetujuan/konfirmasi ("...kan ya?").<br><b>よ (yo):</b> Memberi penekanan atau informasi baru kepada lawan bicara ("...lho!").</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>今日<rt>きょう</rt></ruby>はいい<ruby>天気<rt>てんき</rt></ruby>ですね。</div>
+                <div class="ex-id">Hari ini cuacanya bagus ya. (Kyou wa ii tenki desu ne.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="今日はいい天気ですね。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">このカレーはおいしいですよ！</div>
+                <div class="ex-id">Kari ini enak banget lho! (Kono karee wa oishii desu yo!)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="このカレーはおいしいですよ。">🔊</button>
+            </div>
+          </div>
         </div>
-        <div class="examples-list">
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp"><ruby>今日<rt>きょう</rt></ruby>はいい<ruby>天気<rt>てんき</rt></ruby>ですね。</div>
-              <div class="ex-id">Hari ini cuacanya bagus ya. (Kyou wa ii tenki desu ne.)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="今日はいい天気ですね。">🔊</button>
-          </div>
-          <div class="example-item">
-            <div class="example-main">
-              <div class="ex-jp jp">このカレーはおいしいですよ！</div>
-              <div class="ex-id">Kari ini enak banget lho! (Kono karee wa oishii desu yo!)</div>
-            </div>
-            <button type="button" class="btn-audio" data-speech="このカレーはおいしいですよ。">🔊</button>
-          </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_ne_yo">📝 Latihan Partikel ね &amp; よ ›</button>
         </div>
       </div>
 
@@ -1117,9 +1266,12 @@
 
     <!-- 1. は (wa) vs が (ga) -->
     <div class="comp-card search-item">
-      <div class="comp-title">
-        <span style="font-size:22px">🎯</span>
-        <span>Perbedaan は (wa) vs が (ga)</span>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div class="comp-title">
+          <span style="font-size:22px">🎯</span>
+          <span>Perbedaan は (wa) vs が (ga)</span>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="comp_wa_ga">📝 Latihan Soal は vs が ›</button>
       </div>
       <p style="margin:0;font-size:14px;color:#4a475d;line-height:1.6">
         Salah satu materi paling membingungkan bagi pembelajar! Kunci utamanya adalah <b>di mana fokus tekanan informasinya berada</b>:
@@ -1158,9 +1310,12 @@
 
     <!-- 2. に (ni) vs で (de) -->
     <div class="comp-card search-item">
-      <div class="comp-title">
-        <span style="font-size:22px">📍</span>
-        <span>Perbedaan Lokasi: に (ni) vs で (de)</span>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div class="comp-title">
+          <span style="font-size:22px">📍</span>
+          <span>Perbedaan Lokasi: に (ni) vs で (de)</span>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="comp_ni_de">📝 Latihan Soal に vs で ›</button>
       </div>
       <p style="margin:0;font-size:14px;color:#4a475d;line-height:1.6">
         Keduanya bisa diterjemahkan sebagai <b>"di"</b> dalam bahasa Indonesia, tetapi fungsinya sangat berbeda:
@@ -1193,9 +1348,12 @@
 
     <!-- 3. に (ni) vs へ (e) & と (to) vs や (ya) -->
     <div class="comp-card search-item">
-      <div class="comp-title">
-        <span style="font-size:22px">🚀</span>
-        <span>Tips Tambahan: に vs へ &amp; と vs や</span>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div class="comp-title">
+          <span style="font-size:22px">🚀</span>
+          <span>Tips Tambahan: に vs へ &amp; と vs や</span>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="comp_ni_e_to_ya">📝 Latihan Soal に/へ &amp; と/や ›</button>
       </div>
 
       <div class="comp-columns">
@@ -1223,38 +1381,132 @@
     </div>
   </div>
 
-  <!-- Banner CTA Latihan Kuis -->
-  <div style="background:linear-gradient(135deg,#6f4df5 0%,#8b6bff 100%);border-radius:20px;padding:22px 26px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:32px;box-shadow:0 10px 26px rgba(111,77,245,.28)">
-    <div>
-      <h3 style="margin:0 0 6px;font-size:20px;font-weight:800">Sudah Paham Rumus &amp; Partikelnya?</h3>
-      <p style="margin:0;font-size:14px;opacity:.9">Uji pemahaman tata bahasa Anda dengan menjawab soal pilihan ganda dan susun kalimat N5–N1 di Kuis!</p>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <a href="kuis.html?tipe=partikel&start=1" class="btn-toggle" style="background:#fff;border-color:#fff;color:var(--accent);text-decoration:none;font-weight:700">
-        📍 Soal Partikel (900 Soal) ›
-      </a>
-      <a href="kuis.html?tipe=grammar&start=1" class="btn-toggle" style="background:rgba(255,255,255,.2);border-color:transparent;color:#fff;text-decoration:none">
-        🧩 Kuis Tata Bahasa Lengkap ›
-      </a>
+  <!-- ================= BOTTOM SELECTOR: UJI MATERI SPESIFIK ================= -->
+  <div class="cta-banner" id="ujiMateriSec">
+    <h3>🎯 Uji Pemahaman Khusus Materi Pilihan Anda</h3>
+    <p>Pilih satu materi spesifik di bawah ini (atau klik tombol <b>"📝 Latihan Soal"</b> pada kartu materi di atas). Soal yang ditampilkan <b>hanya membahas materi yang Anda pilih saja</b>!</p>
+    <div class="cta-picker">
+      <select id="bottomQuizSelect" class="cta-select">
+        <optgroup label="🔤 Materi Bentuk ~て (Te-Form)">
+          <option value="te_konjugasi">Konjugasi Bentuk ~て (Golongan 1, 2, 3)</option>
+          <option value="te_kudasai">Pola 〜てください (Tolong / Silakan)</option>
+          <option value="te_imasu">Pola 〜ています (Sedang / Status Keadaan)</option>
+          <option value="te_mo_ii">Pola 〜てもいいですか (Meminta Izin)</option>
+          <option value="te_wa_ikemasen" selected>Pola 〜てはいけません (Larangan / Tidak Boleh)</option>
+          <option value="te_kara">Pola 〜てから (Setelah Melakukan...)</option>
+          <option value="te_urutan">Pola 〜て、〜て (Urutan Kejadian &amp; Kata Sifat)</option>
+          <option value="te_mimasu_shimau">Pola 〜てみます &amp; 〜てしまいます</option>
+        </optgroup>
+        <optgroup label="📍 Materi Partikel (助詞)">
+          <option value="part_wa">Partikel は (wa — Topik Kalimat)</option>
+          <option value="part_ga">Partikel が (ga — Subjek, Keberadaan &amp; Kesukaan)</option>
+          <option value="part_o">Partikel を (o — Objek Penderita &amp; Lintasan)</option>
+          <option value="part_ni">Partikel に (ni — Waktu, Tujuan, Lokasi Diam)</option>
+          <option value="part_de">Partikel で (de — Tempat Aksi &amp; Sarana)</option>
+          <option value="part_e">Partikel へ (e — Arah Gerak)</option>
+          <option value="part_to">Partikel と (to — Dan, Bersama, Kutipan)</option>
+          <option value="part_mo">Partikel も (mo — Juga / Pun)</option>
+          <option value="part_kara_made">Partikel から &amp; まで (Dari &amp; Sampai)</option>
+          <option value="part_yori">Partikel より (yori — Perbandingan 'Daripada')</option>
+          <option value="part_no">Partikel の (no — Kepemilikan &amp; Penghubung)</option>
+          <option value="part_ya">Partikel や (ya — Daftar Contoh Terbuka)</option>
+          <option value="part_ka">Partikel か (ka — Kalimat Tanya &amp; 'Atau')</option>
+          <option value="part_ne_yo">Partikel ね &amp; よ (Akhiran Konfirmasi vs Penekanan)</option>
+        </optgroup>
+        <optgroup label="⚖️ Materi Komparasi &amp; Tips">
+          <option value="comp_wa_ga">Komparasi: は (wa) vs が (ga)</option>
+          <option value="comp_ni_de">Komparasi Lokasi: に (ni) vs で (de)</option>
+          <option value="comp_ni_e_to_ya">Komparasi: に vs へ &amp; と vs や</option>
+        </optgroup>
+      </select>
+      <button type="button" class="cta-btn" id="btnStartSelectedQuiz">
+        🚀 Mulai Latihan Materi Ini ›
+      </button>
     </div>
   </div>
 
 </div>
 
-<!-- Script Stats & Interactivity -->
+<!-- ================= MODAL KUIS FOKUS MATERI ================= -->
+<div class="qmodal-backdrop hidden" id="quizModalBackdrop">
+  <div class="qmodal" role="dialog" aria-modal="true">
+    <div class="qmodal-head">
+      <div>
+        <span class="qmodal-tag" id="qmCategory">Bentuk ~て</span>
+        <div class="qmodal-title" id="qmTitle">Pola 〜てはいけません</div>
+      </div>
+      <button type="button" class="qmodal-close" id="qmClose" title="Tutup latihan">✕</button>
+    </div>
+
+    <!-- Active Question View -->
+    <div id="qmPlayView">
+      <div class="qmodal-body">
+        <div class="qmeta-bar">
+          <span id="qmStepText">Soal 1 / 5</span>
+          <span id="qmScoreText">Benar: 0</span>
+        </div>
+        <div class="qprogress-track">
+          <div class="qprogress-fill" id="qmProgressFill"></div>
+        </div>
+
+        <div class="qprompt-box">
+          <div class="qprompt-text" id="qmPromptText"></div>
+          <button type="button" class="btn-audio" id="qmAudioBtn" title="Dengarkan kalimat">🔊</button>
+        </div>
+
+        <div class="qopts-list" id="qmOptsList"></div>
+
+        <div class="qexp-box hidden" id="qmExpBox"></div>
+      </div>
+
+      <div class="qmodal-foot">
+        <span style="font-size:12.5px;color:var(--muted)" id="qmHintFoot">Pilih salah satu jawaban di atas</span>
+        <button type="button" class="qbtn-next" id="qmNextBtn" disabled>Soal Berikutnya ›</button>
+      </div>
+    </div>
+
+    <!-- Summary View -->
+    <div id="qmResultView" class="hidden">
+      <div class="qmodal-body" style="text-align:center;padding:30px 22px">
+        <div style="font-size:44px;margin-bottom:8px" id="qmResEmoji">🎉</div>
+        <h3 style="margin:0 0 6px;font-size:22px;font-weight:800" id="qmResHeading">Latihan Selesai!</h3>
+        <p style="margin:0 0 18px;font-size:14px;color:var(--muted)" id="qmResSub">Materi: Pola 〜てはいけません</p>
+
+        <div style="display:inline-flex;gap:16px;background:#faf8ff;border:1px solid #ebe5f8;border-radius:16px;padding:14px 24px;margin-bottom:22px">
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent)" id="qmResScore">5 / 5</div>
+            <div style="font-size:11.5px;color:var(--muted)">Skor Benar</div>
+          </div>
+          <div style="width:1px;background:#e4ddf4"></div>
+          <div>
+            <div style="font-size:24px;font-weight:800;color:var(--ok)" id="qmResPct">100%</div>
+            <div style="font-size:11.5px;color:var(--muted)">Akurasi</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button type="button" class="btn-toggle" id="qmRetryBtn" style="height:42px;padding:0 18px">🔄 Ulangi Materi Ini</button>
+          <button type="button" class="qbtn-next" id="qmDoneBtn" style="margin:0">✓ Selesai &amp; Tutup</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Scripts -->
 <script src="stats.js"></script>
+<script src="bunpo-soal.js"></script>
 <script>
 (function() {
   'use strict';
 
   // 1. Audio Pronunciation via Web Speech API
   function speak(text) {
-    if (!('speechSynthesis' in window)) {
-      alert('Browser Anda belum mendukung suara otomatis.');
-      return;
-    }
+    if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    var clean = text.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
+    var clean = String(text || '').replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
+    if (!clean) return;
     var u = new SpeechSynthesisUtterance(clean);
     u.lang = 'ja-JP';
     u.rate = 0.9;
@@ -1263,7 +1515,7 @@
 
   document.addEventListener('click', function(e) {
     var btn = e.target.closest('.btn-audio');
-    if (!btn) return;
+    if (!btn || btn.id === 'qmAudioBtn' || btn.id === 'resAudio') return;
     var speech = btn.getAttribute('data-speech');
     if (speech) speak(speech);
   });
@@ -1328,7 +1580,6 @@
     });
   });
 
-  // URL query parameter support (e.g., bunpo.html?tab=te)
   var params = new URLSearchParams(window.location.search);
   var initialTab = params.get('tab');
   if (initialTab && ['all', 'te', 'partikel', 'komparasi', 'tester'].indexOf(initialTab) !== -1) {
@@ -1345,7 +1596,6 @@
         items.forEach(function(item) { item.style.display = ''; });
         return;
       }
-      // If user is searching, switch to 'all' so matching items in any category are visible
       setTab('all');
       items.forEach(function(item) {
         var text = item.textContent.toLowerCase();
@@ -1365,18 +1615,11 @@
   function updateTester() {
     if (!testerSelect) return;
     var parts = testerSelect.value.split('|');
-    // kana | kanji | teRomaji | teKanji | mean | group | rule
-    var teRomaji = parts[2];
-    var teKanji = parts[3];
-    var mean = parts[4];
-    var group = parts[5];
-    var rule = parts[6];
-
-    resGroup.textContent = group;
-    resRule.textContent = rule;
-    resWord.textContent = teKanji + ' (' + teRomaji + ')';
-    resMean.textContent = 'Arti: ' + mean;
-    resAudio.setAttribute('data-speech', teKanji);
+    resGroup.textContent = parts[5];
+    resRule.textContent = parts[6];
+    resWord.textContent = parts[3] + ' (' + parts[2] + ')';
+    resMean.textContent = 'Arti: ' + parts[4];
+    resAudio.setAttribute('data-speech', parts[3]);
   }
 
   if (testerSelect) {
@@ -1388,6 +1631,209 @@
       var s = this.getAttribute('data-speech');
       if (s) speak(s);
     });
+  }
+
+  // 6. Topic-Specific Quiz Engine
+  var BANK = window.KAISHI_BUNPO_SOAL || {};
+  var backdrop = document.getElementById('quizModalBackdrop');
+  var qmCategory = document.getElementById('qmCategory');
+  var qmTitle = document.getElementById('qmTitle');
+  var qmClose = document.getElementById('qmClose');
+  var qmPlayView = document.getElementById('qmPlayView');
+  var qmResultView = document.getElementById('qmResultView');
+  var qmStepText = document.getElementById('qmStepText');
+  var qmScoreText = document.getElementById('qmScoreText');
+  var qmProgressFill = document.getElementById('qmProgressFill');
+  var qmPromptText = document.getElementById('qmPromptText');
+  var qmAudioBtn = document.getElementById('qmAudioBtn');
+  var qmOptsList = document.getElementById('qmOptsList');
+  var qmExpBox = document.getElementById('qmExpBox');
+  var qmHintFoot = document.getElementById('qmHintFoot');
+  var qmNextBtn = document.getElementById('qmNextBtn');
+  var qmResEmoji = document.getElementById('qmResEmoji');
+  var qmResHeading = document.getElementById('qmResHeading');
+  var qmResSub = document.getElementById('qmResSub');
+  var qmResScore = document.getElementById('qmResScore');
+  var qmResPct = document.getElementById('qmResPct');
+  var qmRetryBtn = document.getElementById('qmRetryBtn');
+  var qmDoneBtn = document.getElementById('qmDoneBtn');
+  var bottomQuizSelect = document.getElementById('bottomQuizSelect');
+  var btnStartSelectedQuiz = document.getElementById('btnStartSelectedQuiz');
+
+  var curTopicKey = null;
+  var curQuestions = [];
+  var curIdx = 0;
+  var curCorrect = 0;
+  var curWrong = 0;
+  var answered = false;
+
+  function openTopicQuiz(topicKey) {
+    var data = BANK[topicKey];
+    if (!data || !data.questions || !data.questions.length) return;
+
+    curTopicKey = topicKey;
+    curQuestions = data.questions.slice();
+    curIdx = 0;
+    curCorrect = 0;
+    curWrong = 0;
+
+    if (bottomQuizSelect) bottomQuizSelect.value = topicKey;
+
+    qmCategory.textContent = data.category || 'Bunpo';
+    qmTitle.textContent = data.title;
+    qmPlayView.classList.remove('hidden');
+    qmResultView.classList.add('hidden');
+    backdrop.classList.remove('hidden');
+
+    renderQuestion();
+  }
+
+  function closeTopicQuiz() {
+    backdrop.classList.add('hidden');
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }
+
+  function renderQuestion() {
+    answered = false;
+    var q = curQuestions[curIdx];
+    var total = curQuestions.length;
+
+    qmStepText.textContent = 'Soal ' + (curIdx + 1) + ' / ' + total;
+    qmScoreText.textContent = 'Benar: ' + curCorrect;
+    qmProgressFill.style.width = Math.round((curIdx / total) * 100) + '%';
+
+    qmPromptText.innerHTML = q.q;
+    qmAudioBtn.setAttribute('data-speech', q.speech || '');
+    qmExpBox.classList.add('hidden');
+    qmExpBox.innerHTML = '';
+    qmHintFoot.textContent = 'Pilih salah satu jawaban di atas';
+    qmNextBtn.disabled = true;
+    qmNextBtn.textContent = (curIdx + 1 < total) ? 'Soal Berikutnya ›' : 'Lihat Hasil ›';
+
+    var keys = ['A', 'B', 'C', 'D'];
+    qmOptsList.innerHTML = '';
+    q.opts.forEach(function(optText, idx) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'qopt-btn';
+      btn.innerHTML = '<span class="qopt-key">' + (keys[idx] || (idx + 1)) + '</span><span class="jp">' + optText + '</span>';
+      btn.addEventListener('click', function() {
+        handleAnswer(idx, btn);
+      });
+      qmOptsList.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(selectedIdx, clickedBtn) {
+    if (answered) return;
+    answered = true;
+
+    var q = curQuestions[curIdx];
+    var isRight = (selectedIdx === q.a);
+    var allBtns = qmOptsList.querySelectorAll('.qopt-btn');
+
+    allBtns.forEach(function(b, i) {
+      b.disabled = true;
+      if (i === q.a) b.classList.add('correct');
+    });
+
+    if (isRight) {
+      curCorrect++;
+      qmHintFoot.textContent = '✅ Jawaban Benar!';
+    } else {
+      curWrong++;
+      clickedBtn.classList.add('wrong');
+      qmHintFoot.textContent = '❌ Kurang tepat, simak pembahasannya.';
+    }
+
+    qmScoreText.textContent = 'Benar: ' + curCorrect;
+    qmProgressFill.style.width = Math.round(((curIdx + 1) / curQuestions.length) * 100) + '%';
+
+    if (q.exp) {
+      qmExpBox.innerHTML = '💡 <b>Pembahasan:</b> ' + q.exp;
+      qmExpBox.classList.remove('hidden');
+    }
+
+    if (window.KaishiStats && typeof window.KaishiStats.quizAnswer === 'function') {
+      window.KaishiStats.quizAnswer({
+        correct: isRight,
+        base: 10,
+        level: 5,
+        wordId: 'bunpo_' + curTopicKey + '_' + curIdx
+      });
+    }
+
+    qmNextBtn.disabled = false;
+  }
+
+  function showResults() {
+    qmPlayView.classList.add('hidden');
+    qmResultView.classList.remove('hidden');
+
+    var total = curQuestions.length;
+    var pct = total ? Math.round((curCorrect / total) * 100) : 0;
+
+    qmResEmoji.textContent = pct === 100 ? '🏆' : (pct >= 80 ? '🎉' : (pct >= 60 ? '👍' : '💪'));
+    qmResHeading.textContent = pct === 100 ? 'Sempurna!' : (pct >= 80 ? 'Bagus Sekali!' : 'Terus Berlatih!');
+    qmResSub.textContent = 'Materi: ' + (BANK[curTopicKey] ? BANK[curTopicKey].title : '');
+    qmResScore.textContent = curCorrect + ' / ' + total;
+    qmResPct.textContent = pct + '%';
+
+    if (window.KaishiStats && typeof window.KaishiStats.quizDone === 'function') {
+      window.KaishiStats.quizDone({ correct: curCorrect, wrong: curWrong });
+    }
+  }
+
+  // Event listeners for opening topic quiz from any card button
+  document.addEventListener('click', function(e) {
+    var qbtn = e.target.closest('.btn-topic-quiz');
+    if (!qbtn) return;
+    var topic = qbtn.getAttribute('data-quiz-topic');
+    if (topic) openTopicQuiz(topic);
+  });
+
+  if (btnStartSelectedQuiz && bottomQuizSelect) {
+    btnStartSelectedQuiz.addEventListener('click', function() {
+      openTopicQuiz(bottomQuizSelect.value);
+    });
+  }
+
+  if (qmAudioBtn) {
+    qmAudioBtn.addEventListener('click', function() {
+      var s = this.getAttribute('data-speech');
+      if (s) speak(s);
+    });
+  }
+
+  if (qmNextBtn) {
+    qmNextBtn.addEventListener('click', function() {
+      if (curIdx + 1 < curQuestions.length) {
+        curIdx++;
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    });
+  }
+
+  if (qmRetryBtn) {
+    qmRetryBtn.addEventListener('click', function() {
+      if (curTopicKey) openTopicQuiz(curTopicKey);
+    });
+  }
+
+  if (qmClose) qmClose.addEventListener('click', closeTopicQuiz);
+  if (qmDoneBtn) qmDoneBtn.addEventListener('click', closeTopicQuiz);
+  if (backdrop) {
+    backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) closeTopicQuiz();
+    });
+  }
+
+  // Check if URL has ?quiz=topicKey to auto-open a specific topic quiz
+  var urlQuiz = params.get('quiz');
+  if (urlQuiz && BANK[urlQuiz]) {
+    openTopicQuiz(urlQuiz);
   }
 
 })();
