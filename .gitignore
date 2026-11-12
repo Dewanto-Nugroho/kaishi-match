@@ -1,6 +1,6 @@
 # ---- data pribadi ----
-# progres belajar Anda dari Anki (tanggal & status tiap kartu)
-progress.js
+# (progress.js diikutkan agar progres belajar terbaca di HP / hosting)
+# progress.js
 
 # ---- rahasia ----
 # kunci API untuk generator soal (salin dari ai-config.contoh.json)
