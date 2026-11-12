@@ -318,7 +318,7 @@
     text-transform: uppercase; margin: 0 0 10px 2px;
   }
   .menu-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px;
   }
   .mcard-menu {
     background: var(--card); border: 1px solid var(--line); border-radius: 20px;
@@ -337,6 +337,7 @@
   .mcard-icon.match { background: #efe9ff; color: var(--accent); }
   .mcard-icon.quiz { background: #e6f4ff; color: #1d6fd8; }
   .mcard-icon.read { background: #e4f7ee; color: var(--ok); }
+  .mcard-icon.grammar { background: #fff1e5; color: #d97706; }
   .mcard-tag {
     font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 4px 10px;
     background: #f4f2fa; color: #5c5a72;
@@ -399,7 +400,10 @@
   .wotd-sen { font-size: 13.5px; color: #4b4960; margin-top: 4px; padding-top: 8px; border-top: 1px dashed var(--line); }
   .wotd-sen small { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1080px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 760px) {
     .menu-grid { grid-template-columns: 1fr; }
     .home-stats { grid-template-columns: repeat(2, 1fr); }
     .home-bottom { grid-template-columns: 1fr; }
@@ -540,6 +544,33 @@
           </div>
         </div>
       </div>
+
+      <!-- 4. Bunpo / Grammar -->
+      <div class="mcard-menu">
+        <div>
+          <div class="mcard-head">
+            <div class="mcard-icon grammar jp">文</div>
+            <span class="mcard-tag">Panduan &amp; Rumus</span>
+          </div>
+          <div class="mcard-body">
+            <h2>Bunpo (Tata Bahasa)</h2>
+            <p>Panduan lengkap: perubahan bentuk ~て (Te-form), fungsi seluruh partikel penting, komparasi &amp; contoh kalimat.</p>
+          </div>
+          <div class="mcard-meta">
+            <span class="mcard-pill">🔤 Bentuk ~て (Te-form)</span>
+            <span class="mcard-pill">📍 Partikel Lengkap</span>
+            <span class="mcard-pill">💡 Komparasi &amp; Audio</span>
+          </div>
+        </div>
+        <div class="mcard-actions">
+          <a class="mcard-mainbtn" href="bunpo.html">Buka Tata Bahasa ›</a>
+          <div class="mcard-quick">
+            <a class="qbtn" href="bunpo.html?tab=te">⚡ Bentuk ~て</a>
+            <a class="qbtn" href="bunpo.html?tab=partikel">📍 Partikel</a>
+            <a class="qbtn" href="bunpo.html?tab=komparasi">⚖️ は vs が</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Bagian Bawah: Filter Cepat Anki & Kata Acak -->
@@ -614,6 +645,7 @@
         <a class="badge badge-link" href="#beranda" id="homeBadgeLink">‹ Beranda</a>
         <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
         <a class="badge badge-link" href="teks.html">Baca ›</a>
+        <a class="badge badge-link" href="bunpo.html">Bunpo ›</a>
         <button class="badge badge-poin" id="poinBadge" type="button" title="Lihat progres & poin">★ 0</button>
         <span class="badge" id="deckBadge">memuat…</span>
         <span class="badge badge-anki" id="ankiBadge">Anki belum tersambung</span>

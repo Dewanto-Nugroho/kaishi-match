@@ -6,6 +6,8 @@ Aplikasi latihan bahasa Jepang dari deck **Kaishi 1.5k (versi Indonesia)**:
   timer 30 detik per ronde, filter status Anki, dan sistem poin.
 - **Kuis N5–N1** — 6.300 soal (arti, bacaan, isi rumpang, partikel, susun kalimat,
   bacaan kalimat), lengkap dengan pembahasan tata bahasa dan furigana setelah dijawab.
+- **Baca Teks** — baca wacana pendek dari kosakata Kaishi, klik kata untuk arti & audio, sebaran level N5–N1, dan generator teks.
+- **Bunpo (Tata Bahasa)** — panduan komprehensif perubahan bentuk ~て (Te-form), 16 partikel utama beserta contoh kalimat ber-furigana & audio pengucapan, komparasi penting (は vs が, に vs で), serta alat uji konjugasi interaktif.
 
 Tanpa server web, tanpa database, tanpa akun. Cukup buka `index.html`.
 
