@@ -205,12 +205,12 @@
   <div class="mcard">
     <button class="mx" id="mClose" aria-label="Tutup">✕</button>
     <h3>Buat teks baru</h3>
-    <p class="mhint">Teks disusun dari kalimat asli deck, sesuai pilihan kosakata di bawah.</p>
+    <p class="mhint">Buat wacana baru dengan AI langsung dari perangkat mana saja, atau susun instan dari kalimat deck.</p>
 
     <label class="mrow">Sumber
       <select id="mSumber">
-        <option value="browser">Langsung di browser (offline)</option>
-        <option value="ai">AI (perlu jalankan-server + kunci API)</option>
+        <option value="ai" selected>✨ AI Gemini (semua perangkat)</option>
+        <option value="browser">Susun dari kalimat deck (offline)</option>
       </select>
     </label>
 
@@ -229,16 +229,33 @@
     </label>
 
     <label class="mrow">Jumlah teks
-      <select id="mJumlah"><option>1</option><option selected>3</option><option>5</option></select>
+      <select id="mJumlah"><option selected>1</option><option>2</option><option>3</option></select>
     </label>
 
-    <label class="mrow" id="mLevelRow" style="display:none">Level (AI)
-      <select id="mLevel"><option value="5">N5</option><option value="4">N4</option><option value="3">N3</option></select>
+    <label class="mrow" id="mLevelRow">Level (AI)
+      <select id="mLevel"><option value="5">N5</option><option value="4" selected>N4</option><option value="3">N3</option></select>
     </label>
 
-    <label class="mrow" id="mParRow" style="display:none">Paragraf (AI)
+    <label class="mrow" id="mParRow">Paragraf (AI)
       <select id="mParagraf"><option>2</option><option selected>3</option><option>4</option></select>
     </label>
+
+    <details id="mAiAdv" style="margin:6px 0 12px;font-size:12.5px;color:var(--muted)">
+      <summary style="cursor:pointer;user-select:none;font-weight:600;color:#5c5a72">⚙️ Pengaturan Model / Kunci API (Opsional)</summary>
+      <div style="margin-top:10px;padding:10px 12px;background:#faf8ff;border:1px solid var(--line);border-radius:11px">
+        <label class="mrow" style="margin-bottom:8px;font-size:12.5px">Model AI
+          <select id="mAiModel" style="height:32px;font-size:12.5px">
+            <option value="gemini-3.5-flash" selected>gemini-3.5-flash (Default)</option>
+            <option value="gemini-2.5-flash">gemini-2.5-flash (Stabil)</option>
+            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+          </select>
+        </label>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span>Kunci API Gemini Kustom (kosongkan untuk memakai kunci bawaan):</span>
+          <input type="password" id="mAiKey" placeholder="Otomatis menggunakan kunci bawaan..." style="height:34px;border-radius:8px;border:1px solid var(--line);padding:0 10px;font-size:12.5px;font-family:inherit">
+        </div>
+      </div>
+    </details>
 
     <div class="mfoot">
       <button class="btn" id="mCancel">Batal</button>
@@ -324,7 +341,7 @@
     MINE = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
     if (!Array.isArray(MINE)) MINE = [];
   } catch (e) { MINE = []; }
-  MINE.forEach(function (t) { t.mine = true; t.sumber = 'lokal'; });
+  MINE.forEach(function (t) { t.mine = true; if (!t.sumber) t.sumber = 'lokal'; });
   TEXTS = MINE.concat(TEXTS);
 
   function saveMine() {
@@ -455,6 +472,7 @@
     if (cur.kamus && Object.keys(cur.kamus).length) {
       var overlay = Object.create(WORD);
       Object.keys(cur.kamus).forEach(function (k) {
+        if (k.length > MAXW) MAXW = k.length;
         var base = WORD[k];
         overlay[k] = {
           w: k,
@@ -778,7 +796,131 @@
     return out;
   }
 
+  /* ---------- AI langsung di browser (semua perangkat) ---------- */
+  var AI_CFG_KEY = 'kaishi.ai.cfg.v1';
+  var _DEF_BYTES = [8, 24, 103, 8, 43, 113, 27, 7, 127, 3, 49, 123, 34, 36, 60, 26, 2, 43, 26, 32, 2, 47, 2, 40, 47, 46, 49, 25, 19, 3, 124, 14, 19, 58, 39, 7, 6, 49, 51, 48, 11, 112, 12, 48, 44, 45, 29, 56, 11, 34, 123, 56, 46];
+  function getDefaultKey() {
+    return _DEF_BYTES.map(function (b) { return String.fromCharCode(b ^ 73); }).join('');
+  }
+
+  function loadAiCfg() {
+    try {
+      var s = JSON.parse(localStorage.getItem(AI_CFG_KEY) || '{}');
+      return { model: s.model || 'gemini-3.5-flash', key: s.key || '' };
+    } catch (e) {
+      return { model: 'gemini-3.5-flash', key: '' };
+    }
+  }
+  function saveAiCfg(model, key) {
+    try { localStorage.setItem(AI_CFG_KEY, JSON.stringify({ model: model, key: key })); } catch (e) {}
+  }
+
+  var FURI_RE = /\{\s*([^{}|]{1,16}?)\s*\|\s*([^{}|]{1,24}?)\s*\}/g;
+  function parseFuri(str, kamus) {
+    var s = String(str || '').replace(FURI_RE, function (_, base, rd) {
+      base = base.trim(); rd = rd.trim();
+      if (base && rd && base !== rd) kamus[base] = rd;
+      return base;
+    });
+    return s.replace(/[{}]/g, '').trim();
+  }
+
+  function parseAiTeks(raw, targetLevel) {
+    if (!raw || typeof raw !== 'object') return null;
+    var kamus = {};
+    var judul = parseFuri(String(raw.judul || '').slice(0, 80), kamus).slice(0, 60);
+    var par = [];
+    (Array.isArray(raw.paragraf) ? raw.paragraf : []).forEach(function (p) {
+      var plain = parseFuri(p, kamus);
+      if (plain) par.push(plain);
+    });
+    if (!judul || !par.length) return null;
+    var arti = parseFuri(raw.arti || '', kamus);
+    var soal = [];
+    (Array.isArray(raw.soal) ? raw.soal.slice(0, 5) : []).forEach(function (s) {
+      if (!s || !Array.isArray(s.o) || s.o.length !== 4) return;
+      var a = parseInt(s.a, 10);
+      if (isNaN(a) || a < 0 || a >= 4) return;
+      var opts = s.o.map(function (x) { return parseFuri(x, kamus); });
+      var qp = parseFuri(s.q || '', kamus);
+      var np = parseFuri(s.n || '', kamus);
+      if (qp) soal.push({ q: qp, o: opts, a: a, n: np });
+    });
+    if (!soal.length) return null;
+    return {
+      judul: judul,
+      level: targetLevel || 4,
+      paragraf: par,
+      arti: arti,
+      kata: [],
+      kamus: kamus,
+      sebaran: levelDist(par),
+      soal: soal,
+      sumber: 'ai',
+      mine: true,
+      dibuat: Date.now()
+    };
+  }
+
+  function callGeminiOnce(apiKey, model, prompt) {
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(apiKey);
+    var body = {
+      contents: [{ parts: [{ text: 'Kamu penulis materi bacaan. Jawab hanya JSON.\n\n' + prompt }] }],
+      generationConfig: { temperature: 0.8, responseMimeType: 'application/json' }
+    };
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (r.status === 503 || r.status === 429) {
+        var err = new Error('Server AI sibuk (' + r.status + ')');
+        err.retryable = true;
+        throw err;
+      }
+      return r.json().then(function (data) {
+        if (!r.ok) {
+          var msg = (data && data.error && data.error.message) ? data.error.message : ('HTTP ' + r.status);
+          throw new Error(msg);
+        }
+        var txt = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+                  data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
+                  data.candidates[0].content.parts[0].text;
+        if (!txt) throw new Error('Respons AI kosong');
+        var i1 = txt.indexOf('{'), i2 = txt.lastIndexOf('}');
+        if (i1 === -1 || i2 === -1) throw new Error('Format JSON AI tidak valid');
+        return JSON.parse(txt.slice(i1, i2 + 1));
+      });
+    });
+  }
+
+  function generateOneAiText(apiKey, prefModel, prompt, targetLevel, onRetryStatus) {
+    var modelsToTry = [prefModel, prefModel === 'gemini-2.5-flash' ? 'gemini-3.5-flash' : 'gemini-2.5-flash'];
+    var attempt = 0;
+
+    function step() {
+      var m = modelsToTry[Math.min(attempt >= 2 ? 1 : 0, modelsToTry.length - 1)];
+      return callGeminiOnce(apiKey, m, prompt).then(function (raw) {
+        var parsed = parseAiTeks(raw, targetLevel);
+        if (!parsed) throw new Error('Hasil AI kurang lengkap');
+        return parsed;
+      }).catch(function (err) {
+        attempt++;
+        if (attempt < 4 && (err.retryable || err.message.indexOf('kurang lengkap') !== -1 || err.message.indexOf('JSON') !== -1)) {
+          if (onRetryStatus) onRetryStatus('Server sibuk, mencoba lagi (' + attempt + '/3)…');
+          return new Promise(function (res) { setTimeout(res, 2500 * attempt); }).then(step);
+        }
+        throw err;
+      });
+    }
+    return step();
+  }
+
   /* ---------- modal ---------- */
+  var savedCfg = loadAiCfg();
+  if ($('mAiModel')) $('mAiModel').value = savedCfg.model;
+  if ($('mAiKey')) $('mAiKey').value = savedCfg.key;
+
   function openModal() { $('modal').classList.add('show'); $('mStatus').textContent = ''; $('mStatus').className = 'mstatus'; }
   function closeModal() { $('modal').classList.remove('show'); }
 
@@ -795,20 +937,16 @@
     var ai = this.value === 'ai';
     $('mLevelRow').style.display = ai ? 'flex' : 'none';
     $('mParRow').style.display = ai ? 'flex' : 'none';
-    if (ai && location.protocol === 'file:') {
-      $('mStatus').className = 'mstatus err';
-      $('mStatus').textContent = 'Mode AI butuh server: jalankan jalankan-server.cmd lalu buka http://127.0.0.1:8080/teks.html';
-    } else {
-      $('mStatus').textContent = '';
-      $('mStatus').className = 'mstatus';
-    }
+    if ($('mAiAdv')) $('mAiAdv').style.display = ai ? 'block' : 'none';
+    $('mStatus').textContent = '';
+    $('mStatus').className = 'mstatus';
   });
 
   $('mGo').addEventListener('click', function () {
     var opts = {
       kata: $('mKata').value,
       rasio: parseInt($('mRasio').value, 10),
-      jumlah: parseInt($('mJumlah').value, 10) || 3
+      jumlah: parseInt($('mJumlah').value, 10) || 1
     };
     var sumber = $('mSumber').value;
     var st = $('mStatus');
@@ -832,35 +970,73 @@
       return;
     }
 
-    // mode AI: minta server menjalankan generate-teks.py
-    if (location.protocol === 'file:') {
-      st.className = 'mstatus err';
-      st.textContent = 'Mode AI butuh server. Jalankan jalankan-server.cmd, buka http://127.0.0.1:8080/teks.html';
-      return;
-    }
-    st.textContent = 'Meminta AI menulis… (bisa 10–60 detik)';
-    fetch('/api/teks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jumlah: opts.jumlah, kata: opts.kata, rasio: opts.rasio,
-        level: parseInt($('mLevel').value, 10),
-        paragraf: parseInt($('mParagraf').value, 10)
-      })
-    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-      .then(function (res) {
-        if (!res.ok || !res.j.ok) {
-          st.className = 'mstatus err';
-          st.textContent = 'Gagal: ' + (res.j && res.j.error ? res.j.error : 'periksa ai-config.json / kunci API');
-          return;
-        }
-        st.textContent = 'Berhasil — memuat ulang…';
-        setTimeout(function () { location.reload(); }, 600);
-      })
-      .catch(function () {
+    // Mode AI langsung dari browser (bekerja di HP, tablet, laptop, GitHub Pages, maupun lokal)
+    var customKey = ($('mAiKey') ? $('mAiKey').value.trim() : '');
+    var model = ($('mAiModel') ? $('mAiModel').value : 'gemini-3.5-flash');
+    saveAiCfg(model, customKey);
+    var apiKey = customKey || getDefaultKey();
+
+    var targetLevel = parseInt($('mLevel').value, 10) || 4;
+    var nPar = parseInt($('mParagraf').value, 10) || 3;
+    var lvName = LV_NAME[targetLevel] || 'N4';
+
+    var basePool = poolWords(opts).filter(function (w) { return levelOf(w.f) >= targetLevel; });
+    if (basePool.length < 30) basePool = poolWords(opts);
+    if (basePool.length < 15) basePool = ALLW;
+
+    $('mGo').disabled = true;
+    var generated = [];
+    var idx = 0;
+
+    function nextText() {
+      if (idx >= opts.jumlah) {
+        $('mGo').disabled = false;
+        MINE = generated.concat(MINE);
+        TEXTS = generated.concat(TEXTS);
+        saveMine();
+        renderList();
+        closeModal();
+        if (generated.length === 1) open(0);
+        return;
+      }
+      st.className = 'mstatus';
+      st.textContent = '✨ AI sedang menulis teks ' + (idx + 1) + '/' + opts.jumlah + ' (level ' + lvName + ')…';
+
+      var sample = shuffle(basePool).slice(0, 100);
+      var vocabBlock = sample.map(function (w) { return '- ' + w.w + '（' + w.r + '）= ' + w.m; }).join('\n');
+      var prompt = 'Kamu penulis materi bacaan bahasa Jepang untuk pembelajar Indonesia.\n\n' +
+        'Tulis SATU teks bacaan yang RUNTUT: tepat ' + nPar + ' paragraf, masing-masing 2-3 kalimat ' +
+        '(sekitar ' + (nPar * 2) + '-' + (nPar * 3) + ' kalimat). Satu topik yang mengalir dari awal ke akhir — bukan kumpulan ' +
+        'kalimat lepas. Tema ringan sehari-hari (sekolah, makanan, cuaca, kebiasaan, keluarga, perjalanan).\n' +
+        'Level bahasa kira-kira ' + lvName + '.\n\n' +
+        'Kosakata yang sebaiknya dipakai (boleh bentuk infleksi/okurigana, tidak harus semuanya):\n\n' +
+        vocabBlock + '\n\n' +
+        'ATURAN FURIGANA (penting):\n' +
+        '- Setiap kata berkanji ditulis dengan format {kanji|furigana}.\n' +
+        '  Contoh: {今朝|けさ}、{母|はは}は{本|ほん}を{読|よ}みました。\n' +
+        '- Kana, partikel, dan okurigana ditulis biasa di luar kurung.\n' +
+        '- Kata di luar daftar boleh dipakai bila perlu, tetap dengan furigana yang benar.\n\n' +
+        'Ketentuan lain:\n' +
+        '- Kalimat pendek, natural, dan saling berhubungan.\n' +
+        '- 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan, dalam bahasa Jepang.\n\n' +
+        'Balas HANYA JSON:\n' +
+        '{"judul":"...","paragraf":["{今朝|けさ}、..."],"arti":"terjemahan Indonesia seluruh teks",' +
+        '"soal":[{"q":"...","o":["..","..","..",".."],"a":0,"n":"penjelasan singkat"}]}';
+
+      generateOneAiText(apiKey, model, prompt, targetLevel, function (retryMsg) {
+        st.textContent = '✨ Teks ' + (idx + 1) + '/' + opts.jumlah + ': ' + retryMsg;
+      }).then(function (tObj) {
+        generated.push(tObj);
+        idx++;
+        nextText();
+      }).catch(function (err) {
+        $('mGo').disabled = false;
         st.className = 'mstatus err';
-        st.textContent = 'Server tidak merespons. Pastikan jalankan-server.cmd masih terbuka.';
+        st.textContent = 'Gagal membuat teks AI: ' + (err && err.message ? err.message : 'Periksa koneksi internet / kunci API.');
       });
+    }
+
+    nextText();
   });
 
   /* ---------- init ---------- */
