@@ -222,6 +222,7 @@
           <button class="audio-spd-btn active" data-spd="1.0">1.0x</button>
           <button class="audio-spd-btn" data-spd="1.2">1.2x</button>
         </div>
+        <button class="audio-btn secondary" id="btnVoiceModal" title="Pilih Mesin Suara (Google / ElevenLabs)">⚙️ Mesin Suara</button>
       </div>
 
       <div class="text" id="rText"></div>
@@ -289,6 +290,20 @@
       <input type="checkbox" id="mGenAudio" checked style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer">
     </label>
 
+    <div id="mAudioChoiceWrap" style="margin-bottom:12px;padding:10px 12px;background:#f8f7fd;border:1px solid var(--line);border-radius:11px">
+      <label class="mrow" style="margin-bottom:6px;font-size:13px">Mesin Suara
+        <select id="mAudioEngine" style="height:32px;font-size:12.5px">
+          <option value="google" selected>Google Cloud TTS (Gratis & Cepat)</option>
+          <option value="elevenlabs">ElevenLabs AI (Ultra Realistis)</option>
+        </select>
+      </label>
+      <div id="mElevenQuickRow" style="display:none;font-size:12px;color:var(--muted)">
+        <div style="margin-bottom:4px">Kunci API ElevenLabs:</div>
+        <input type="password" id="mElevenKey" placeholder="xi-api-key..." style="width:100%;box-sizing:border-box;height:32px;border-radius:8px;border:1px solid var(--line);padding:0 8px;font-size:12px;font-family:inherit">
+        <div style="margin-top:4px;font-size:11px"><a href="#" id="mOpenVoiceSettings" style="color:var(--accent);text-decoration:underline">⚙️ Pengaturan Karakter Suara / Tes Audio ›</a></div>
+      </div>
+    </div>
+
     <details id="mAiAdv" style="margin:6px 0 12px;font-size:12.5px;color:var(--muted)">
       <summary style="cursor:pointer;user-select:none;font-weight:600;color:#5c5a72">⚙️ Pengaturan Model / Kunci API (Opsional)</summary>
       <div style="margin-top:10px;padding:10px 12px;background:#faf8ff;border:1px solid var(--line);border-radius:11px">
@@ -311,6 +326,68 @@
       <button class="btn primary" id="mGo">Buat</button>
     </div>
     <div class="mstatus" id="mStatus"></div>
+  </div>
+</div>
+
+<!-- modal pengaturan suara (Google TTS & ElevenLabs) -->
+<div class="modal" id="modalVoice">
+  <div class="mcard" style="max-width:480px">
+    <button class="mx" id="vClose" aria-label="Tutup">✕</button>
+    <h3>⚙️ Pengaturan Suara Audio</h3>
+    <p class="mhint">Pilih mesin audio untuk pelafalan bacaan bahasa Jepang.</p>
+
+    <label class="mrow" style="font-weight:600">Mesin Suara
+      <select id="vEngine" style="font-weight:600">
+        <option value="google">Google Cloud TTS (Gratis, Cepat, Tanpa Kuota)</option>
+        <option value="elevenlabs">ElevenLabs AI (Suara Ultra-Realistis Manusia)</option>
+      </select>
+    </label>
+
+    <div id="vElevenSection" style="margin-top:14px;border-top:1px dashed var(--line);padding-top:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px;color:#2f2b4a">Konfigurasi ElevenLabs AI</div>
+      <p style="margin:0 0 12px;font-size:12px;color:var(--muted);line-height:1.45">
+        ElevenLabs menghasilkan pelafalan bahasa Jepang dengan intonasi emosional yang sangat natural. Dapatkan API Key gratis di <a href="https://elevenlabs.io" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">elevenlabs.io</a> (tersimpan secara lokal di browser Anda).
+      </p>
+
+      <label style="display:block;font-size:12.5px;color:#4b4960;margin-bottom:4px;font-weight:600">API Key ElevenLabs (xi-api-key):</label>
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <input type="password" id="vElevenKey" placeholder="tempelkan API Key ElevenLabs..." style="flex:1;height:36px;border-radius:9px;border:1px solid var(--line);padding:0 10px;font-size:12.5px;font-family:inherit">
+        <button class="btn" id="vToggleKey" type="button" style="height:36px;padding:0 10px;font-size:12px" title="Lihat/Sembunyikan">👁</button>
+      </div>
+
+      <label class="mrow" style="margin-bottom:10px">Karakter Suara
+        <select id="vElevenVoice" style="max-width:230px">
+          <option value="EXAVITQu4vr4xnSDxMaL" selected>Sarah (Wanita Lembut & Alami)</option>
+          <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Wanita Jernih)</option>
+          <option value="AZnzlk1XvdvUeBnXmlld">Domi (Wanita Enerjik)</option>
+          <option value="ErXwobaYiN019PkySvjV">Antoni (Pria Jelas)</option>
+          <option value="VR6AewLTigWG4xSOukaG">Arnold (Pria Narator Tenang)</option>
+          <option value="custom">✏️ Masukkan Voice ID Sendiri…</option>
+        </select>
+      </label>
+
+      <div id="vCustomVoiceRow" style="display:none;margin-bottom:12px">
+        <label style="display:block;font-size:12px;color:#4b4960;margin-bottom:4px">Voice ID Kustom:</label>
+        <input type="text" id="vElevenCustom" placeholder="misal: EXAVITQu4vr4xnSDxMaL" style="width:100%;box-sizing:border-box;height:34px;border-radius:8px;border:1px solid var(--line);padding:0 10px;font-size:12px;font-family:inherit">
+      </div>
+
+      <label class="mrow" style="margin-bottom:12px">Model AI Suara
+        <select id="vElevenModel" style="max-width:230px">
+          <option value="eleven_multilingual_v2" selected>eleven_multilingual_v2 (Paling Alami)</option>
+          <option value="eleven_turbo_v2_5">eleven_turbo_v2_5 (Lebih Cepat)</option>
+        </select>
+      </label>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+        <button class="btn" id="vBtnTest" type="button" style="height:36px;padding:0 14px;font-size:12.5px;background:#f5efff;color:var(--accent);border-color:#ded0f6">▶ Tes Suara Contoh</button>
+        <span id="vTestStatus" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+    </div>
+
+    <div class="mfoot" style="margin-top:16px">
+      <button class="btn" id="vCancel">Batal</button>
+      <button class="btn primary" id="vSave">Simpan Pengaturan</button>
+    </div>
   </div>
 </div>
 
@@ -551,7 +628,8 @@
     $('btnFuri').classList.add('on');
     $('btnFuri').textContent = 'ふ Furigana: ON';
     furi = true;
-    if ($('rAudioStatus')) $('rAudioStatus').textContent = '🎧 Siap mendengarkan bacaan';
+    if (typeof updateAudioStatusHint === 'function') updateAudioStatusHint();
+    else if ($('rAudioStatus')) $('rAudioStatus').textContent = '🎧 Siap mendengarkan bacaan';
     if ($('btnAudioPlay')) $('btnAudioPlay').textContent = '▶ Putar Suara';
     drawText();
     drawDist();
@@ -758,7 +836,86 @@
     window.scrollTo(0, 0);
   });
 
-  /* ---------- audio player AI (Google TTS + SpeechSynthesis Fallback) ---------- */
+  /* ---------- konfigurasi mesin audio (Google Cloud TTS vs ElevenLabs) ---------- */
+  var VOICE_CFG_KEY = 'kaishi.voice.cfg.v1';
+  function loadVoiceCfg() {
+    try {
+      var s = JSON.parse(localStorage.getItem(VOICE_CFG_KEY) || '{}');
+      return {
+        engine: s.engine || 'google',
+        elevenKey: s.elevenKey || '',
+        elevenVoice: s.elevenVoice || 'EXAVITQu4vr4xnSDxMaL',
+        elevenCustomVoice: s.elevenCustomVoice || '',
+        elevenModel: s.elevenModel || 'eleven_multilingual_v2'
+      };
+    } catch (e) {
+      return {
+        engine: 'google',
+        elevenKey: '',
+        elevenVoice: 'EXAVITQu4vr4xnSDxMaL',
+        elevenCustomVoice: '',
+        elevenModel: 'eleven_multilingual_v2'
+      };
+    }
+  }
+
+  function saveVoiceCfg(cfg) {
+    try { localStorage.setItem(VOICE_CFG_KEY, JSON.stringify(cfg)); } catch (e) {}
+  }
+
+  function updateAudioStatusHint() {
+    var st = $('rAudioStatus');
+    if (!st || audioState.playing) return;
+    var vCfg = loadVoiceCfg();
+    if (vCfg.engine === 'elevenlabs') {
+      st.textContent = '🎙️ Siap mendengarkan (ElevenLabs AI)';
+    } else {
+      st.textContent = '🎧 Siap mendengarkan (Google TTS)';
+    }
+  }
+
+  /* Cache hasil fetch ElevenLabs (Object URL) selama sesi agar hemat kuota */
+  var ELEVEN_CACHE = {};
+
+  function fetchElevenLabsAudio(text, vCfg) {
+    var voiceId = (vCfg.elevenVoice === 'custom' ? (vCfg.elevenCustomVoice || '').trim() : vCfg.elevenVoice) || 'EXAVITQu4vr4xnSDxMaL';
+    var apiKey = (vCfg.elevenKey || '').trim();
+    if (!apiKey) return Promise.reject(new Error('Kunci API ElevenLabs belum diisi'));
+
+    var modelId = vCfg.elevenModel || 'eleven_multilingual_v2';
+    var url = 'https://api.elevenlabs.io/v1/text-to-speech/' + encodeURIComponent(voiceId);
+
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'audio/mpeg',
+        'Content-Type': 'application/json',
+        'xi-api-key': apiKey
+      },
+      body: JSON.stringify({
+        text: text,
+        model_id: modelId,
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75
+        }
+      })
+    }).then(function (res) {
+      if (!res.ok) {
+        return res.json().then(function (errData) {
+          var msg = (errData && errData.detail && errData.detail.message) ? errData.detail.message : ('HTTP ' + res.status);
+          throw new Error(msg);
+        }).catch(function (e) {
+          throw new Error(e.message || ('HTTP ' + res.status));
+        });
+      }
+      return res.blob();
+    }).then(function (blob) {
+      return URL.createObjectURL(blob);
+    });
+  }
+
+  /* ---------- audio player AI (Google TTS + ElevenLabs) ---------- */
   var audioState = {
     playing: false,
     mode: 'idle',
@@ -813,11 +970,10 @@
 
     var btnPlay = $('btnAudioPlay');
     if (btnPlay) btnPlay.textContent = '▶ Putar Suara';
-    var st = $('rAudioStatus');
-    if (st) st.textContent = '🎧 Siap mendengarkan bacaan';
+    updateAudioStatusHint();
   }
 
-  function playOneSpeechChunk(chunk, speed, onDone) {
+  function playOneGoogleChunk(chunk, speed, onDone) {
     if (!chunk) { if (onDone) onDone(); return; }
     var ended = false;
     function finish() {
@@ -862,6 +1018,69 @@
     }
   }
 
+  function playGoogleSentences(rawP, onDone) {
+    var sentences = splitSentences(rawP);
+    var sIdx = 0;
+    var targetP = audioState.curP;
+
+    function nextSentence() {
+      if (!audioState.playing || audioState.curP !== targetP) return;
+      if (sIdx >= sentences.length) {
+        if (onDone) onDone();
+        return;
+      }
+      playOneGoogleChunk(sentences[sIdx], audioState.speed, function () {
+        sIdx++;
+        if (audioState.playing && audioState.curP === targetP) {
+          setTimeout(nextSentence, 150);
+        }
+      });
+    }
+
+    nextSentence();
+  }
+
+  function playAudioBlob(blobUrl, speed, onDone) {
+    var ended = false;
+    function finish() {
+      if (ended) return;
+      ended = true;
+      if (onDone) onDone();
+    }
+
+    var audio = new Audio();
+    audioState.audioObj = audio;
+    try { audio.playbackRate = speed || 1.0; } catch (e) {}
+    audio.onended = finish;
+    audio.onerror = finish;
+    audio.src = blobUrl;
+    var p = audio.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(function () { finish(); });
+    }
+  }
+
+  function playElevenSpeech(rawP, speed, onDone, onFallback) {
+    var vCfg = loadVoiceCfg();
+    var voiceId = (vCfg.elevenVoice === 'custom' ? (vCfg.elevenCustomVoice || '').trim() : vCfg.elevenVoice) || 'EXAVITQu4vr4xnSDxMaL';
+    var cacheKey = 'el_' + voiceId + '_' + (vCfg.elevenModel || 'v2') + '_' + rawP;
+
+    if (ELEVEN_CACHE[cacheKey]) {
+      playAudioBlob(ELEVEN_CACHE[cacheKey], speed, onDone);
+      return;
+    }
+
+    var st = $('rAudioStatus');
+    if (st) st.textContent = '✨ Mengambil audio ElevenLabs…';
+
+    fetchElevenLabsAudio(rawP, vCfg).then(function (blobUrl) {
+      ELEVEN_CACHE[cacheKey] = blobUrl;
+      playAudioBlob(blobUrl, speed, onDone);
+    }).catch(function (err) {
+      if (onFallback) onFallback(err.message || 'Error ElevenLabs');
+    });
+  }
+
   function playParagraphIndex(pi, onDone) {
     if (!cur || !cur.paragraf || pi < 0 || pi >= cur.paragraf.length) {
       if (onDone) onDone();
@@ -879,28 +1098,25 @@
       }
     });
 
-    var st = $('rAudioStatus');
-    if (st) st.textContent = '🔊 Memutar paragraf ' + (pi + 1) + ' dari ' + cur.paragraf.length + '…';
-
     var rawP = cleanJapaneseText(cur.paragraf[pi]);
-    var sentences = splitSentences(rawP);
-    var sIdx = 0;
+    var vCfg = loadVoiceCfg();
 
-    function nextSentence() {
-      if (!audioState.playing || audioState.curP !== pi) return;
-      if (sIdx >= sentences.length) {
+    if (vCfg.engine === 'elevenlabs' && vCfg.elevenKey) {
+      var st = $('rAudioStatus');
+      if (st) st.textContent = '🎙️ ElevenLabs: memutar paragraf ' + (pi + 1) + ' dari ' + cur.paragraf.length + '…';
+
+      playElevenSpeech(rawP, audioState.speed, function () {
         if (onDone) onDone();
-        return;
-      }
-      playOneSpeechChunk(sentences[sIdx], audioState.speed, function () {
-        sIdx++;
-        if (audioState.playing && audioState.curP === pi) {
-          setTimeout(nextSentence, 150);
-        }
+      }, function (errMsg) {
+        var s = $('rAudioStatus');
+        if (s) s.textContent = '⚠️ ElevenLabs (' + errMsg + ') — Mengalihkan ke Google TTS';
+        playGoogleSentences(rawP, onDone);
       });
+    } else {
+      var stG = $('rAudioStatus');
+      if (stG) stG.textContent = '🔊 Google TTS: memutar paragraf ' + (pi + 1) + ' dari ' + cur.paragraf.length + '…';
+      playGoogleSentences(rawP, onDone);
     }
-
-    nextSentence();
   }
 
   function togglePlayAll() {
@@ -970,6 +1186,129 @@
       }
     });
   });
+
+  /* ---------- modal pengaturan suara (Google vs ElevenLabs) ---------- */
+  function openVoiceModal() {
+    var cfg = loadVoiceCfg();
+    if ($('vEngine')) $('vEngine').value = cfg.engine;
+    if ($('vElevenKey')) $('vElevenKey').value = cfg.elevenKey;
+    if ($('vElevenVoice')) $('vElevenVoice').value = cfg.elevenVoice;
+    if ($('vElevenCustom')) $('vElevenCustom').value = cfg.elevenCustomVoice;
+    if ($('vElevenModel')) $('vElevenModel').value = cfg.elevenModel;
+    if ($('vTestStatus')) $('vTestStatus').textContent = '';
+
+    syncVoiceModalFields();
+    if ($('modalVoice')) $('modalVoice').classList.add('show');
+  }
+
+  function closeVoiceModal() {
+    if ($('modalVoice')) $('modalVoice').classList.remove('show');
+    if ($('vTestStatus')) $('vTestStatus').textContent = '';
+  }
+
+  function syncVoiceModalFields() {
+    var eng = $('vEngine') ? $('vEngine').value : 'google';
+    if ($('vElevenSection')) $('vElevenSection').style.display = eng === 'elevenlabs' ? 'block' : 'none';
+    var vc = $('vElevenVoice') ? $('vElevenVoice').value : '';
+    if ($('vCustomVoiceRow')) $('vCustomVoiceRow').style.display = vc === 'custom' ? 'block' : 'none';
+  }
+
+  if ($('btnVoiceModal')) $('btnVoiceModal').addEventListener('click', openVoiceModal);
+  if ($('vClose')) $('vClose').addEventListener('click', closeVoiceModal);
+  if ($('vCancel')) $('vCancel').addEventListener('click', closeVoiceModal);
+  if ($('modalVoice')) {
+    $('modalVoice').addEventListener('click', function (e) {
+      if (e.target === $('modalVoice')) closeVoiceModal();
+    });
+  }
+
+  if ($('vEngine')) $('vEngine').addEventListener('change', syncVoiceModalFields);
+  if ($('vElevenVoice')) $('vElevenVoice').addEventListener('change', syncVoiceModalFields);
+
+  if ($('vToggleKey')) {
+    $('vToggleKey').addEventListener('click', function () {
+      var inp = $('vElevenKey');
+      if (!inp) return;
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+  }
+
+  if ($('vBtnTest')) {
+    $('vBtnTest').addEventListener('click', function () {
+      var st = $('vTestStatus');
+      var cfg = {
+        engine: 'elevenlabs',
+        elevenKey: ($('vElevenKey') ? $('vElevenKey').value.trim() : ''),
+        elevenVoice: ($('vElevenVoice') ? $('vElevenVoice').value : 'EXAVITQu4vr4xnSDxMaL'),
+        elevenCustomVoice: ($('vElevenCustom') ? $('vElevenCustom').value.trim() : ''),
+        elevenModel: ($('vElevenModel') ? $('vElevenModel').value : 'eleven_multilingual_v2')
+      };
+
+      if (!cfg.elevenKey) {
+        if (st) { st.style.color = 'var(--bad)'; st.textContent = 'Masukkan API Key dulu.'; }
+        return;
+      }
+
+      if (st) { st.style.color = 'var(--muted)'; st.textContent = 'Meminta suara ElevenLabs…'; }
+      fetchElevenLabsAudio('こんにちは、日本語の勉強を始めましょう。', cfg).then(function (blobUrl) {
+        if (st) { st.style.color = '#1c6d48'; st.textContent = '✓ Suara terhubung!'; }
+        new Audio(blobUrl).play().catch(function () {});
+      }).catch(function (err) {
+        if (st) { st.style.color = 'var(--bad)'; st.textContent = 'Gagal: ' + (err.message || 'Error'); }
+      });
+    });
+  }
+
+  if ($('vSave')) {
+    $('vSave').addEventListener('click', function () {
+      var cfg = {
+        engine: ($('vEngine') ? $('vEngine').value : 'google'),
+        elevenKey: ($('vElevenKey') ? $('vElevenKey').value.trim() : ''),
+        elevenVoice: ($('vElevenVoice') ? $('vElevenVoice').value : 'EXAVITQu4vr4xnSDxMaL'),
+        elevenCustomVoice: ($('vElevenCustom') ? $('vElevenCustom').value.trim() : ''),
+        elevenModel: ($('vElevenModel') ? $('vElevenModel').value : 'eleven_multilingual_v2')
+      };
+      saveVoiceCfg(cfg);
+      updateAudioStatusHint();
+
+      if ($('mAudioEngine')) $('mAudioEngine').value = cfg.engine;
+      if ($('mElevenKey')) $('mElevenKey').value = cfg.elevenKey;
+      if ($('mElevenQuickRow')) $('mElevenQuickRow').style.display = cfg.engine === 'elevenlabs' ? 'block' : 'none';
+
+      closeVoiceModal();
+    });
+  }
+
+  // Sinkronkan pengaturan suara ke modal buat teks saat awal
+  var initVCfg = loadVoiceCfg();
+  if ($('mAudioEngine')) {
+    $('mAudioEngine').value = initVCfg.engine;
+    $('mAudioEngine').addEventListener('change', function () {
+      var isEl = this.value === 'elevenlabs';
+      if ($('mElevenQuickRow')) $('mElevenQuickRow').style.display = isEl ? 'block' : 'none';
+      var currentCfg = loadVoiceCfg();
+      currentCfg.engine = this.value;
+      saveVoiceCfg(currentCfg);
+      updateAudioStatusHint();
+    });
+  }
+  if ($('mElevenKey')) {
+    $('mElevenKey').value = initVCfg.elevenKey;
+    $('mElevenKey').addEventListener('input', function () {
+      var currentCfg = loadVoiceCfg();
+      currentCfg.elevenKey = this.value.trim();
+      saveVoiceCfg(currentCfg);
+    });
+  }
+  if ($('mElevenQuickRow')) {
+    $('mElevenQuickRow').style.display = initVCfg.engine === 'elevenlabs' ? 'block' : 'none';
+  }
+  if ($('mOpenVoiceSettings')) {
+    $('mOpenVoiceSettings').addEventListener('click', function (e) {
+      e.preventDefault();
+      openVoiceModal();
+    });
+  }
 
   /* ---------- popup kata ---------- */
   var sheetTimer = null;
