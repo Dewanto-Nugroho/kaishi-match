@@ -2,6 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f5f4fb">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -66,6 +69,33 @@
   .terjemahan { margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); color:#4b4960; font-size:15px; line-height:1.8; }
   .terjemahan h3 { font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted); margin:0 0 8px; }
 
+  .kosakata-section { margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); }
+  .kosakata-section h3 { font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted); margin:0 0 12px; }
+  .kosakata-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:10px; }
+  .k-card { background:#fbfaff; border:1px solid var(--line); border-radius:12px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .k-card .k-main { flex:1; min-width:0; }
+  .k-card .k-word { font-size:16px; font-weight:700; color:var(--ink); display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; }
+  .k-card .k-rd { font-size:12.5px; color:var(--muted); font-weight:400; }
+  .k-card .k-mean { font-size:13px; color:#4b4960; margin-top:3px; line-height:1.4; word-break:break-word; }
+  .k-card .k-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .k-card .k-play { background:var(--accent-soft); border:0; color:var(--accent); border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:13px; display:grid; place-items:center; transition:background .15s, color .15s; }
+  .k-card .k-play:hover { background:var(--accent); color:#fff; }
+
+  /* audio player bacaan */
+  .audio-bar { background:#fbfaff; border:1px solid var(--line); border-radius:14px; padding:10px 14px; margin-bottom:18px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .audio-btn { border:0; border-radius:10px; padding:8px 14px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; gap:6px; transition:all .15s; }
+  .audio-btn.primary { background:var(--accent); color:#fff; }
+  .audio-btn.primary:hover { background:var(--accent-2); }
+  .audio-btn.secondary { background:#f1f0f6; color:var(--ink); padding:8px 11px; }
+  .audio-btn.secondary:hover { background:#e5e3ee; }
+  .audio-status { font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums; flex:1; min-width:110px; }
+  .audio-speeds { display:inline-flex; background:#ede9f6; border-radius:8px; padding:2px; gap:2px; }
+  .audio-spd-btn { border:0; background:transparent; color:var(--muted); font-size:11.5px; font-weight:700; padding:4px 8px; border-radius:6px; cursor:pointer; font-family:inherit; }
+  .audio-spd-btn.active { background:#fff; color:var(--accent); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .text p.active-p { background:#f4efff; border-left:3px solid var(--accent); padding-left:10px; border-radius:0 8px 8px 0; transition:background .2s, border-left .2s; }
+  .p-play { background:none; border:0; color:var(--muted); cursor:pointer; font-size:13px; margin-left:6px; padding:2px 5px; border-radius:5px; vertical-align:middle; opacity:.6; transition:opacity .15s, color .15s; }
+  .p-play:hover { opacity:1; color:var(--accent); }
+
   .dist { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:20px 0 6px; }
   .dist div { text-align:center; font-size:12px; color:var(--muted); }
   .dist b { display:block; font-size:15px; color:var(--ink); }
@@ -95,6 +125,7 @@
   /* popup kata */
   .sheet { position:fixed; left:50%; bottom:18px; transform:translateX(-50%) translateY(12px); background:#1c1a2b; color:#fff; border-radius:16px; padding:14px 18px; min-width:260px; max-width:92vw; box-shadow:0 18px 40px rgba(20,18,40,.35); opacity:0; pointer-events:none; transition:.18s; z-index:80; }
   .sheet.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+  .sheet.list-mode { width:560px; max-width:92vw; box-sizing:border-box; }
   .sheet .hw { font-size:22px; font-weight:700; }
   .sheet .rd { font-size:12px; opacity:.7; margin-bottom:4px; }
   .sheet .mn { font-size:14px; opacity:.95; }
@@ -110,6 +141,7 @@
     .text { font-size:19px; line-height:2; }
     .dist { gap:4px; }
     .dist b { font-size:13px; }
+    .sheet.list-mode { width:94vw; padding:14px; }
   }
 
   /* tombol & modal buat teks */
@@ -178,11 +210,23 @@
       <div class="toolbar">
         <button class="tbtn on" id="btnFuri">ふ Furigana: ON</button>
         <button class="tbtn" id="btnArti">Terjemahan</button>
-        <button class="tbtn" id="btnKosakata">Daftar kosakata</button>
+        <button class="tbtn" id="btnKosakata" onclick="window.toggleKosakata &amp;&amp; window.toggleKosakata()">📖 Daftar kosakata</button>
+      </div>
+
+      <div class="audio-bar" id="rAudioBar">
+        <button class="audio-btn primary" id="btnAudioPlay">▶ Putar Suara</button>
+        <button class="audio-btn secondary" id="btnAudioStop" title="Berhenti">⏹</button>
+        <span class="audio-status" id="rAudioStatus">🎧 Siap mendengarkan bacaan</span>
+        <div class="audio-speeds">
+          <button class="audio-spd-btn" data-spd="0.8">0.8x</button>
+          <button class="audio-spd-btn active" data-spd="1.0">1.0x</button>
+          <button class="audio-spd-btn" data-spd="1.2">1.2x</button>
+        </div>
       </div>
 
       <div class="text" id="rText"></div>
       <div class="terjemahan hidden" id="rArti"></div>
+      <div class="kosakata-section hidden" id="rKosakata"></div>
 
       <div class="dist" id="rDist"></div>
 
@@ -238,6 +282,11 @@
 
     <label class="mrow" id="mParRow">Paragraf (AI)
       <select id="mParagraf"><option>2</option><option selected>3</option><option>4</option></select>
+    </label>
+
+    <label class="mrow" id="mAudioRow" style="cursor:pointer">
+      <span>🎧 Sertakan Audio AI (Suara Bacaan)</span>
+      <input type="checkbox" id="mGenAudio" checked style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer">
     </label>
 
     <details id="mAiAdv" style="margin:6px 0 12px;font-size:12.5px;color:var(--muted)">
@@ -465,6 +514,7 @@
   var cur = null, furi = true, answered = {};
 
   function open(i) {
+    stopAudio();
     cur = TEXTS[i];
     answered = {};
     // kamus per teks (furigana dari AI) menimpa kamus deck
@@ -495,17 +545,26 @@
     $('rArti').innerHTML = '<h3>Terjemahan</h3>' + esc(cur.arti || '');
     $('rArti').classList.add('hidden');
     $('btnArti').classList.remove('on');
+    $('rKosakata').classList.add('hidden');
+    $('btnKosakata').classList.remove('on');
+    $('sheet').classList.remove('show');
     $('btnFuri').classList.add('on');
     $('btnFuri').textContent = 'ふ Furigana: ON';
     furi = true;
+    if ($('rAudioStatus')) $('rAudioStatus').textContent = '🎧 Siap mendengarkan bacaan';
+    if ($('btnAudioPlay')) $('btnAudioPlay').textContent = '▶ Putar Suara';
     drawText();
     drawDist();
+    drawKosakata();
     drawQuiz();
   }
 
   function drawText() {
-    $('rText').innerHTML = cur.paragraf.map(function (p) {
-      return '<p class="jp">' + renderText(p, furi) + '</p>';
+    $('rText').innerHTML = cur.paragraf.map(function (p, pi) {
+      return '<p class="jp" data-pi="' + pi + '">' +
+        renderText(p, furi) +
+        ' <button class="p-play" data-p-play="' + pi + '" title="Dengarkan paragraf ini">🔊</button>' +
+        '</p>';
     }).join('');
     $('rText').classList.toggle('plain', !furi);
   }
@@ -587,32 +646,101 @@
     el.classList.toggle('hidden');
     this.classList.toggle('on', !el.classList.contains('hidden'));
   });
-  $('btnKosakata').addEventListener('click', function () {
-    var list = [];
-    cur.paragraf.forEach(function (p) {
-      var i = 0;
-      while (i < p.length) {
-        var hit = null;
-        for (var L = Math.min(MAXW, p.length - i); L >= 1; L--) {
-          var sub = p.substr(i, L);
-          if (VOC[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+  function drawKosakata() {
+    var el = $('rKosakata');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'rKosakata';
+      el.className = 'kosakata-section hidden';
+      var arti = $('rArti');
+      if (arti && arti.parentNode) arti.parentNode.insertBefore(el, arti.nextSibling);
+    }
+    if (!cur || !cur.paragraf) return;
+    try {
+      var list = [];
+      cur.paragraf.forEach(function (p) {
+        var i = 0;
+        while (i < p.length) {
+          var hit = null;
+          for (var L = Math.min(MAXW, p.length - i); L >= 1; L--) {
+            var sub = p.substr(i, L);
+            if (VOC && VOC[sub] && (L > 1 || HAS_KANJI.test(sub))) { hit = sub; break; }
+          }
+          if (hit) {
+            var rec = VOC[hit];
+            if (rec && !list.some(function (x) { return x.w === rec.w; })) list.push(rec);
+            i += hit.length;
+          } else i++;
         }
-        if (hit) {
-          var rec = VOC[hit];
-          if (!list.some(function (x) { return x.w === rec.w; })) list.push(rec);
-          i += hit.length;
-        } else i++;
+      });
+
+      var count = list.length;
+      var html = '<h3>Daftar Kosakata (' + count + ' kata)</h3>';
+      if (!count) {
+        html += '<p style="color:var(--muted);font-size:14px">Tidak ada kosakata yang terdeteksi di teks ini.</p>';
+      } else {
+        html += '<div class="kosakata-grid">';
+        list.forEach(function (r) {
+          var lvName = (r.lv && LV_NAME[r.lv]) ? LV_NAME[r.lv] : ('N' + (r.lv || 3));
+          html += '<div class="k-card">' +
+            '<div class="k-main">' +
+              '<div class="k-word jp">' + esc(r.w) +
+                (r.r && r.r !== r.w ? '<span class="k-rd jp">（' + esc(r.r) + '）</span>' : '') +
+              '</div>' +
+              '<div class="k-mean">' + esc(r.m || '—') + '</div>' +
+            '</div>' +
+            '<div class="k-right">' +
+              '<span class="lv lv' + (r.lv || 3) + '">' + lvName + '</span>' +
+              (r.a != null ? '<button class="k-play" data-play="' + r.a + '" title="Dengarkan pelafalan">🔊</button>' : '') +
+            '</div>' +
+          '</div>';
+        });
+        html += '</div>';
       }
-    });
-    var html = '<div style="max-height:60vh;overflow:auto">' + list.map(function (r) {
-      return '<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #f4f2fa">' +
-        '<span class="jp" style="min-width:90px;font-weight:600">' + esc(r.w) + '</span>' +
-        '<span style="min-width:80px;color:#7c7a92">' + esc(r.r) + '</span>' +
-        '<span style="flex:1">' + esc(r.m) + '</span>' +
-        '<span class="lv lv' + r.lv + '">' + LV_NAME[r.lv] + '</span></div>';
-    }).join('') + '</div>';
-    showSheet('Kosakata dalam teks (' + list.length + ')', html, null);
+      el.innerHTML = html;
+    } catch (e) {
+      console.error('drawKosakata error:', e);
+      el.innerHTML = '<h3>Daftar Kosakata</h3><p style="color:var(--bad)">Gagal memuat: ' + esc(e.message) + '</p>';
+    }
+  }
+
+  function toggleKosakata() {
+    var el = $('rKosakata');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'rKosakata';
+      el.className = 'kosakata-section hidden';
+      var arti = $('rArti');
+      if (arti && arti.parentNode) arti.parentNode.insertBefore(el, arti.nextSibling);
+    }
+    if (!el.innerHTML.trim() || el.innerHTML.indexOf('Daftar Kosakata') === -1) {
+      drawKosakata();
+    }
+    el.classList.toggle('hidden');
+    var isVisible = !el.classList.contains('hidden');
+    var b = $('btnKosakata');
+    if (b) b.classList.toggle('on', isVisible);
+    if (isVisible) {
+      setTimeout(function () {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
+  }
+  window.toggleKosakata = toggleKosakata;
+
+  if ($('btnKosakata')) {
+    $('btnKosakata').addEventListener('click', toggleKosakata);
+  }
+
+  $('rKosakata').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-play]');
+    if (!btn) return;
+    var a = btn.getAttribute('data-play');
+    if (a != null) {
+      try { new Audio('media/m' + a + '.mp3').play().catch(function () {}); } catch (err) {}
+    }
   });
+
   $('btnReset').addEventListener('click', function () {
     answered = {};
     (cur.soal || []).forEach(function (s) { delete s._ok; });
@@ -621,28 +749,244 @@
   });
   $('backLink').addEventListener('click', function (e) {
     e.preventDefault();
+    stopAudio();
+    $('sheet').classList.remove('show');
+    $('rKosakata').classList.add('hidden');
+    $('btnKosakata').classList.remove('on');
     $('screenRead').classList.add('hidden');
     $('screenList').classList.remove('hidden');
     window.scrollTo(0, 0);
   });
 
+  /* ---------- audio player AI (Google TTS + SpeechSynthesis Fallback) ---------- */
+  var audioState = {
+    playing: false,
+    mode: 'idle',
+    curP: -1,
+    speed: 1.0,
+    audioObj: null,
+    synthUtter: null
+  };
+
+  function cleanJapaneseText(str) {
+    if (!str) return '';
+    return str.replace(/\{\s*([^{}|]+?)\s*\|\s*[^{}|]+?\s*\}/g, '$1')
+              .replace(/[{}]/g, '')
+              .replace(/[\r\n\t]/g, ' ')
+              .trim();
+  }
+
+  function splitSentences(text) {
+    var parts = [];
+    var curS = '';
+    for (var i = 0; i < text.length; i++) {
+      var c = text.charAt(i);
+      curS += c;
+      if (c === '。' || c === '！' || c === '？' || c === '!' || c === '?' || c === '\n') {
+        if (curS.trim()) parts.push(curS.trim());
+        curS = '';
+      }
+    }
+    if (curS.trim()) parts.push(curS.trim());
+    return parts.length ? parts : [text];
+  }
+
+  function stopAudio() {
+    audioState.playing = false;
+    audioState.mode = 'idle';
+    audioState.curP = -1;
+    if (audioState.audioObj) {
+      try {
+        audioState.audioObj.pause();
+        audioState.audioObj.currentTime = 0;
+        audioState.audioObj.src = '';
+      } catch (e) {}
+      audioState.audioObj = null;
+    }
+    if (window.speechSynthesis) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+    audioState.synthUtter = null;
+
+    var paras = document.querySelectorAll('#rText p');
+    Array.prototype.forEach.call(paras, function (p) { p.classList.remove('active-p'); });
+
+    var btnPlay = $('btnAudioPlay');
+    if (btnPlay) btnPlay.textContent = '▶ Putar Suara';
+    var st = $('rAudioStatus');
+    if (st) st.textContent = '🎧 Siap mendengarkan bacaan';
+  }
+
+  function playOneSpeechChunk(chunk, speed, onDone) {
+    if (!chunk) { if (onDone) onDone(); return; }
+    var ended = false;
+    function finish() {
+      if (ended) return;
+      ended = true;
+      if (onDone) onDone();
+    }
+
+    var enc = encodeURIComponent(chunk);
+    var url = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=' + enc;
+    var audio = new Audio();
+    audioState.audioObj = audio;
+    try { audio.playbackRate = speed || 1.0; } catch (e) {}
+
+    var fallbackTried = false;
+    function trySpeechSynth() {
+      if (fallbackTried) return;
+      fallbackTried = true;
+      audioState.audioObj = null;
+      if (window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+          var u = new SpeechSynthesisUtterance(chunk);
+          u.lang = 'ja-JP';
+          u.rate = speed || 1.0;
+          u.onend = finish;
+          u.onerror = function () { finish(); };
+          audioState.synthUtter = u;
+          window.speechSynthesis.speak(u);
+          return;
+        } catch (err) {}
+      }
+      finish();
+    }
+
+    audio.onended = finish;
+    audio.onerror = trySpeechSynth;
+    audio.src = url;
+    var p = audio.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(function () { trySpeechSynth(); });
+    }
+  }
+
+  function playParagraphIndex(pi, onDone) {
+    if (!cur || !cur.paragraf || pi < 0 || pi >= cur.paragraf.length) {
+      if (onDone) onDone();
+      return;
+    }
+    audioState.curP = pi;
+
+    var paras = document.querySelectorAll('#rText p');
+    Array.prototype.forEach.call(paras, function (p, idx) {
+      if (idx === pi) {
+        p.classList.add('active-p');
+        p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        p.classList.remove('active-p');
+      }
+    });
+
+    var st = $('rAudioStatus');
+    if (st) st.textContent = '🔊 Memutar paragraf ' + (pi + 1) + ' dari ' + cur.paragraf.length + '…';
+
+    var rawP = cleanJapaneseText(cur.paragraf[pi]);
+    var sentences = splitSentences(rawP);
+    var sIdx = 0;
+
+    function nextSentence() {
+      if (!audioState.playing || audioState.curP !== pi) return;
+      if (sIdx >= sentences.length) {
+        if (onDone) onDone();
+        return;
+      }
+      playOneSpeechChunk(sentences[sIdx], audioState.speed, function () {
+        sIdx++;
+        if (audioState.playing && audioState.curP === pi) {
+          setTimeout(nextSentence, 150);
+        }
+      });
+    }
+
+    nextSentence();
+  }
+
+  function togglePlayAll() {
+    if (audioState.playing) {
+      stopAudio();
+      return;
+    }
+    if (!cur || !cur.paragraf || !cur.paragraf.length) return;
+
+    audioState.playing = true;
+    audioState.mode = 'all';
+    var btnPlay = $('btnAudioPlay');
+    if (btnPlay) btnPlay.textContent = '⏸ Berhenti';
+
+    function runP(pi) {
+      if (!audioState.playing || audioState.mode !== 'all') return;
+      if (pi >= cur.paragraf.length) {
+        stopAudio();
+        var st = $('rAudioStatus');
+        if (st) st.textContent = '✓ Selesai mendengarkan seluruh bacaan';
+        return;
+      }
+      playParagraphIndex(pi, function () {
+        if (audioState.playing && audioState.mode === 'all') {
+          setTimeout(function () {
+            if (audioState.playing && audioState.mode === 'all') runP(pi + 1);
+          }, 350);
+        }
+      });
+    }
+
+    runP(0);
+  }
+
+  function playSingleParagraph(pi) {
+    if (audioState.playing && audioState.curP === pi && audioState.mode === 'single') {
+      stopAudio();
+      return;
+    }
+    stopAudio();
+    if (!cur || !cur.paragraf || pi < 0 || pi >= cur.paragraf.length) return;
+
+    audioState.playing = true;
+    audioState.mode = 'single';
+    var btnPlay = $('btnAudioPlay');
+    if (btnPlay) btnPlay.textContent = '⏸ Berhenti';
+
+    playParagraphIndex(pi, function () {
+      stopAudio();
+      var st = $('rAudioStatus');
+      if (st) st.textContent = '✓ Paragraf ' + (pi + 1) + ' selesai';
+    });
+  }
+
+  if ($('btnAudioPlay')) $('btnAudioPlay').addEventListener('click', togglePlayAll);
+  if ($('btnAudioStop')) $('btnAudioStop').addEventListener('click', stopAudio);
+
+  var spdBtns = document.querySelectorAll('.audio-spd-btn');
+  Array.prototype.forEach.call(spdBtns, function (b) {
+    b.addEventListener('click', function () {
+      var s = parseFloat(this.getAttribute('data-spd')) || 1.0;
+      audioState.speed = s;
+      Array.prototype.forEach.call(spdBtns, function (x) { x.classList.remove('active'); });
+      this.classList.add('active');
+      if (audioState.audioObj) {
+        try { audioState.audioObj.playbackRate = s; } catch (e) {}
+      }
+    });
+  });
+
   /* ---------- popup kata ---------- */
   var sheetTimer = null;
-  function showSheet(title, bodyHtml, word) {
+  function showSheet(word) {
     var el = $('sheet');
-    el.innerHTML = (word
-      ? '<div class="hw jp">' + esc(word.w) + '<span class="lv lv' + word.lv + ' lvtag">' + LV_NAME[word.lv] + '</span></div>' +
-        '<div class="rd jp">' + esc(word.r) + '</div><div class="mn">' + esc(word.m) + '</div>'
-      : '<div class="mn" style="font-weight:600;margin-bottom:6px">' + esc(title) + '</div>' + bodyHtml) +
+    el.innerHTML = '<div class="hw jp">' + esc(word.w) + '<span class="lv lv' + word.lv + ' lvtag">' + (LV_NAME[word.lv] || '') + '</span></div>' +
+      '<div class="rd jp">' + esc(word.r) + '</div><div class="mn">' + esc(word.m) + '</div>' +
       '<div class="btns">' +
-      (word && word.a != null ? '<button data-act="play">🔊 Suara</button>' : '') +
+      (word.a != null ? '<button data-act="play">🔊 Suara</button>' : '') +
       '<button data-act="close">Tutup</button></div>';
     el.classList.add('show');
     clearTimeout(sheetTimer);
-    el.querySelectorAll('button').forEach(function (b) {
-      b.addEventListener('click', function () {
-        if (b.getAttribute('data-act') === 'play' && word && word.a != null) {
-          try { new Audio('media/m' + word.a + '.mp3').play().catch(function () {}); } catch (e) {}
+    el.querySelectorAll('button[data-act]').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (b.getAttribute('data-act') === 'play' && word.a != null) {
+          try { new Audio('media/m' + word.a + '.mp3').play().catch(function () {}); } catch (err) {}
         } else {
           el.classList.remove('show');
         }
@@ -651,17 +995,26 @@
   }
 
   $('rText').addEventListener('click', function (e) {
+    var pPlay = e.target.closest('[data-p-play]');
+    if (pPlay) {
+      e.stopPropagation();
+      var pi = parseInt(pPlay.getAttribute('data-p-play'), 10);
+      playSingleParagraph(pi);
+      return;
+    }
     var w = e.target.closest('[data-k]');
     if (!w) return;
     var key = w.getAttribute('data-k');
     var rec = VOC[key];
-    if (rec) showSheet(null, null, { w: key, r: (key === rec.w ? rec.r : key), m: rec.m, lv: rec.lv, a: rec.a });
+    if (rec) showSheet({ w: key, r: (key === rec.w ? rec.r : key), m: rec.m, lv: rec.lv, a: rec.a });
   });
 
   document.addEventListener('click', function (e) {
     var el = $('sheet');
     if (!el.classList.contains('show')) return;
-    if (!e.target.closest('#sheet') && !e.target.closest('[data-k]')) el.classList.remove('show');
+    if (!e.target.closest('#sheet') && !e.target.closest('[data-k]')) {
+      el.classList.remove('show');
+    }
   });
 
   /* ---------- buat teks baru ---------- */
@@ -966,6 +1319,7 @@
         saveMine();
         renderList();
         closeModal();
+        if (baru.length === 1) open(0);
       }, 30);
       return;
     }
@@ -996,7 +1350,12 @@
         saveMine();
         renderList();
         closeModal();
-        if (generated.length === 1) open(0);
+        if (generated.length === 1) {
+          open(0);
+          if ($('mGenAudio') && $('mGenAudio').checked && $('rAudioStatus')) {
+            $('rAudioStatus').textContent = '✨ Audio AI siap! Klik ▶ Putar Suara atau 🔊 tiap paragraf.';
+          }
+        }
         return;
       }
       st.className = 'mstatus';
