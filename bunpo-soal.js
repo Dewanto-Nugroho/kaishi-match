@@ -1115,5 +1115,272 @@ window.KAISHI_BUNPO_SOAL = {
         exp: "Karena daftarnya lengkap/tuntas (hanya 2 benda itu saja), gunakan partikel <b>と</b>."
       }
     ]
+  },
+
+  "pola_mashouka": {
+    title: "Pola 〜ましょうか (Menawarkan Bantuan & Mengajak)",
+    category: "Ekspresi & Pola Tambahan",
+    questions: [
+      {
+        q: "<span class=\"jp\"><ruby>荷物<rt>にもつ</rt></ruby>が<ruby>重<rt>おも</rt></ruby>そうですね。<ruby>私<rt>わたし</rt></ruby>が（　）。</span><br><small>(Barang bawaannya kelihatan berat ya. Bagaimana kalau saya bawakan?)</small>",
+        speech: "荷物が重そうですね。私が持ちましょうか。",
+        opts: ["持ちませんか", "持ちましょうか", "持っていません", "持ちすぎます"],
+        a: 1,
+        exp: "Untuk menawarkan bantuan kepada lawan bicara (\"Bagaimana kalau saya ...?\"), gunakan <b>Kata Kerja Bentuk ます (tanpa ます) + ましょうか</b>. Jadi 持ちます menjadi <b>持ちましょうか</b>."
+      },
+      {
+        q: "Manakah kalimat menawarkan bantuan yang konjugasi bentuk <span class=\"jp\">「〜ましょうか」</span>-nya <b>PALING TEPAT</b>?",
+        speech: "部屋が暑いですね。窓を開けましょうか。",
+        opts: [
+          "手伝うましょうか",
+          "窓を開けましょうか",
+          "コピーしますましょうか",
+          "来てましょうか"
+        ],
+        a: 1,
+        exp: "<b>〜ましょうか</b> selalu menempel pada <b>akar ます (masu-stem)</b>: 開けます ➔ <b>開けましょうか</b>. Yang salah: 手伝う harusnya 手伝いましょうか, コピーします harusnya コピーしましょうか, 来ます harusnya 来ましょうか."
+      },
+      {
+        q: "Teman menawarkan bantuan: <span class=\"jp\">「すみません、<ruby>駅<rt>えき</rt></ruby>まで<ruby>迎<rt>むか</rt></ruby>えに<ruby>行<rt>い</rt></ruby>きましょうか。」</span><br>Jika Anda ingin <b>menerima</b> tawarannya dengan sopan, jawaban mana yang tepat?",
+        speech: "はい、お願いします。",
+        opts: [
+          "いいえ、結構です。",
+          "はい、お願いします。",
+          "いいえ、行きましょうか。",
+          "大丈夫じゃないです。"
+        ],
+        a: 1,
+        exp: "Saat menerima tawaran bantuan <b>〜ましょうか</b>, jawab dengan <b>はい、お願いします</b> atau <b>すみません、お願いします</b>. Sedangkan <i>いいえ、結構です</i> dipakai untuk menolak secara halus."
+      },
+      {
+        q: "<span class=\"jp\">もう１２<ruby>時<rt>じ</rt></ruby>ですね。そろそろ<ruby>昼<rt>ひる</rt></ruby>ご<ruby>飯<rt>はん</rt></ruby>を<ruby>食<rt>た</rt></ruby>べ（　）。</span><br>— <span class=\"jp\">ええ、そうしましょう。</span>",
+        speech: "もう１２時ですね。そろそろ昼ご飯を食べましょうか。ええ、そうしましょう。",
+        opts: ["ましょうか", "すぎます", "しか", "てはいけません"],
+        a: 0,
+        exp: "Selain menawarkan bantuan, <b>〜ましょうか</b> juga dipakai untuk mengusulkan/mengajak melakukan sesuatu bersama secara lembut (\"Bagaimana kalau kita makan siang sekarang?\"). Lawan bicara merespons dengan <b>ええ、そうしましょう</b>."
+      },
+      {
+        q: "Apa perbedaan utama <span class=\"jp\">「<ruby>手伝<rt>てつだ</rt></ruby>いましょうか」</span> dibandingkan <span class=\"jp\">「<ruby>手伝<rt>てつだ</rt></ruby>いませんか」</span>?",
+        speech: "手伝いましょうか。手伝いませんか。",
+        opts: [
+          "手伝いましょうか = menanyakan kebiasaan; 手伝いませんか = melarang",
+          "手伝いましょうか = pembicara menawarkan dirinya untuk membantu; 手伝いませんか = mengajak lawan bicara untuk melakukan bersama",
+          "手伝いましょうか hanya untuk masa lalu",
+          "Tidak ada perbedaan sama sekali"
+        ],
+        a: 1,
+        exp: "<b>〜ましょうか</b> berfokus pada pembicara menawarkan jasa/aksi (<i>Bagaimana kalau saya bantu?</i>), sedangkan <b>〜ませんか</b> mengajak lawan bicara melakukan sesuatu bersama atau meminta partisipasinya (<i>Maukah Anda ikut...?</i>)."
+      }
+    ]
+  },
+
+  "pola_sugimasu": {
+    title: "Pola 〜すぎます (Terlalu / Berlebihan)",
+    category: "Ekspresi & Pola Tambahan",
+    questions: [
+      {
+        q: "<span class=\"jp\"><ruby>昨晩<rt>さくばん</rt></ruby>、お<ruby>酒<rt>さけ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>み（　）ました。<ruby>今朝<rt>けさ</rt></ruby>、<ruby>頭<rt>あたま</rt></ruby>が<ruby>痛<rt>いた</rt></ruby>いです。</span><br><small>(Tadi malam minum alkohol terlalu banyak. Pagi ini kepala saya sakit.)</small>",
+        speech: "昨晩、お酒を飲みすぎました。今朝、頭が痛いです。",
+        opts: ["すぎ", "ましょうか", "だけ", "しか"],
+        a: 0,
+        exp: "Pola <b>Kata Kerja akar ます + すぎます</b> menyatakan tindakan yang berlebihan. 飲みます (akar 飲み) + すぎました menjadi <b>飲みすぎました</b> (terlalu banyak minum)."
+      },
+      {
+        q: "<span class=\"jp\">このパソコンは<ruby>値段<rt>ねだん</rt></ruby>が（　）て、<ruby>買<rt>か</rt></ruby>えません。</span><br><small>(Komputer ini harganya terlalu mahal, jadi tidak bisa beli.) — Kata dasar: 高い</small>",
+        speech: "このパソコンは値段が高すぎて、買えません。",
+        opts: ["高いすぎ", "高くすぎ", "高すぎ", "高いすぎる"],
+        a: 2,
+        exp: "Untuk <b>Kata Sifat -i</b>, hapus akhiran <b>い</b> terlebih dahulu sebelum menempelkan すぎます: 高い ➔ 高 + すぎて = <b>高すぎて</b> (karena terlalu mahal)."
+      },
+      {
+        q: "Bagaimana perubahan yang benar untuk kata sifat pengecualian <span class=\"jp\">「いい」</span> (bagus) jika digabung dengan <span class=\"jp\">「〜すぎます」</span>?",
+        speech: "このデザインはよすぎます。",
+        opts: ["いすぎます", "いいすぎます", "よすぎます", "いくすぎます"],
+        a: 2,
+        exp: "Kata sifat <b>いい</b> selalu berubah menggunakan akar aslinya <b>よい</b> saat berkonjugasi, sehingga menjadi <b>よすぎます</b> (terlalu bagus)."
+      },
+      {
+        q: "<span class=\"jp\">この<ruby>部屋<rt>へや</rt></ruby>は（　）ます。<ruby>少<rt>すこ</rt></ruby>し<ruby>寂<rt>さび</rt></ruby>しいです。</span><br><small>(Kamar ini terlalu sunyi. Agak sepi rasanya.) — Kata dasar: 静か (KS -na)</small>",
+        speech: "この部屋は静かすぎます。少し寂しいです。",
+        opts: ["静かなすぎ", "静かにすぎ", "静かで過ぎ", "静かすぎ"],
+        a: 3,
+        exp: "Untuk <b>Kata Sifat -na</b>, cukup buang <b>な/だ</b> lalu langsung tambahkan すぎます: 静か + すぎます = <b>静かすぎます</b>."
+      },
+      {
+        q: "<span class=\"jp\">ケーキを（　）、おなかが<ruby>痛<rt>いた</rt></ruby>くなりました。</span><br><small>(Karena makan kue terlalu banyak, perut saya jadi sakit.)</small>",
+        speech: "ケーキを食べすぎて、おなかが痛くなりました。",
+        opts: ["食べすぎ", "食べすぎて", "食べるすぎて", "食べたすぎ"],
+        a: 1,
+        exp: "Karena menjadi penyebab/alasan kejadian berikutnya (perut sakit), すぎます diubah ke bentuk 〜て menjadi <b>食べすぎて</b>."
+      },
+      {
+        q: "Pilih kelompok perubahan <span class=\"jp\">「〜すぎます」</span> yang <b>SEMUANYA BENAR</b>!",
+        speech: "高すぎます。静かすぎます。食べすぎます。",
+        opts: [
+          "高い ➔ 高いすぎます / 静か ➔ 静かなすぎます",
+          "高い ➔ 高すぎます / 静か ➔ 静かすぎます / 食べる ➔ 食べすぎます",
+          "高い ➔ 高くすぎます / 食べる ➔ 食べるすぎます",
+          "いい ➔ いすぎます / 飲む ➔ 飲むすぎます"
+        ],
+        a: 1,
+        exp: "Aturannya: Kata Kerja buang ます (<b>食べすぎます</b>), Kata Sifat -i buang い (<b>高すぎます</b>, kecuali いい➔<b>よすぎます</b>), dan Kata Sifat -na buang な (<b>静かすぎます</b>)."
+      }
+    ]
+  },
+
+  "part_dake": {
+    title: "Partikel だけ (dake — Hanya / Saja [Netral])",
+    category: "Partikel (助詞)",
+    questions: [
+      {
+        q: "<span class=\"jp\"><ruby>毎日<rt>まいにち</rt></ruby>、<ruby>野菜<rt>やさい</rt></ruby>（　）<ruby>食<rt>た</rt></ruby>べています。<ruby>肉<rt>にく</rt></ruby>は<ruby>食<rt>た</rt></ruby>べません。</span><br><small>(Setiap hari makan sayur saja. Tidak makan daging.)</small>",
+        speech: "毎日、野菜だけ食べています。肉は食べません。",
+        opts: ["しか", "だけ", "より", "ほど"],
+        a: 1,
+        exp: "Karena predikatnya kalimat <b>positif</b> (食べています), gunakan <b>だけ</b> (bukan しか yang mewajibkan bentuk negatif)."
+      },
+      {
+        q: "<span class=\"jp\">ここに<ruby>名前<rt>なまえ</rt></ruby>（　）<ruby>書<rt>か</rt></ruby>いてください。</span><br><small>(Tolong tulis nama Anda saja di sini.)</small>",
+        speech: "ここに名前だけ書いてください。",
+        opts: ["だけ", "しか", "すぎて", "ましょうか"],
+        a: 0,
+        exp: "Untuk menyatakan batas dalam kalimat permohonan atau perintah (<b>〜てください</b>), harus menggunakan <b>だけ</b> (しか tidak dapat dipasangkan dengan 〜てください)."
+      },
+      {
+        q: "<span class=\"jp\">きょうは<ruby>店<rt>みせ</rt></ruby>で<ruby>見<rt>み</rt></ruby>る（　）で、<ruby>何<rt>なに</rt></ruby>も<ruby>買<rt>か</rt></ruby>いませんでした。</span><br><small>(Hari ini di toko cuma melihat-lihat saja, tidak membeli apa-apa.)</small>",
+        speech: "きょうは店で見るだけで、何も買いませんでした。",
+        opts: ["しか", "だけ", "ばかりで", "すぎ"],
+        a: 1,
+        exp: "Partikel <b>だけ</b> juga bisa langsung menempel setelah Kata Kerja bentuk kamus (<b>見るだけ</b> = hanya melihat saja), lalu disambung で (karena merupakan rangkaian kalimat)."
+      },
+      {
+        q: "<span class=\"jp\">あと５<ruby>分<rt>ふん</rt></ruby>（　）<ruby>待<rt>ま</rt></ruby>ってください。すぐ<ruby>終<rt>お</rt></ruby>わります。</span><br><small>(Tolong tunggu 5 menit lagi saja. Sebentar lagi selesai.)</small>",
+        speech: "あと５分だけ待ってください。すぐ終わります。",
+        opts: ["しか", "に", "だけ", "へ"],
+        a: 2,
+        exp: "<b>5分だけ待ってください</b> menggunakan だけ karena diikuti bentuk permohonan positif (待ってください) dan bernuansa cukup/ringan (\"5 menit saja\")."
+      },
+      {
+        q: "Manakah kalimat menggunakan <span class=\"jp\">「だけ」</span> yang <b>SALAH / TIDAK ALAMI</b>?",
+        speech: "日曜日だけ休みます。水だけ飲みます。",
+        opts: [
+          "日曜日だけ休みます。",
+          "水だけ飲みます。",
+          "１つだけ質問してもいいですか。",
+          "このレストランは現金がだけ使えます。"
+        ],
+        a: 3,
+        exp: "Partikel <b>は, が, を</b> biasanya <b>digantikan/dihilangkan</b> saat bertemu だけ (atau だけを boleh, tapi TIDAK \"がだけ\"). Jadi bentuk yang benar adalah 「現金<b>だけ</b>使えます」."
+      }
+    ]
+  },
+
+  "part_shika": {
+    title: "Partikel しか〜ない (shika — Hanya / Cuma [Harus Negatif])",
+    category: "Partikel (助詞)",
+    questions: [
+      {
+        q: "<span class=\"jp\"><ruby>財布<rt>さいふ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>に<ruby>千円<rt>せんえん</rt></ruby>（　）ありません。</span><br><small>(Di dalam dompet cuma ada 1.000 yen.)</small>",
+        speech: "財布の中に千円しかありません。",
+        opts: ["だけ", "しか", "を", "も"],
+        a: 1,
+        exp: "Di akhir kalimat terdapat bentuk negatif <b>ありません</b>, sehingga pembatas yang tepat dan menunjukkan kesan kurang/sedikit adalah <b>しか</b>."
+      },
+      {
+        q: "<span class=\"jp\"><ruby>教室<rt>きょうしつ</rt></ruby>には<ruby>山田<rt>やまだ</rt></ruby>さんしか（　）。</span><br><small>(Di ruang kelas cuma ada Yamada-san seorang.)</small>",
+        speech: "教室には山田さんしかいません。",
+        opts: ["います", "いません", "あります", "いました"],
+        a: 1,
+        exp: "Aturan emas partikel <b>しか</b>: predikat di akhir kalimat <b>WAJIB berbentuk negatif</b>! Karena Yamada-san adalah orang (bernyawa), gunakan <b>いません</b>."
+      },
+      {
+        q: "<span class=\"jp\"><ruby>昨日<rt>きのう</rt></ruby>は２<ruby>時間<rt>じかん</rt></ruby>（　）<ruby>寝<rt>ね</rt></ruby>られませんでした。とても<ruby>眠<rt>ねむ</rt></ruby>いです。</span><br><small>(Kemarin cuma bisa tidur 2 jam. Ngantuk sekali.)</small>",
+        speech: "昨日は２時間しか寝られませんでした。とても眠いです。",
+        opts: ["だけ", "ほど", "しか", "より"],
+        a: 2,
+        exp: "Predikatnya berbentuk negatif lampau (<b>寝られませんでした</b>) dan pembicara merasa 2 jam itu sangat kurang/sedikit, jadi gunakan <b>しか</b>."
+      },
+      {
+        q: "<span class=\"jp\">まだひらがな（　）<ruby>書<rt>か</rt></ruby>けません。<ruby>漢字<rt>かんじ</rt></ruby>は<ruby>難<rt>むずか</rt></ruby>しいです。</span><br><small>(Masih cuma bisa menulis hiragana saja. Kanji sulit.)</small>",
+        speech: "まだひらがなしか書けません。漢字は難しいです。",
+        opts: ["をしか", "しか", "だけが", "ばかり"],
+        a: 1,
+        exp: "Sama seperti だけ, partikel <b>しか</b> menggantikan は/が/を (tidak boleh \"をしか\"). Langsung tulis <b>ひらがなしか書けません</b>."
+      },
+      {
+        q: "Mengapa kalimat <span class=\"jp\">「<ruby>水<rt>みず</rt></ruby>しか<ruby>飲<rt>の</rt></ruby>みます」</span> salah secara tata bahasa?",
+        speech: "水しか飲みません。",
+        opts: [
+          "Karena 水 tidak bisa diikuti partikel",
+          "Karena しか wajib berpasangan dengan bentuk negatif (seharusnya 水しか飲みません)",
+          "Karena 飲みます harus diubah ke bentuk 〜ましょうか",
+          "Karena 水 butuh partikel で"
+        ],
+        a: 1,
+        exp: "Dalam bahasa Jepang, <b>しか</b> secara harfiah berarti \"selain ini tidak...\", sehingga predikatnya <b>selalu wajib negatif</b> (飲みません, ありません, できません, dll)."
+      }
+    ]
+  },
+
+  "comp_dake_shika": {
+    title: "Komparasi: だけ vs しか〜ない",
+    category: "Komparasi & Tips",
+    questions: [
+      {
+        q: "Perhatikan dua kalimat berikut:<br>1) <span class=\"jp\">３時間（　）寝ました。</span><br>2) <span class=\"jp\">３時間（　）寝ませんでした。</span><br>Isian yang benar secara berurutan adalah...",
+        speech: "３時間だけ寝ました。３時間しか寝ませんでした。",
+        opts: ["1) しか / 2) だけ", "1) だけ / 2) しか", "Keduanya しか", "Keduanya だけ"],
+        a: 1,
+        exp: "Kalimat 1 berakhir positif (寝ました) sehingga memakai <b>だけ</b>; kalimat 2 berakhir negatif (寝ませんでした) sehingga wajib memakai <b>しか</b>."
+      },
+      {
+        q: "Apa perbedaan nuansa antara <span class=\"jp\">「あと１０分だけあります」</span> dan <span class=\"jp\">「あと１０分しかありません」</span>?",
+        speech: "あと１０分だけあります。あと１０分しかありません。",
+        opts: [
+          "だけ = masih ada 10 menit (netral/cukup); しか〜ない = tinggal 10 menit lagi (terasa kurang/mepet)",
+          "だけ berarti lebih lama dari しか",
+          "しか〜ない lebih sopan daripada だけ",
+          "Keduanya berarti waktu sudah habis"
+        ],
+        a: 0,
+        exp: "<b>だけ</b> menyatakan batas secara objektif/netral (atau terasa cukup), sedangkan <b>しか〜ない</b> menekankan rasa <i>kekurangan, sedikit, atau mepet</i>."
+      },
+      {
+        q: "Bagaimana menyatakan \"Di kulkas cuma ada 1 butir telur (kurang untuk masak)\" dengan nuansa kekurangan yang tepat?",
+        speech: "冷蔵庫に卵が１個しかありません。",
+        opts: [
+          "冷蔵庫に卵が１個しかあります。",
+          "冷蔵庫に卵が１個しかありません。",
+          "冷蔵庫に卵が１個だけありません。",
+          "冷蔵庫に卵が１個すぎます。"
+        ],
+        a: 1,
+        exp: "Untuk menekankan bahwa jumlahnya sedikit/kurang (tidak cukup), gunakan <b>しか + ありません</b>: 「卵が１個<b>しかありません</b>」."
+      },
+      {
+        q: "Manakah kalimat permohonan yang benar untuk arti \"Tolong baca halaman ini saja\"?",
+        speech: "このページだけ読んでください。",
+        opts: [
+          "このページしか読んでください。",
+          "このページだけ読んでください。",
+          "このページしか読まないでください。",
+          "このページだけ読みましょうか。"
+        ],
+        a: 1,
+        exp: "<b>しか</b> tidak dapat dipakai dalam kalimat ajakan/permohonan positif (〜てください / 〜ましょう). Jadi gunakan <b>だけ</b>: 「このページだけ読んでください」."
+      },
+      {
+        q: "Hati-hati! Apa arti dari <span class=\"jp\">「りんご<b>だけ</b>食べません」</span> dibandingkan <span class=\"jp\">「りんご<b>しか</b>食べません」</span>?",
+        speech: "りんごだけ食べません。りんごしか食べません。",
+        opts: [
+          "Keduanya berarti hanya makan apel saja",
+          "りんごだけ食べません = Hanya apel yang TIDAK saya makan (buah lain makan); りんごしか食べません = Saya HANYA makan apel (yang lain tidak)",
+          "りんごだけ食べません salah secara tata bahasa",
+          "りんごしか食べません berarti benci apel"
+        ],
+        a: 1,
+        exp: "Ini jebakan klasik! Saat <b>だけ</b> bertemu negatif (〜ません), artinya \"<b>hanya X saja yang tidak</b> dilakukan\" (yang lain makan). Sedangkan <b>しか〜ません</b> artinya \"selain X tidak ada yang dilakukan = <b>cuma makan X</b>\"."
+      }
+    ]
   }
 };

@@ -393,7 +393,7 @@
     <div class="hero-left">
       <span class="hero-tag">📖 Modul Belajar &amp; Latihan Fokus</span>
       <h1>文法 Bunpo (Tata Bahasa Jepang)</h1>
-      <p>Panduan komprehensif tata bahasa praktis bahasa Jepang: aturan perubahan &amp; pola kalimat <b>Bentuk ~て (Te-form)</b>, <b>16 Partikel Utama (助詞)</b>, dan komparasinya. Klik <b>"📝 Latihan Soal Materi Ini"</b> di setiap kartu untuk menguji khusus materi yang dipilih saja!</p>
+      <p>Panduan komprehensif tata bahasa praktis bahasa Jepang: aturan perubahan &amp; pola kalimat <b>Bentuk ~て (Te-form)</b>, <b>Pola Ekspresi (~ましょうか・~すぎます)</b>, <b>18 Partikel Utama (助詞)</b>, dan komparasinya. Klik <b>"📝 Latihan Soal"</b> di setiap kartu untuk menguji khusus materi yang dipilih saja!</p>
     </div>
     <div class="hero-stats">
       <div class="hstat-chip">
@@ -401,11 +401,11 @@
         <small>Golongan Kata Kerja</small>
       </div>
       <div class="hstat-chip">
-        <b>8+</b>
-        <small>Pola Bentuk ~て</small>
+        <b>10+</b>
+        <small>Pola Kalimat &amp; Ekspresi</small>
       </div>
       <div class="hstat-chip">
-        <b>25</b>
+        <b>30</b>
         <small>Topik Latihan Fokus</small>
       </div>
     </div>
@@ -415,7 +415,7 @@
   <div class="ctrlbar">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Cari partikel, pola kalimat, atau arti (misal: te wa ikemasen, te kudasai, wa vs ga)...">
+      <input type="text" id="searchInput" class="search-input" placeholder="Cari partikel, pola kalimat, atau arti (misal: masyouka, dake, shika, sugimasu, te wa ikemasen, wa vs ga)...">
     </div>
     <div class="ctrl-actions">
       <button type="button" class="btn-toggle active" id="btnToggleFuri" title="Sembunyikan atau tampilkan furigana">
@@ -431,6 +431,7 @@
   <div class="tabs" id="tabNav">
     <button type="button" class="tab-btn active" data-tab="all">🌟 Semua Modul</button>
     <button type="button" class="tab-btn" data-tab="te">🔤 Bentuk ~て (Te-Form)</button>
+    <button type="button" class="tab-btn" data-tab="pola">📐 Ekspresi (ましょうか・すぎます)</button>
     <button type="button" class="tab-btn" data-tab="partikel">📍 Partikel (助詞)</button>
     <button type="button" class="tab-btn" data-tab="komparasi">⚖️ Komparasi &amp; Tips</button>
     <button type="button" class="tab-btn" data-tab="tester">🧪 Uji Konjugasi (Tester)</button>
@@ -866,6 +867,143 @@
     </div>
   </div>
 
+  <!-- ================= TAB: POLA EKSPRESI (ましょうか・すぎます) ================= -->
+  <div class="tab-content" id="tabPolaSec">
+    <div class="sec-heading">
+      <h2>📐 Pola Ekspresi Praktis (〜ましょうか &amp; 〜すぎます)</h2>
+      <span class="badge-count">Klik tombol latihan di tiap pola</span>
+    </div>
+
+    <!-- Ekspresi 1: ~ましょうか -->
+    <div class="card search-item">
+      <div class="card-head">
+        <div class="card-title-group">
+          <span class="badge-pill pill-blue">Ekspresi 1</span>
+          <h3 style="margin:0;font-size:18px">〜ましょうか (~ mashou ka / masyouka) — Menawarkan Bantuan &amp; Mengajak</h3>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="pola_mashouka">📝 Latihan Soal 〜ましょうか ›</button>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:#4a475d">Digunakan untuk dua situasi utama: <b>(1) Menawarkan bantuan</b> kepada lawan bicara ("Bagaimana kalau saya...? / Boleh saya bantu...?"), dan <b>(2) Mengusulkan/mengajak</b> melakukan sesuatu bersama secara halus ("Bagaimana kalau kita...?").</p>
+      <div class="formula-box"><b>Rumus:</b> Kata Kerja Bentuk ます (hapus <s>ます</s>) + <b>ましょうか</b> &nbsp;|&nbsp; <small style="color:#646078">Misal: 手伝います ➔ 手伝い<b>ましょうか</b></small></div>
+
+      <div class="te-grid">
+        <div class="te-tile">
+          <div style="font-weight:700;color:#1d4ed8;margin-bottom:6px">1. Fungsi &amp; Perbandingan Cepat</div>
+          <div class="te-examples">
+            <div class="ex-row"><span><b>〜ましょうか</b> (Tawaran)</span> <span>"Bagaimana kalau <b>saya</b> bantu...?"</span></div>
+            <div class="ex-row"><span><b>〜ましょう</b> (Ajakan tegas)</span> <span>"Ayo kita ..."</span></div>
+            <div class="ex-row"><span><b>〜ませんか</b> (Undangan sopan)</span> <span>"Maukah Anda ikut ...?"</span></div>
+          </div>
+        </div>
+        <div class="te-tile">
+          <div style="font-weight:700;color:#15803d;margin-bottom:6px">2. Cara Menjawab / Merespons</div>
+          <div class="te-examples">
+            <div class="ex-row"><span>✅ Terima bantuan:</span> <span><b>はい、お<ruby>願<rt>ねが</rt></ruby>いします</b> (Ya, tolong)</span></div>
+            <div class="ex-row"><span>🙅 Tolak halus bantuan:</span> <span><b>いいえ、<ruby>結構<rt>けっこう</rt></ruby>です</b> / <ruby>大丈夫<rt>だいじょうぶ</rt></ruby>です</span></div>
+            <div class="ex-row"><span>🤝 Terima ajakan:</span> <span><b>ええ、そうしましょう</b> (Ya, ayo begitu)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="examples-list">
+        <div class="example-item">
+          <div class="example-main">
+            <div class="ex-jp jp"><ruby>荷物<rt>にもつ</rt></ruby>が<ruby>重<rt>おも</rt></ruby>そうですね。<ruby>私<rt>わたし</rt></ruby>が<ruby>持<rt>も</rt></ruby>ちましょうか。</div>
+            <div class="ex-id">Barang bawaannya terlihat berat ya. Bagaimana kalau saya bawakan? (Watashi ga mochimashou ka.) [Menawarkan bantuan]</div>
+          </div>
+          <button type="button" class="btn-audio" data-speech="荷物が重そうですね。私が持ちましょうか。">🔊</button>
+        </div>
+        <div class="example-item">
+          <div class="example-main">
+            <div class="ex-jp jp"><ruby>駅<rt>えき</rt></ruby>まで<ruby>迎<rt>むか</rt></ruby>えに<ruby>行<rt>い</rt></ruby>きましょうか。 — すみません、お<ruby>願<rt>ねが</rt></ruby>いします。</div>
+            <div class="ex-id">Bagaimana kalau saya jemput ke stasiun? — Maaf merepotkan, tolong ya. (Eki made mukae ni ikimashou ka.)</div>
+          </div>
+          <button type="button" class="btn-audio" data-speech="駅まで迎えに行きましょうか。すみません、お願いします。">🔊</button>
+        </div>
+        <div class="example-item">
+          <div class="example-main">
+            <div class="ex-jp jp">そろそろ<ruby>昼<rt>ひる</rt></ruby>ご<ruby>飯<rt>はん</rt></ruby>を<ruby>食<rt>た</rt></ruby>べましょうか。 — ええ、<ruby>食<rt>た</rt></ruby>べましょう。</div>
+            <div class="ex-id">Bagaimana kalau kita makan siang sekarang? — Ya, ayo makan. (Hirugohan o tabemashou ka.) [Mengajak halus]</div>
+          </div>
+          <button type="button" class="btn-audio" data-speech="そろそろ昼ご飯を食べましょうか。ええ、食べましょう。">🔊</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ekspresi 2: ~すぎます -->
+    <div class="card search-item">
+      <div class="card-head">
+        <div class="card-title-group">
+          <span class="badge-pill pill-orange">Ekspresi 2</span>
+          <h3 style="margin:0;font-size:18px">〜すぎます (~ sugimasu / sugiru) — Terlalu / Berlebihan</h3>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="pola_sugimasu">📝 Latihan Soal 〜すぎます ›</button>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:#4a475d">Menyatakan bahwa suatu tindakan atau sifat melebihi batas wajar (<b>"terlalu ..."</b> atau <b>"kebanyakan ..."</b>). Biasanya bernuansa negatif/mengeluh, meski kadang juga dipakai untuk memuji ("terlalu hebat/bagus").</p>
+      <div class="formula-box"><b>Rumus:</b> [KK akar ます / KS-i hapus <s>い</s> / KS-na hapus <s>な</s>] + <b>すぎます</b> &nbsp;|&nbsp; <small style="color:#646078">Bentuk kasual: <b>〜すぎる</b>, lampau: <b>〜すぎました</b>, sebab: <b>〜すぎて</b></small></div>
+
+      <div class="te-grid">
+        <div class="te-tile">
+          <div style="font-weight:700;color:#c2410c;margin-bottom:4px">1. Kata Kerja (動詞)</div>
+          <div style="font-size:13px;color:var(--muted)">Hapus <b>ます</b> ➔ + <b>すぎます</b></div>
+          <div class="te-examples" style="margin-top:8px">
+            <div class="ex-row"><span><ruby>食<rt>た</rt></ruby>べます (makan)</span> <span>➔ <b><ruby>食<rt>た</rt></ruby>べすぎます</b></span></div>
+            <div class="ex-row"><span><ruby>飲<rt>の</rt></ruby>みます (minum)</span> <span>➔ <b><ruby>飲<rt>の</rt></ruby>みすぎます</b></span></div>
+            <div class="ex-row"><span><ruby>働<rt>はたら</rt></ruby>きます (bekerja)</span> <span>➔ <b><ruby>働<rt>はたら</rt></ruby>きすぎます</b></span></div>
+          </div>
+        </div>
+
+        <div class="te-tile">
+          <div style="font-weight:700;color:#c2410c;margin-bottom:4px">2. Kata Sifat -i (い形容詞)</div>
+          <div style="font-size:13px;color:var(--muted)">Hapus <b>い</b> ➔ + <b>すぎます</b></div>
+          <div class="te-examples" style="margin-top:8px">
+            <div class="ex-row"><span><ruby>高<rt>たか</rt></ruby>い (mahal/tinggi)</span> <span>➔ <b><ruby>高<rt>たか</rt></ruby>すぎます</b></span></div>
+            <div class="ex-row"><span><ruby>難<rt>むずか</rt></ruby>しい (sulit)</span> <span>➔ <b><ruby>難<rt>むずか</rt></ruby>しすぎます</b></span></div>
+            <div class="ex-row" style="color:#b45309"><span>⚠️ いい (bagus)</span> <span>➔ <b>よすぎます</b> [Pengecualian!]</span></div>
+          </div>
+        </div>
+
+        <div class="te-tile">
+          <div style="font-weight:700;color:#c2410c;margin-bottom:4px">3. Kata Sifat -na (な形容詞)</div>
+          <div style="font-size:13px;color:var(--muted)">Hapus <b>な/だ</b> ➔ + <b>すぎます</b></div>
+          <div class="te-examples" style="margin-top:8px">
+            <div class="ex-row"><span><ruby>静<rt>しず</rt></ruby>か(な) (tenang)</span> <span>➔ <b><ruby>静<rt>しず</rt></ruby>かすぎます</b></span></div>
+            <div class="ex-row"><span><ruby>簡単<rt>かんたん</rt></ruby>(な) (mudah)</span> <span>➔ <b><ruby>簡単<rt>かんたん</rt></ruby>すぎます</b></span></div>
+            <div class="ex-row"><span><ruby>暇<rt>ひま</rt></ruby>(な) (senggang)</span> <span>➔ <b><ruby>暇<rt>ひま</rt></ruby>すぎます</b></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="te-warn-box">
+        <b>Catatan konjugasi:</b> Kata <b>すぎる (すぎます)</b> sendiri berkonjugasi seperti Kata Kerja Golongan 2 (Ichidan): <b>〜すぎます</b> (sopan), <b>〜すぎました</b> (lampau), <b>〜すぎません</b> (negatif), dan <b>〜すぎて</b> (untuk alasan: "karena terlalu..."). Catatan ekstra: kata <b>ない</b> menjadi <b>なさすぎます</b> ("terlalu sedikit/tidak ada").
+      </div>
+
+      <div class="examples-list">
+        <div class="example-item">
+          <div class="example-main">
+            <div class="ex-jp jp"><ruby>昨日<rt>きのう</rt></ruby>、お<ruby>酒<rt>さけ</rt></ruby>を<ruby>飲<rt>の</rt></ruby>みすぎました。</div>
+            <div class="ex-id">Kemarin saya minum alkohol terlalu banyak. (Kinou, osake o nomisugimashita.)</div>
+          </div>
+          <button type="button" class="btn-audio" data-speech="昨日、お酒を飲みすぎました。">🔊</button>
+        </div>
+        <div class="example-item">
+          <div class="example-main">
+            <div class="ex-jp jp">この<ruby>靴<rt>くつ</rt></ruby>は<ruby>高<rt>たか</rt></ruby>すぎて、<ruby>買<rt>か</rt></ruby>えません。</div>
+            <div class="ex-id">Sepatu ini terlalu mahal, jadi tidak bisa beli. (Kono kutsu wa takasugite, kaemasen.)</div>
+          </div>
+          <button type="button" class="btn-audio" data-speech="この靴は高すぎて、買えません。">🔊</button>
+        </div>
+        <div class="example-item">
+          <div class="example-main">
+            <div class="ex-jp jp">この<ruby>部屋<rt>へや</rt></ruby>は<ruby>静<rt>しず</rt></ruby>かすぎます。ちょっと<ruby>寂<rt>さび</rt></ruby>しいです。</div>
+            <div class="ex-id">Kamar ini terlalu sunyi. Rasanya agak sepi. (Kono heya wa shizukasugimasu.)</div>
+          </div>
+          <button type="button" class="btn-audio" data-speech="この部屋は静かすぎます。ちょっと寂しいです。">🔊</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= TAB: PARTIKEL ================= -->
   <div class="tab-content" id="tabPartikelSec">
     <div class="sec-heading">
@@ -1255,6 +1393,68 @@
         </div>
       </div>
 
+      <!-- 17. だけ (dake) -->
+      <div class="part-card search-item">
+        <div>
+          <div class="part-top">
+            <div class="part-char green jp" style="font-size:16px">だけ</div>
+            <span class="badge-pill pill-green">Pembatas Netral</span>
+          </div>
+          <div class="part-name">Partikel だけ <span class="part-romaji">(dake — "Hanya / Saja")</span></div>
+          <div class="part-desc">Membatasi benda, jumlah, atau aksi ("hanya/saja") secara <b>netral atau terasa cukup</b>. Menggantikan は/が/を, dapat dipakai di kalimat <b>positif</b>, permohonan (<span class="jp">〜てください</span>), maupun menempel pada KK/KS.</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>野菜<rt>やさい</rt></ruby>だけ<ruby>食<rt>た</rt></ruby>べます。</div>
+                <div class="ex-id">Hanya makan sayur saja. (Yasai dake tabemasu.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="野菜だけ食べます。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">ここに<ruby>名前<rt>なまえ</rt></ruby>だけ<ruby>書<rt>か</rt></ruby>いてください。</div>
+                <div class="ex-id">Tolong tulis nama saja di sini. (Namae dake kaite kudasai.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="ここに名前だけ書いてください。">🔊</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_dake">📝 Latihan Partikel だけ ›</button>
+        </div>
+      </div>
+
+      <!-- 18. しか〜ない (shika) -->
+      <div class="part-card search-item">
+        <div>
+          <div class="part-top">
+            <div class="part-char rose jp" style="font-size:16px">しか</div>
+            <span class="badge-pill pill-orange">Pembatas + Wajib Negatif</span>
+          </div>
+          <div class="part-name">Partikel しか〜ない <span class="part-romaji">(shika — "Hanya / Cuma")</span></div>
+          <div class="part-desc">Menyatakan batasan dengan nuansa <b>terasa sedikit, kurang, atau tidak ada pilihan lain</b>. Menggantikan は/が/を, dan predikat di akhir kalimat <b>WAJIB berbentuk negatif</b> (<span class="jp">〜ません / 〜ない</span>).</div>
+          <div class="examples-list">
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp"><ruby>千円<rt>せんえん</rt></ruby>しかありません。</div>
+                <div class="ex-id">Cuma punya seribu yen (sedikit sekali). (Sen-en shika arimasen.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="千円しかありません。">🔊</button>
+            </div>
+            <div class="example-item">
+              <div class="example-main">
+                <div class="ex-jp jp">まだひらがなしか<ruby>書<rt>か</rt></ruby>けません。</div>
+                <div class="ex-id">Masih cuma bisa menulis hiragana saja. (Hiragana shika kakemasen.)</div>
+              </div>
+              <button type="button" class="btn-audio" data-speech="まだひらがなしか書けません。">🔊</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn-topic-quiz" data-quiz-topic="part_shika">📝 Latihan Partikel しか ›</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1380,6 +1580,44 @@
         </div>
       </div>
     </div>
+
+    <!-- 4. だけ (dake) vs しか〜ない (shika ~nai) -->
+    <div class="comp-card search-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div class="comp-title">
+          <span style="font-size:22px">🎯</span>
+          <span>Perbedaan Krusial: Partikel だけ (dake) vs しか〜ない (shika)</span>
+        </div>
+        <button type="button" class="btn-topic-quiz" data-quiz-topic="comp_dake_shika">📝 Latihan Soal だけ vs しか ›</button>
+      </div>
+      <p style="margin:0;font-size:13.5px;color:#4a475d">Keduanya sama-sama bisa diterjemahkan menjadi <b>"hanya / saja / cuma"</b>, tetapi <b>bentuk predikat</b> dan <b>nuansa perasaan pembicara</b> sangat berbeda!</p>
+
+      <div class="comp-columns">
+        <div class="comp-col" style="background:#f0fdf4;border-color:#bbf7d0">
+          <div class="comp-col-title" style="color:#15803d">
+            <span class="jp">【だけ】</span> Positif / Netral / Cukup
+          </div>
+          <div style="font-size:13px;color:#4a475d;line-height:1.6">
+            • Diikuti kalimat <b>positif</b>, permohonan (<span class="jp">〜てください</span>), atau ajakan (<span class="jp">〜ましょうか</span>).<br>
+            • Nuansa objektif atau merasa jumlahnya sudah pas/cukup.<br>
+            • Contoh: <i>あと１０<ruby>分<rt>ぷん</rt></ruby><b>だけ</b>あります</i> (Masih ada 10 menit — cukup/santai).<br>
+            • ⚠️ Hati-hati: <i>りんご<b>だけ</b><ruby>食<rt>た</rt></ruby>べません</i> artinya "<b>Hanya apel yang tidak</b> saya makan" (buah lain makan!).
+          </div>
+        </div>
+
+        <div class="comp-col" style="background:#fff1f2;border-color:#fecdd3">
+          <div class="comp-col-title" style="color:#be123c">
+            <span class="jp">【しか〜ない】</span> Wajib Negatif / Terasa Kurang
+          </div>
+          <div style="font-size:13px;color:#4a475d;line-height:1.6">
+            • Predikat di akhir <b>WAJIB negatif</b> (<span class="jp">ません / ない / ませんでした</span>).<br>
+            • Nuansa <b>terasa sedikit, mepet, atau tidak ada pilihan lain</b> ("cuma...").<br>
+            • Contoh: <i>あと１０<ruby>分<rt>ぷん</rt></ruby><b>しか</b>ありません</i> (Cuma tinggal 10 menit lagi! — terasa mepet).<br>
+            • Contoh kontras: <i>りんご<b>しか</b><ruby>食<rt>た</rt></ruby>べません</i> artinya "<b>Hanya makan apel</b> saja" (selain apel tidak makan!).
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ================= BOTTOM SELECTOR: UJI MATERI SPESIFIK ================= -->
@@ -1398,6 +1636,10 @@
           <option value="te_urutan">Pola 〜て、〜て (Urutan Kejadian &amp; Kata Sifat)</option>
           <option value="te_mimasu_shimau">Pola 〜てみます &amp; 〜てしまいます</option>
         </optgroup>
+        <optgroup label="📐 Ekspresi (ましょうか・すぎます)">
+          <option value="pola_mashouka">Pola 〜ましょうか (Menawarkan Bantuan &amp; Mengajak)</option>
+          <option value="pola_sugimasu">Pola 〜すぎます (Terlalu / Berlebihan)</option>
+        </optgroup>
         <optgroup label="📍 Materi Partikel (助詞)">
           <option value="part_wa">Partikel は (wa — Topik Kalimat)</option>
           <option value="part_ga">Partikel が (ga — Subjek, Keberadaan &amp; Kesukaan)</option>
@@ -1413,11 +1655,14 @@
           <option value="part_ya">Partikel や (ya — Daftar Contoh Terbuka)</option>
           <option value="part_ka">Partikel か (ka — Kalimat Tanya &amp; 'Atau')</option>
           <option value="part_ne_yo">Partikel ね &amp; よ (Akhiran Konfirmasi vs Penekanan)</option>
+          <option value="part_dake">Partikel だけ (dake — Hanya / Saja [Netral])</option>
+          <option value="part_shika">Partikel しか〜ない (shika — Hanya / Cuma [Wajib Negatif])</option>
         </optgroup>
         <optgroup label="⚖️ Materi Komparasi &amp; Tips">
           <option value="comp_wa_ga">Komparasi: は (wa) vs が (ga)</option>
           <option value="comp_ni_de">Komparasi Lokasi: に (ni) vs で (de)</option>
           <option value="comp_ni_e_to_ya">Komparasi: に vs へ &amp; と vs や</option>
+          <option value="comp_dake_shika">Komparasi: だけ vs しか〜ない</option>
         </optgroup>
       </select>
       <button type="button" class="cta-btn" id="btnStartSelectedQuiz">
@@ -1537,42 +1782,32 @@
 
   // 3. Tab Switching
   var tabBtns = document.querySelectorAll('.tab-btn');
-  var tabTeSec = document.getElementById('tabTeSec');
-  var tabPartikelSec = document.getElementById('tabPartikelSec');
-  var tabKomparasiSec = document.getElementById('tabKomparasiSec');
-  var tabTesterSec = document.getElementById('tabTesterSec');
+  var tabSections = {
+    tester: document.getElementById('tabTesterSec'),
+    te: document.getElementById('tabTeSec'),
+    pola: document.getElementById('tabPolaSec'),
+    partikel: document.getElementById('tabPartikelSec'),
+    komparasi: document.getElementById('tabKomparasiSec')
+  };
+  var tabVisibility = {
+    all: ['tester', 'te', 'pola', 'partikel', 'komparasi'],
+    te: ['tester', 'te'],
+    pola: ['pola'],
+    partikel: ['partikel'],
+    komparasi: ['komparasi'],
+    tester: ['tester']
+  };
 
   function setTab(name) {
+    var visible = tabVisibility[name] || tabVisibility.all;
     tabBtns.forEach(function(b) {
       b.classList.toggle('active', b.getAttribute('data-tab') === name);
     });
-
-    if (name === 'all') {
-      tabTesterSec.classList.remove('hidden');
-      tabTeSec.classList.remove('hidden');
-      tabPartikelSec.classList.remove('hidden');
-      tabKomparasiSec.classList.remove('hidden');
-    } else if (name === 'te') {
-      tabTesterSec.classList.remove('hidden');
-      tabTeSec.classList.remove('hidden');
-      tabPartikelSec.classList.add('hidden');
-      tabKomparasiSec.classList.add('hidden');
-    } else if (name === 'partikel') {
-      tabTesterSec.classList.add('hidden');
-      tabTeSec.classList.add('hidden');
-      tabPartikelSec.classList.remove('hidden');
-      tabKomparasiSec.classList.add('hidden');
-    } else if (name === 'komparasi') {
-      tabTesterSec.classList.add('hidden');
-      tabTeSec.classList.add('hidden');
-      tabPartikelSec.classList.add('hidden');
-      tabKomparasiSec.classList.remove('hidden');
-    } else if (name === 'tester') {
-      tabTesterSec.classList.remove('hidden');
-      tabTeSec.classList.add('hidden');
-      tabPartikelSec.classList.add('hidden');
-      tabKomparasiSec.classList.add('hidden');
-    }
+    Object.keys(tabSections).forEach(function(key) {
+      if (tabSections[key]) {
+        tabSections[key].classList.toggle('hidden', visible.indexOf(key) === -1);
+      }
+    });
   }
 
   tabBtns.forEach(function(btn) {
@@ -1583,7 +1818,7 @@
 
   var params = new URLSearchParams(window.location.search);
   var initialTab = params.get('tab');
-  if (initialTab && ['all', 'te', 'partikel', 'komparasi', 'tester'].indexOf(initialTab) !== -1) {
+  if (initialTab && Object.prototype.hasOwnProperty.call(tabVisibility, initialTab)) {
     setTab(initialTab);
   }
 
