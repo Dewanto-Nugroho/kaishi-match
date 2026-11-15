@@ -37,7 +37,7 @@
   .jp { font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic Pro", Meiryo, sans-serif; }
   .hidden { display: none !important; }
 
-  .wrap { max-width: 980px; margin: 0 auto; padding: 20px 18px 120px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 18px 120px; }
 
   /* ---------- Topbar ---------- */
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
@@ -56,15 +56,15 @@
     border: 1px solid #fde3c7;
     border-radius: 22px;
     box-shadow: var(--shadow);
-    padding: 24px 26px;
-    margin-bottom: 22px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
   }
-  .hero-left { max-width: 640px; }
+  .hero-left { max-width: 700px; }
   .hero-tag {
     display: inline-flex; align-items: center; gap: 6px;
     font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
@@ -72,7 +72,7 @@
   }
   .hero h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px; color: var(--ink); display: flex; align-items: center; gap: 10px; }
   .hero p { margin: 0; font-size: 14px; color: #5c586e; line-height: 1.6; }
-  .hero-stats { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-stats { display: flex; gap: 10px; flex-wrap: wrap; }
   .hstat-chip {
     background: #fff; border: 1px solid #fed7aa; border-radius: 14px; padding: 10px 14px;
     text-align: center; min-width: 90px;
@@ -83,35 +83,154 @@
   /* ---------- Controls Bar ---------- */
   .ctrlbar {
     background: var(--card); border: 1px solid var(--line); border-radius: 18px;
-    box-shadow: var(--shadow); padding: 12px 16px; margin-bottom: 22px;
+    box-shadow: var(--shadow); padding: 12px 16px; margin-bottom: 16px;
     display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    position: sticky; top: 10px; z-index: 40; backdrop-filter: blur(10px); background: rgba(255,255,255,.95);
   }
   .search-wrap { flex: 1; min-width: 240px; position: relative; }
   .search-input {
     width: 100%; height: 42px; border-radius: 11px; border: 1px solid var(--line);
-    background: #fbfaff; padding: 0 14px 0 38px; font-size: 14px; color: var(--ink); outline: none;
+    background: #fbfaff; padding: 0 36px 0 38px; font-size: 14px; color: var(--ink); outline: none;
     transition: all .15s; font-family: inherit;
   }
   .search-input:focus { border-color: var(--warn); box-shadow: 0 0 0 3px rgba(217, 119, 6, .12); background: #fff; }
   .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; }
+  .search-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    border: 0; background: #ede9fe; color: var(--accent); width: 24px; height: 24px;
+    border-radius: 999px; font-size: 12px; font-weight: 800; cursor: pointer; display: none; place-items: center;
+  }
+  .search-clear.show { display: grid; }
   .ctrl-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .btn-toggle {
-    height: 40px; padding: 0 14px; border-radius: 11px; border: 1px solid var(--line);
+    height: 40px; padding: 0 13px; border-radius: 11px; border: 1px solid var(--line);
     background: #fff; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer;
     display: inline-flex; align-items: center; gap: 6px; transition: all .15s; font-family: inherit;
   }
   .btn-toggle:hover { border-color: var(--warn); color: var(--warn); }
   .btn-toggle.active { background: var(--warn); border-color: var(--warn); color: #fff; }
+  .btn-toggle.purple-active { background: var(--accent-soft); border-color: #d8b4fe; color: var(--accent); }
 
-  /* ---------- Tabs ---------- */
-  .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
-  .tab-btn {
-    border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px;
-    padding: 8px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
-    transition: all .15s; font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
+  /* ---------- Category Tabs (Grid Wrap — No Horizontal Scrollbar!) ---------- */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
   }
-  .tab-btn:hover { border-color: #f59e0b; color: #b45309; background: #fffbeb; }
-  .tab-btn.active { background: #d97706; border-color: #d97706; color: #fff; box-shadow: 0 4px 12px rgba(217, 119, 6, .24); }
+  .tab-btn {
+    border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 14px;
+    padding: 10px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer;
+    transition: all .15s; font-family: inherit; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    box-shadow: 0 1px 2px rgba(28,26,43,.03); text-align: left;
+  }
+  .tab-btn-left { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+  .tab-btn-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tab-count {
+    font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+    background: #f3f1f9; color: var(--muted); flex: none; transition: all .15s;
+  }
+  .tab-btn:hover { border-color: #f59e0b; color: #b45309; background: #fffbeb; transform: translateY(-1px); }
+  .tab-btn.active { background: linear-gradient(135deg, #ea580c, #d97706); border-color: #d97706; color: #fff; box-shadow: 0 6px 14px rgba(217, 119, 6, .24); }
+  .tab-btn.active .tab-count { background: rgba(255,255,255,.22); color: #fff; }
+
+  /* ---------- 2-Column Workspace Layout (Sidebar Directory + Main Content) ---------- */
+  .bunpo-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .bunpo-sidebar {
+    position: sticky;
+    top: 76px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 16px 14px;
+    scrollbar-width: thin;
+    scrollbar-color: #dcd7ee transparent;
+  }
+  .bunpo-sidebar::-webkit-scrollbar { width: 5px; }
+  .bunpo-sidebar::-webkit-scrollbar-thumb { background: #dcd7ee; border-radius: 99px; }
+  .sb-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+  .sb-title { font-size: 13.5px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+  .sb-sub { font-size: 11px; color: var(--muted); }
+  .sb-group { margin-bottom: 12px; }
+  .sb-group:last-child { margin-bottom: 0; }
+  .sb-group-title {
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--muted); padding: 4px 6px; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .sb-list { display: flex; flex-direction: column; gap: 3px; }
+  .sb-item {
+    border: 0; background: transparent; width: 100%; text-align: left;
+    padding: 6px 8px; border-radius: 9px; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    color: #4a475d; font-size: 12.5px; transition: all .12s;
+  }
+  .sb-item:hover { background: #f5f2ff; color: var(--accent); }
+  .sb-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .sb-item-jp {
+    font-weight: 700; color: var(--ink); background: #f8f7fc; border: 1px solid #e9e5f5;
+    padding: 1px 6px; border-radius: 6px; font-size: 12px; flex: none; max-width: 115px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sb-item:hover .sb-item-jp, .sb-item.active .sb-item-jp {
+    background: #fff; border-color: #d8b4fe; color: var(--accent);
+  }
+  .sb-item-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+
+  /* Mobile Quick Jump Chip Bar */
+  .mobile-index-bar {
+    display: none;
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 12px 14px; margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  .mib-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .mib-chip {
+    border: 1px solid #e4dff2; background: #fbfaff; color: var(--ink);
+    border-radius: 8px; padding: 4px 9px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all .12s;
+  }
+  .mib-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  /* Search Status Banner */
+  .search-status {
+    display: none; align-items: center; justify-content: space-between; gap: 12px;
+    background: #fffbeb; border: 1px solid #fde68a; color: #92400e;
+    padding: 10px 16px; border-radius: 14px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;
+  }
+  .search-status.show { display: flex; }
+
+  /* Compact Mode & Card Collapse */
+  .btn-card-collapse {
+    background: #f8f7fc; border: 1px solid var(--line); color: var(--muted);
+    border-radius: 9px; padding: 6px 10px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all .15s;
+  }
+  .btn-card-collapse:hover { border-color: var(--accent); color: var(--accent); background: #f5f2ff; }
+  .card.is-collapsed .examples-list,
+  .card.is-collapsed .te-grid,
+  .card.is-collapsed .te-warn-box,
+  .card.is-collapsed .card-foot,
+  .comp-card.is-collapsed .comp-columns,
+  .part-card.is-collapsed .examples-list {
+    display: none !important;
+  }
+  .card.is-collapsed { padding-bottom: 16px; }
+  @keyframes cardFlash {
+    0% { box-shadow: 0 0 0 0 rgba(111, 77, 245, .45); border-color: var(--accent); }
+    70% { box-shadow: 0 0 0 8px rgba(111, 77, 245, 0); border-color: var(--accent); }
+    100% { box-shadow: var(--shadow); }
+  }
+  .card-highlight { animation: cardFlash 1.2s ease-out; border-color: var(--accent) !important; }
 
   /* ---------- Section Styling ---------- */
   .sec-heading {
@@ -361,10 +480,17 @@
   body.hide-furi ruby rt { display: none; }
 
   /* ---------- Responsive ---------- */
+  @media (max-width: 920px) {
+    .bunpo-layout { grid-template-columns: 1fr; }
+    .bunpo-sidebar { display: none; }
+    .mobile-index-bar { display: block; }
+  }
   @media (max-width: 768px) {
     .wrap { padding: 14px 12px 100px; }
     .hero { padding: 18px 16px; }
     .hero h1 { font-size: 22px; }
+    .ctrlbar { position: static; }
+    .tabs { grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .comp-columns { grid-template-columns: 1fr; }
     .te-grid { grid-template-columns: 1fr; }
   }
@@ -393,7 +519,7 @@
     <div class="hero-left">
       <span class="hero-tag">📖 Modul Belajar &amp; Latihan Fokus</span>
       <h1>文法 Bunpo (Tata Bahasa Jepang)</h1>
-      <p>Panduan komprehensif tata bahasa praktis bahasa Jepang: aturan perubahan &amp; pola kalimat <b>Bentuk ~て (Te-form)</b>, <b>Pola Ekspresi (~ましょうか・~すぎます)</b>, <b>18 Partikel Utama (助詞)</b>, dan komparasinya. Klik <b>"📝 Latihan Soal"</b> di setiap kartu untuk menguji khusus materi yang dipilih saja!</p>
+      <p>Panduan terstruktur tata bahasa praktis bahasa Jepang: <b>Bentuk ~て (Te-form)</b>, <b>Pola &amp; Ekspresi</b>, <b>18 Partikel Utama (助詞)</b>, serta <b>Komparasinya</b>. Gunakan <b>Indeks Cepat</b> di samping atau aktifkan <b>Mode Ringkas</b> agar tetap nyaman dipelajari seiring bertambahnya materi!</p>
     </div>
     <div class="hero-stats">
       <div class="hstat-chip">
@@ -416,26 +542,76 @@
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" class="search-input" placeholder="Cari partikel, pola kalimat, atau arti (misal: masyouka, dake, shika, sugimasu, te wa ikemasen, wa vs ga)...">
+      <button type="button" id="btnClearSearch" class="search-clear" title="Bersihkan pencarian">✕</button>
     </div>
     <div class="ctrl-actions">
+      <button type="button" class="btn-toggle" id="btnToggleCompact" title="Ringkas atau buka semua detail contoh kartu">
+        <span>🗂️</span> Tampilan: <b id="compactStatus">Lengkap</b>
+      </button>
       <button type="button" class="btn-toggle active" id="btnToggleFuri" title="Sembunyikan atau tampilkan furigana">
         <span>ふ</span> Furigana: <b id="furiStatus">ON</b>
       </button>
       <a href="#ujiMateriSec" class="btn-toggle" style="text-decoration:none;background:#fef3c7;border-color:#fcd34d;color:#92400e;">
-        🎯 Pilih Kuis Per Materi ›
+        🎯 Pilih Kuis ›
       </a>
     </div>
   </div>
 
-  <!-- Navigation Tabs -->
+  <!-- Navigation Tabs (Grid — Tanpa Scrollbar Horizontal) -->
   <div class="tabs" id="tabNav">
-    <button type="button" class="tab-btn active" data-tab="all">🌟 Semua Modul</button>
-    <button type="button" class="tab-btn" data-tab="te">🔤 Bentuk ~て (Te-Form)</button>
-    <button type="button" class="tab-btn" data-tab="pola">📐 Ekspresi (ましょうか・すぎます)</button>
-    <button type="button" class="tab-btn" data-tab="partikel">📍 Partikel (助詞)</button>
-    <button type="button" class="tab-btn" data-tab="komparasi">⚖️ Komparasi &amp; Tips</button>
-    <button type="button" class="tab-btn" data-tab="tester">🧪 Uji Konjugasi (Tester)</button>
+    <button type="button" class="tab-btn active" data-tab="all">
+      <span class="tab-btn-left"><span>🌟</span><span class="tab-btn-label">Semua Modul</span></span>
+      <span class="tab-count">30</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="te">
+      <span class="tab-btn-left"><span>🔤</span><span class="tab-btn-label">Bentuk ~て</span></span>
+      <span class="tab-count">8</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="pola">
+      <span class="tab-btn-left"><span>📐</span><span class="tab-btn-label">Pola &amp; Ekspresi</span></span>
+      <span class="tab-count">2</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="partikel">
+      <span class="tab-btn-left"><span>📍</span><span class="tab-btn-label">Partikel (助詞)</span></span>
+      <span class="tab-count">16</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="komparasi">
+      <span class="tab-btn-left"><span>⚖️</span><span class="tab-btn-label">Komparasi &amp; Tips</span></span>
+      <span class="tab-count">4</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="tester">
+      <span class="tab-btn-left"><span>🧪</span><span class="tab-btn-label">Tester Konjugasi</span></span>
+      <span class="tab-count">Alat</span>
+    </button>
   </div>
+
+  <!-- Mobile Quick-Jump Bar (muncul di layar kecil) -->
+  <div class="mobile-index-bar" id="mobileIndexBar">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <span style="font-size:12.5px;font-weight:800;color:var(--ink)">📌 Lompat Cepat ke Materi:</span>
+      <span style="font-size:11px;color:var(--muted)">Klik untuk menuju kartu</span>
+    </div>
+    <div class="mib-chips" id="mobileIndexChips"></div>
+  </div>
+
+  <!-- Search Filter Status -->
+  <div class="search-status" id="searchStatus">
+    <span id="searchStatusText">Menampilkan hasil pencarian</span>
+    <button type="button" id="btnResetSearchBanner" class="btn-card-collapse" style="background:#fff;border-color:#fcd34d;color:#92400e">✕ Reset Pencarian</button>
+  </div>
+
+  <div class="bunpo-layout">
+    <!-- Left Sticky Sidebar: Auto-Generated Index of All Bunpo Topics -->
+    <aside class="bunpo-sidebar" id="bunpoSidebar">
+      <div class="sb-head">
+        <div class="sb-title">📚 Daftar Isi Bunpo</div>
+        <span class="sb-sub" id="sbTotalCount">30 materi</span>
+      </div>
+      <div id="sbContent"></div>
+    </aside>
+
+    <!-- Main Content Column -->
+    <div class="bunpo-main" id="bunpoMain">
 
   <!-- ================= TAB: TESTER KONJUGASI ================= -->
   <div class="tab-content" id="tabTesterSec">
@@ -1671,6 +1847,9 @@
     </div>
   </div>
 
+    </div><!-- /.bunpo-main -->
+  </div><!-- /.bunpo-layout -->
+
 </div>
 
 <!-- ================= MODAL KUIS FOKUS MATERI ================= -->
@@ -1780,8 +1959,54 @@
     });
   }
 
-  // 3. Tab Switching
+  // 2b. Card Collapse Buttons & Global Compact Mode Toggle
+  var btnToggleCompact = document.getElementById('btnToggleCompact');
+  var compactStatus = document.getElementById('compactStatus');
+  var isCompactMode = false;
+
+  function updateCardCollapseBtn(card, btn) {
+    var collapsed = card.classList.contains('is-collapsed');
+    btn.textContent = collapsed ? '▸ Detail & Contoh' : '▾ Ringkas';
+  }
+
+  document.querySelectorAll('.card.search-item, .comp-card.search-item').forEach(function(card) {
+    var quizBtn = card.querySelector('.btn-topic-quiz');
+    if (!quizBtn || !quizBtn.parentNode) return;
+    var colBtn = document.createElement('button');
+    colBtn.type = 'button';
+    colBtn.className = 'btn-card-collapse';
+    updateCardCollapseBtn(card, colBtn);
+    colBtn.addEventListener('click', function() {
+      card.classList.toggle('is-collapsed');
+      updateCardCollapseBtn(card, colBtn);
+    });
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap';
+    quizBtn.parentNode.insertBefore(wrap, quizBtn);
+    wrap.appendChild(colBtn);
+    wrap.appendChild(quizBtn);
+  });
+
+  function setAllCompact(compact) {
+    isCompactMode = compact;
+    document.querySelectorAll('.search-item').forEach(function(card) {
+      card.classList.toggle('is-collapsed', compact);
+      var btn = card.querySelector('.btn-card-collapse');
+      if (btn) updateCardCollapseBtn(card, btn);
+    });
+    if (compactStatus) compactStatus.textContent = compact ? 'Ringkas' : 'Lengkap';
+    if (btnToggleCompact) btnToggleCompact.classList.toggle('purple-active', compact);
+  }
+
+  if (btnToggleCompact) {
+    btnToggleCompact.addEventListener('click', function() {
+      setAllCompact(!isCompactMode);
+    });
+  }
+
+  // 3. Tab Switching & Dynamic Sidebar / Quick-Jump Index
   var tabBtns = document.querySelectorAll('.tab-btn');
+  var currentTab = 'all';
   var tabSections = {
     tester: document.getElementById('tabTesterSec'),
     te: document.getElementById('tabTeSec'),
@@ -1798,16 +2023,144 @@
     tester: ['tester']
   };
 
+  var sbContent = document.getElementById('sbContent');
+  var sbTotalCount = document.getElementById('sbTotalCount');
+  var mobileIndexChips = document.getElementById('mobileIndexChips');
+  var mobileIndexBar = document.getElementById('mobileIndexBar');
+  var directoryGroups = [
+    { key: 'te', title: '🔤 Bentuk ~て', el: tabSections.te },
+    { key: 'pola', title: '📐 Pola & Ekspresi', el: tabSections.pola },
+    { key: 'partikel', title: '📍 Partikel (助詞)', el: tabSections.partikel },
+    { key: 'komparasi', title: '⚖️ Komparasi & Tips', el: tabSections.komparasi }
+  ];
+
+  function extractCardMeta(card, secKey, idx) {
+    if (!card.id) card.id = 'bunpo-item-' + secKey + '-' + idx;
+    var jpBadge = '';
+    var label = '';
+    if (card.classList.contains('part-card')) {
+      var pc = card.querySelector('.part-char');
+      var pn = card.querySelector('.part-name');
+      jpBadge = pc ? pc.textContent.trim() : '助詞';
+      label = pn ? pn.textContent.replace(/Partikel\s+/i, '').trim() : jpBadge;
+    } else if (card.classList.contains('comp-card')) {
+      var ct = card.querySelector('.comp-title');
+      var raw = ct ? ct.textContent.trim() : 'Komparasi';
+      jpBadge = '⚖️';
+      label = raw.replace(/^[^\w\u3040-\u30ff\u4e00-\u9faf]+/, '').replace(/^(Perbedaan\s+\w+:|Tips\s+\w+:|Komparasi\s*\w*:)\s*/i, '');
+    } else {
+      var h3 = card.querySelector('h3');
+      var rawH3 = h3 ? h3.textContent.trim() : 'Materi';
+      var parts = rawH3.split('—');
+      if (parts.length > 1) {
+        jpBadge = parts[0].replace(/\(.*?\)/g, '').trim();
+        label = parts[1].trim();
+      } else {
+        jpBadge = 'Aturan ~て';
+        label = rawH3.replace(/^[^\w\u3040-\u30ff\u4e00-\u9faf]+/, '');
+      }
+    }
+    return { id: card.id, jp: jpBadge, label: label, card: card, secKey: secKey };
+  }
+
+  var allIndexedItems = [];
+  directoryGroups.forEach(function(g) {
+    if (!g.el) return;
+    var cards = g.el.querySelectorAll('.search-item');
+    g.items = [];
+    cards.forEach(function(c, i) {
+      var meta = extractCardMeta(c, g.key, i + 1);
+      g.items.push(meta);
+      allIndexedItems.push(meta);
+    });
+  });
+
+  if (sbTotalCount) sbTotalCount.textContent = allIndexedItems.length + ' materi';
+
+  function jumpToItem(meta) {
+    if (tabSections[meta.secKey] && tabSections[meta.secKey].classList.contains('hidden')) {
+      setTab(meta.secKey);
+    }
+    meta.card.classList.remove('is-collapsed');
+    var cBtn = meta.card.querySelector('.btn-card-collapse');
+    if (cBtn) updateCardCollapseBtn(meta.card, cBtn);
+
+    document.querySelectorAll('.sb-item').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-target-id') === meta.id);
+    });
+
+    var rect = meta.card.getBoundingClientRect();
+    var top = window.pageYOffset + rect.top - 84;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    meta.card.classList.remove('card-highlight');
+    void meta.card.offsetWidth;
+    meta.card.classList.add('card-highlight');
+  }
+
+  function renderDirectory(activeTab) {
+    if (sbContent) {
+      sbContent.innerHTML = '';
+      directoryGroups.forEach(function(g) {
+        if (!g.items || !g.items.length) return;
+        if (activeTab !== 'all' && activeTab !== 'tester' && activeTab !== g.key) return;
+        var grp = document.createElement('div');
+        grp.className = 'sb-group';
+        var head = document.createElement('div');
+        head.className = 'sb-group-title';
+        head.innerHTML = '<span>' + g.title + '</span><span>' + g.items.length + '</span>';
+        grp.appendChild(head);
+
+        var list = document.createElement('div');
+        list.className = 'sb-list';
+        g.items.forEach(function(item) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'sb-item';
+          btn.setAttribute('data-target-id', item.id);
+          btn.innerHTML = '<span class="sb-item-jp jp">' + item.jp + '</span><span class="sb-item-label">' + item.label + '</span>';
+          btn.addEventListener('click', function() { jumpToItem(item); });
+          list.appendChild(btn);
+        });
+        grp.appendChild(list);
+        sbContent.appendChild(grp);
+      });
+    }
+
+    if (mobileIndexChips && mobileIndexBar) {
+      mobileIndexChips.innerHTML = '';
+      if (activeTab === 'tester') {
+        mobileIndexBar.style.display = 'none';
+        return;
+      }
+      mobileIndexBar.style.display = '';
+      directoryGroups.forEach(function(g) {
+        if (!g.items) return;
+        if (activeTab !== 'all' && activeTab !== g.key) return;
+        g.items.forEach(function(item) {
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'mib-chip jp';
+          chip.textContent = item.jp === '⚖️' ? ('⚖️ ' + item.label) : item.jp;
+          chip.title = item.label;
+          chip.addEventListener('click', function() { jumpToItem(item); });
+          mobileIndexChips.appendChild(chip);
+        });
+      });
+    }
+  }
+
   function setTab(name) {
-    var visible = tabVisibility[name] || tabVisibility.all;
+    currentTab = tabVisibility[name] ? name : 'all';
+    var visible = tabVisibility[currentTab];
     tabBtns.forEach(function(b) {
-      b.classList.toggle('active', b.getAttribute('data-tab') === name);
+      b.classList.toggle('active', b.getAttribute('data-tab') === currentTab);
     });
     Object.keys(tabSections).forEach(function(key) {
       if (tabSections[key]) {
         tabSections[key].classList.toggle('hidden', visible.indexOf(key) === -1);
       }
     });
+    renderDirectory(currentTab);
   }
 
   tabBtns.forEach(function(btn) {
@@ -1816,29 +2169,76 @@
     });
   });
 
+  renderDirectory('all');
+
   var params = new URLSearchParams(window.location.search);
   var initialTab = params.get('tab');
   if (initialTab && Object.prototype.hasOwnProperty.call(tabVisibility, initialTab)) {
     setTab(initialTab);
   }
 
-  // 4. Live Search Filter
+  // 4. Live Search Filter with Status Banner & Empty Section Hiding
   var searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', function() {
-      var q = this.value.trim().toLowerCase();
-      var items = document.querySelectorAll('.search-item');
-      if (!q) {
-        items.forEach(function(item) { item.style.display = ''; });
-        return;
+  var btnClearSearch = document.getElementById('btnClearSearch');
+  var btnResetSearchBanner = document.getElementById('btnResetSearchBanner');
+  var searchStatus = document.getElementById('searchStatus');
+  var searchStatusText = document.getElementById('searchStatusText');
+
+  function runSearchFilter() {
+    if (!searchInput) return;
+    var q = searchInput.value.trim().toLowerCase();
+    var items = document.querySelectorAll('.search-item');
+    if (btnClearSearch) btnClearSearch.classList.toggle('show', q.length > 0);
+
+    if (!q) {
+      if (searchStatus) searchStatus.classList.remove('show');
+      items.forEach(function(item) { item.style.display = ''; });
+      setTab(currentTab);
+      return;
+    }
+
+    setTab('all');
+    if (tabSections.tester) tabSections.tester.classList.add('hidden');
+
+    var matchCount = 0;
+    items.forEach(function(item) {
+      var text = item.textContent.toLowerCase();
+      var matched = text.indexOf(q) !== -1;
+      item.style.display = matched ? '' : 'none';
+      if (matched) {
+        matchCount++;
+        item.classList.remove('is-collapsed');
+        var cBtn = item.querySelector('.btn-card-collapse');
+        if (cBtn) updateCardCollapseBtn(item, cBtn);
       }
-      setTab('all');
-      items.forEach(function(item) {
-        var text = item.textContent.toLowerCase();
-        item.style.display = text.indexOf(q) !== -1 ? '' : 'none';
-      });
     });
+
+    ['te', 'pola', 'partikel', 'komparasi'].forEach(function(secKey) {
+      var sec = tabSections[secKey];
+      if (!sec) return;
+      var hasVisible = Array.prototype.some.call(sec.querySelectorAll('.search-item'), function(el) {
+        return el.style.display !== 'none';
+      });
+      sec.classList.toggle('hidden', !hasVisible);
+    });
+
+    if (searchStatus && searchStatusText) {
+      searchStatus.classList.add('show');
+      searchStatusText.textContent = matchCount > 0
+        ? ('🔍 Menampilkan ' + matchCount + ' materi untuk "' + searchInput.value.trim() + '"')
+        : ('⚠️ Tidak ditemukan materi untuk "' + searchInput.value.trim() + '" — coba kata kunci lain');
+    }
   }
+
+  function clearSearch() {
+    if (!searchInput) return;
+    searchInput.value = '';
+    runSearchFilter();
+  }
+
+  if (searchInput) searchInput.addEventListener('input', runSearchFilter);
+  if (btnClearSearch) btnClearSearch.addEventListener('click', clearSearch);
+  if (btnResetSearchBanner) btnResetSearchBanner.addEventListener('click', clearSearch);
 
   // 5. Interactive Te-form Tester
   var testerSelect = document.getElementById('testerSelect');
