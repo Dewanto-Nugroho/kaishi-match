@@ -209,9 +209,9 @@
       </div>
 
       <div class="toolbar">
-        <button class="tbtn on" id="btnFuri">ふ Furigana: ON</button>
-        <button class="tbtn" id="btnArti">Terjemahan</button>
-        <button class="tbtn" id="btnKosakata" onclick="window.toggleKosakata &amp;&amp; window.toggleKosakata()">📖 Daftar kosakata</button>
+        <button type="button" class="tbtn on" id="btnFuri">ふ Furigana: ON</button>
+        <button type="button" class="tbtn" id="btnArti">Terjemahan</button>
+        <button type="button" class="tbtn" id="btnKosakata">📖 Daftar kosakata</button>
       </div>
 
       <div class="audio-bar" id="rAudioBar">
@@ -770,7 +770,7 @@
             '</div>' +
             '<div class="k-right">' +
               '<span class="lv lv' + (r.lv || 3) + '">' + lvName + '</span>' +
-              (r.a != null ? '<button class="k-play" data-play="' + r.a + '" title="Dengarkan pelafalan">🔊</button>' : '') +
+              (r.a != null ? '<button type="button" class="k-play" data-play="' + r.a + '" title="Dengarkan pelafalan">🔊</button>' : '') +
             '</div>' +
           '</div>';
         });
@@ -801,11 +801,13 @@
     if (b) b.classList.toggle('on', isVisible);
     if (isVisible) {
       setTimeout(function () {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        var rect = el.getBoundingClientRect();
+        if (rect.top > window.innerHeight - 60 || rect.top < 0) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }, 50);
     }
   }
-  window.toggleKosakata = toggleKosakata;
 
   if ($('btnKosakata')) {
     $('btnKosakata').addEventListener('click', toggleKosakata);
