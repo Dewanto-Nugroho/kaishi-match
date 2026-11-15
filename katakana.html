@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f4fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236f4df5'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E3%82%AB%3C/text%3E%3C/svg%3E">
+<title>Kosakata Katakana — Kaishi 1.5k</title>
+<style>
+  :root {
+    --bg: #f5f4fb;
+    --card: #ffffff;
+    --ink: #1c1a2b;
+    --muted: #7c7a92;
+    --line: #eae7f4;
+    --accent: #6f4df5;
+    --accent-2: #8b6bff;
+    --accent-soft: #efe9ff;
+    --teal: #0d9488;
+    --teal-2: #14b8a6;
+    --teal-bg: #f0fdfa;
+    --teal-line: #99f6e4;
+    --ok: #1e9d63;
+    --ok-bg: #e4f7ee;
+    --bad: #d2453f;
+    --bad-bg: #fdeaea;
+    --warn: #d97706;
+    --warn-bg: #fffbeb;
+    --shadow: 0 1px 2px rgba(28, 26, 43, .04), 0 8px 24px rgba(28, 26, 43, .06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .jp { font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic Pro", Meiryo, sans-serif; }
+  .hidden { display: none !important; }
+  ruby { ruby-position: over; }
+  ruby rt { font-size: .56em; color: #544c6e; font-weight: 700; }
+  body.hide-furi ruby rt { display: none; }
+  body.hide-romaji .v-romaji { display: none; }
+  body.compact-list .v-example { display: none; }
+
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 20px 18px 110px; }
+
+  /* ---------- Topbar ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .crumb { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .crumb a { color: var(--muted); text-decoration: none; }
+  .crumb a:hover { color: var(--accent); }
+  .crumb b { color: var(--teal); font-weight: 700; }
+  .badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .badge { font-size: 12px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 5px 12px; font-weight: 600; }
+  .badge-link { text-decoration: none; background: #fff; border: 1px solid var(--line); color: var(--ink); }
+  .badge-link:hover { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+    border: 1px solid #ccfbf1;
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 24px 26px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .hero-left { max-width: 610px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    background: #ccfbf1; color: #0f766e; padding: 4px 11px; border-radius: 999px; margin-bottom: 10px;
+  }
+  .hero h1 { font-size: 25px; font-weight: 800; margin: 0 0 8px; color: var(--ink); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .hero p { margin: 0; font-size: 14px; color: #525866; line-height: 1.6; }
+  .hero-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hstat-chip {
+    background: #fff; border: 1px solid #bae6fd; border-color: #99f6e4; border-radius: 14px;
+    padding: 10px 14px; text-align: center; min-width: 96px;
+  }
+  .hstat-chip b { display: block; font-size: 19px; color: var(--teal); font-weight: 800; font-variant-numeric: tabular-nums; }
+  .hstat-chip small { font-size: 11px; color: var(--muted); }
+
+  /* ---------- Tabs ---------- */
+  .tabs { display: flex; gap: 8px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 4px; }
+  .tab-btn {
+    border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px;
+    padding: 9px 17px; font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: all .15s; font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
+    touch-action: manipulation;
+  }
+  .tab-btn:hover { border-color: var(--teal-2); color: #0f766e; background: #f0fdfa; }
+  .tab-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; box-shadow: 0 4px 12px rgba(13, 148, 136, .24); }
+
+  /* ---------- Controls Panel ---------- */
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: var(--shadow); padding: 18px; margin-bottom: 18px;
+  }
+  .search-wrap { position: relative; margin-bottom: 14px; }
+  .search-input {
+    width: 100%; height: 46px; border-radius: 13px; border: 1px solid var(--line);
+    background: #fbfaff; padding: 0 16px 0 40px; font-size: 15px; color: var(--ink);
+    outline: none; transition: border-color .15s, box-shadow .15s; font-family: inherit;
+  }
+  .search-input:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(13, 148, 136, .12); background: #fff; }
+  .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--muted); pointer-events: none; }
+
+  .cat-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+  .chip {
+    border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px;
+    padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: all .15s; display: inline-flex; align-items: center; gap: 5px; touch-action: manipulation;
+  }
+  .chip:hover { border-color: var(--teal-2); color: #0f766e; background: var(--teal-bg); }
+  .chip.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .chip small { opacity: .72; font-weight: 500; }
+
+  .filter-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    flex-wrap: wrap; padding-top: 12px; border-top: 1px dashed var(--line);
+  }
+  .filter-left, .filter-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .select-sm {
+    height: 36px; border-radius: 10px; border: 1px solid var(--line); background: #fff;
+    padding: 0 10px; font-size: 13px; font-family: inherit; color: var(--ink); cursor: pointer; outline: none;
+  }
+  .tbtn {
+    height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff;
+    color: var(--ink); font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 5px; transition: all .15s; touch-action: manipulation;
+  }
+  .tbtn:hover { border-color: var(--teal-2); color: #0f766e; }
+  .tbtn.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .tbtn.accent { background: var(--accent-soft); border-color: #dcd2ff; color: var(--accent); }
+  .tbtn.accent:hover { background: var(--accent); color: #fff; }
+
+  .list-meta {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 12px; padding: 0 4px; font-size: 13px; color: var(--muted);
+  }
+
+  /* ---------- Vocabulary Grid & Cards ---------- */
+  .v-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .v-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); padding: 16px 18px; display: flex; flex-direction: column;
+    justify-content: space-between; gap: 10px; transition: transform .12s, border-color .15s;
+  }
+  .v-card:hover { transform: translateY(-1px); border-color: #b7e8df; }
+  .v-card.is-known { border-color: #b6e5cd; background: linear-gradient(180deg, #ffffff 0%, #f7fcf9 100%); }
+  .v-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .v-word-wrap { min-width: 0; flex: 1; }
+  .v-word-btn {
+    background: none; border: 0; padding: 0; margin: 0; text-align: left; cursor: pointer;
+    color: var(--ink); font-size: 22px; font-weight: 800; line-height: 1.25;
+    display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .v-word-btn:hover { color: var(--teal); }
+  .v-romaji { font-size: 13px; color: var(--teal); font-weight: 600; margin-top: 2px; }
+  .v-badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+  .v-pill {
+    font-size: 10.5px; font-weight: 700; border-radius: 6px; padding: 3px 7px; white-space: nowrap;
+  }
+  .v-pill.cat { background: #f3f2f8; color: #5b5870; }
+  .v-pill.kaishi { background: var(--accent-soft); color: var(--accent); }
+  .v-pill.wasei { background: #fff3e0; color: #c25e00; }
+
+  .v-mean { font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.4; }
+  .v-asal { font-size: 12px; color: var(--muted); }
+  .v-example {
+    background: #faf9fd; border: 1px solid #f0edf8; border-radius: 12px;
+    padding: 10px 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  }
+  .v-ex-text { flex: 1; min-width: 0; }
+  .v-ex-jp { font-size: 15px; line-height: 1.75; color: var(--ink); font-weight: 500; }
+  .v-ex-jp mark.kw { background: #ccfbf1; color: #0f766e; border-radius: 4px; padding: 0 3px; font-weight: 700; }
+  .v-ex-id { font-size: 12.5px; color: #5d5a72; margin-top: 3px; line-height: 1.45; }
+
+  .btn-spk {
+    width: 34px; height: 34px; border-radius: 9px; border: 0; background: var(--teal-bg);
+    color: #0f766e; cursor: pointer; font-size: 14px; display: grid; place-items: center; flex: none;
+    transition: all .15s;
+  }
+  .btn-spk:hover { background: var(--teal); color: #fff; }
+
+  .v-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding-top: 8px; border-top: 1px dashed #efedf6;
+  }
+  .v-act {
+    border: 1px solid var(--line); background: #fff; color: #5c5a72; border-radius: 9px;
+    padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 5px; transition: all .15s;
+  }
+  .v-act:hover { border-color: var(--teal-2); color: #0f766e; }
+  .v-act.star-on { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
+  .v-act.known-on { background: var(--ok-bg); border-color: #a7e3c5; color: #15803d; }
+
+  .empty-box {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 40px 20px; text-align: center; color: var(--muted); font-size: 14px;
+  }
+
+  /* ---------- Flashcard ---------- */
+  .fc-wrap { max-width: 620px; margin: 0 auto; }
+  .fc-controls {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  }
+  .fc-progress { font-size: 13px; color: var(--muted); font-weight: 600; text-align: center; margin-bottom: 10px; }
+  .fc-bar { height: 7px; border-radius: 99px; background: #e9e6f4; overflow: hidden; margin-bottom: 16px; }
+  .fc-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--teal-2), var(--teal)); transition: width .25s; }
+  .fc-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 24px;
+    box-shadow: var(--shadow); min-height: 290px; padding: 28px 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; cursor: pointer; position: relative; transition: transform .12s, border-color .15s;
+  }
+  .fc-card:hover { border-color: #99f6e4; }
+  .fc-side-tag {
+    position: absolute; top: 14px; left: 18px; font-size: 11px; font-weight: 700;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .04em;
+  }
+  .fc-top-badges { position: absolute; top: 12px; right: 16px; display: flex; gap: 6px; }
+  .fc-main { font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1.3; margin: 12px 0 8px; }
+  .fc-main.id-mode { font-size: 25px; }
+  .fc-hint { font-size: 12.5px; color: var(--muted); margin-top: 12px; }
+  .fc-back-mean { font-size: 22px; font-weight: 800; color: var(--teal); margin-bottom: 4px; }
+  .fc-back-romaji { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+  .fc-back-asal { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; }
+  .fc-back-ex {
+    background: #faf9fd; border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 14px; width: 100%; text-align: left;
+  }
+  .fc-actions {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px;
+  }
+  .btn {
+    height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink); font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: transform .12s, background .15s; touch-action: manipulation;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.primary { background: linear-gradient(180deg, var(--teal-2), var(--teal)); border-color: transparent; color: #fff; }
+  .btn.ok { background: var(--ok-bg); border-color: #a7e3c5; color: #15803d; }
+  .btn.warn { background: var(--warn-bg); border-color: #fde68a; color: #b45309; }
+
+  /* ---------- Quiz & Match ---------- */
+  .quiz-box { max-width: 760px; margin: 0 auto; }
+  .mode-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .qcard {
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+    box-shadow: var(--shadow); padding: 24px 22px; text-align: center;
+  }
+  .qprompt { font-size: 32px; font-weight: 800; line-height: 1.35; margin: 8px 0; }
+  .qprompt.sm { font-size: 20px; font-weight: 600; line-height: 1.65; }
+  .qopts { display: grid; gap: 10px; margin-top: 18px; }
+  .qopt {
+    text-align: left; padding: 13px 16px; border-radius: 13px; border: 1px solid var(--line);
+    background: #fff; font-size: 15.5px; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; gap: 12px; transition: all .15s;
+  }
+  .qopt:hover:not(:disabled) { border-color: var(--teal-2); background: var(--teal-bg); }
+  .qopt .key {
+    width: 24px; height: 24px; border-radius: 7px; background: #f1f0f6; color: #5c5a72;
+    font-size: 12px; font-weight: 700; display: grid; place-items: center; flex: none;
+  }
+  .qopt.correct { background: var(--ok-bg); border-color: #a7e3c5; color: #166534; }
+  .qopt.correct .key { background: #bbf7d0; color: #166534; }
+  .qopt.wrong { background: var(--bad-bg); border-color: #f3bcbc; color: #991b1b; }
+  .qopt.wrong .key { background: #fecaca; color: #991b1b; }
+  .qexp {
+    margin-top: 16px; border-radius: 14px; padding: 13px 16px; font-size: 13.5px;
+    line-height: 1.55; text-align: left; display: none;
+  }
+  .qexp.show { display: block; }
+  .qexp.good { background: var(--ok-bg); color: #166534; }
+  .qexp.bad { background: var(--bad-bg); color: #991b1b; }
+
+  .mboard { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .mcol { display: flex; flex-direction: column; gap: 10px; }
+  .mtile {
+    width: 100%; min-height: 64px; padding: 10px 14px; border-radius: 14px;
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    font-size: 17px; font-weight: 600; cursor: pointer; font-family: inherit;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; transition: all .14s;
+  }
+  .mtile:hover:not(.matched) { border-color: var(--teal-2); transform: translateY(-1px); }
+  .mtile.selected { background: linear-gradient(180deg, var(--teal-2), var(--teal)); border-color: transparent; color: #fff; }
+  .mtile.matched { background: var(--ok-bg); border-color: #a7e3c5; color: #15803d; cursor: default; }
+  .mtile.wrong { background: var(--bad-bg); border-color: #f3bcbc; color: #a8332e; animation: shake .32s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* ---------- Bagan Katakana ---------- */
+  .kana-sec { background: var(--card); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 20px; margin-bottom: 18px; }
+  .kana-sec h2 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
+  .kana-sec p { margin: 0 0 14px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .kana-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .kcell {
+    background: #fbfaff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 6px; text-align: center; cursor: pointer; transition: all .15s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .kcell:hover:not(.empty) { border-color: var(--teal); background: var(--teal-bg); transform: translateY(-1px); }
+  .kcell.empty { background: transparent; border-style: dashed; opacity: .35; cursor: default; }
+  .kcell b { font-size: 22px; color: var(--ink); line-height: 1.2; }
+  .kcell span { font-size: 11.5px; color: var(--teal); font-weight: 700; }
+
+  .kana-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .pair-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .pair-card { background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 14px 16px; }
+  .pair-chars { font-size: 28px; font-weight: 800; color: #92400e; margin-bottom: 6px; display: flex; gap: 14px; align-items: center; }
+  .pair-card small { font-size: 13px; color: #78350f; line-height: 1.5; display: block; }
+
+  /* ---------- Voice Modal ---------- */
+  .modal { position: fixed; inset: 0; background: rgba(24, 22, 36, .48); display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px; }
+  .modal.show { display: flex; }
+  .mcard { background: #fff; border-radius: 20px; width: 100%; max-width: 440px; padding: 22px; box-shadow: 0 24px 60px rgba(20, 18, 40, .3); position: relative; }
+  .mcard h3 { margin: 0 0 6px; font-size: 18px; }
+  .mx { position: absolute; top: 12px; right: 14px; border: 0; background: #f1f0f6; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; color: #5c5a72; }
+  .mrow { margin-bottom: 12px; font-size: 13.5px; color: #4b4960; }
+  .mrow label { display: block; font-weight: 600; margin-bottom: 5px; }
+  .mrow select, .mrow input {
+    width: 100%; height: 38px; border-radius: 10px; border: 1px solid var(--line);
+    padding: 0 11px; font-size: 13.5px; font-family: inherit;
+  }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(10px);
+    background: #1c1a2b; color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 13.5px;
+    opacity: 0; pointer-events: none; transition: .2s; z-index: 220; max-width: 88vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 780px) {
+    .v-grid { grid-template-columns: 1fr; }
+    .fc-actions { grid-template-columns: repeat(2, 1fr); }
+    .mboard { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mtile { font-size: 14.5px; min-height: 54px; padding: 8px; }
+    .hero { padding: 18px 16px; }
+    .hero h1 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="crumb">
+      <a href="index.html">🏠 Beranda</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Kosakata Katakana</b>
+    </div>
+    <div class="badges">
+      <a class="badge badge-link" href="index.html">‹ Beranda</a>
+      <a class="badge badge-link" href="index.html#pilih">Cocokkan ›</a>
+      <a class="badge badge-link" href="kuis.html">Kuis N5–N1 ›</a>
+      <a class="badge badge-link" href="teks.html">Baca ›</a>
+      <a class="badge badge-link" href="bunpo.html">Bunpo ›</a>
+      <button class="badge" id="poinBadge" type="button" style="border:0;cursor:pointer;font-family:inherit">★ 0</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-left">
+      <span class="hero-tag">カタカナ Modul Kosakata Serapan &amp; Harian</span>
+      <h1>ア Kosakata Katakana</h1>
+      <p>Kumpulan kosakata penting beraksara <b>Katakana</b> — termasuk kata-kata yang muncul di kalimat contoh Kaishi 1.5k, istilah <i>Wasei-eigo</i> (singkatan khas Jepang), romaji, asal kata, audio, flashcard, serta kuis latihan.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat-chip">
+        <b id="statTotal">0</b>
+        <small>Total Kosakata</small>
+      </div>
+      <div class="hstat-chip">
+        <b id="statKnown">0</b>
+        <small>Sudah Hafal</small>
+      </div>
+      <div class="hstat-chip">
+        <b id="statKaishi">0</b>
+        <small>Di Kalimat Kaishi</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabNav">
+    <button type="button" class="tab-btn active" data-tab="list">📋 Daftar Kosakata</button>
+    <button type="button" class="tab-btn" data-tab="flashcard">🃏 Flashcard</button>
+    <button type="button" class="tab-btn" data-tab="kuis">🎯 Kuis &amp; Cocokkan</button>
+    <button type="button" class="tab-btn" data-tab="bagan">🔤 Bagan &amp; Tips</button>
+  </div>
+
+  <!-- ================= TAB 1: DAFTAR KOSAKATA ================= -->
+  <section id="secList">
+    <div class="panel">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input id="searchInput" class="search-input" type="search" placeholder="Cari kata katakana, romaji, arti, atau asal kata… (mis. pasokon, apartemen, kopi, パソコン)">
+      </div>
+
+      <div class="cat-chips" id="catChips"></div>
+
+      <div class="filter-bar">
+        <div class="filter-left">
+          <select id="specialFilter" class="select-sm" title="Filter sumber atau status">
+            <option value="all">Semua sumber &amp; status</option>
+            <option value="kaishi">Dari kalimat Kaishi 1.5k</option>
+            <option value="wasei">Wasei-eigo / Singkatan Jepang</option>
+            <option value="unlearned">Belum hafal</option>
+            <option value="known">Sudah hafal ✓</option>
+            <option value="star">Ditandai ★</option>
+          </select>
+          <button type="button" class="tbtn accent" id="btnPracticeFiltered" title="Latih kata yang sedang tampil sebagai flashcard">🃏 Latih Daftar Ini</button>
+        </div>
+        <div class="filter-right">
+          <button type="button" class="tbtn on" id="btnToggleFuri">ふ Furigana: ON</button>
+          <button type="button" class="tbtn on" id="btnToggleRomaji">Aa Romaji: ON</button>
+          <button type="button" class="tbtn on" id="btnToggleExample">💬 Contoh: ON</button>
+          <button type="button" class="tbtn" id="btnVoiceCfg">🔊 <span id="voiceLabel">Suara</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-meta">
+      <span id="listMetaText">Memuat kosakata…</span>
+      <span id="listProgressMeta"></span>
+    </div>
+
+    <div class="v-grid" id="vocabGrid"></div>
+  </section>
+
+  <!-- ================= TAB 2: FLASHCARD ================= -->
+  <section id="secFlashcard" class="hidden">
+    <div class="fc-wrap">
+      <div class="fc-controls">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select id="fcSource" class="select-sm">
+            <option value="all">Semua kosakata</option>
+            <option value="filtered">Sesuai filter daftar</option>
+            <option value="unlearned">Belum hafal saja</option>
+            <option value="star">Ditandai ★ saja</option>
+            <option value="kaishi">Dari kalimat Kaishi</option>
+            <option value="wasei">Wasei-eigo / Singkatan</option>
+          </select>
+          <select id="fcDir" class="select-sm">
+            <option value="kt-id">Katakana → Arti</option>
+            <option value="id-kt">Arti → Katakana</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="tbtn" id="fcShuffleBtn">🔀 Acak Ulang</button>
+        </div>
+      </div>
+
+      <div class="fc-progress" id="fcProgress">Kartu 0 / 0</div>
+      <div class="fc-bar"><i id="fcBarFill"></i></div>
+
+      <div class="fc-card" id="fcCard">
+        <div class="fc-side-tag" id="fcSideTag">DEPAN</div>
+        <div class="fc-top-badges" id="fcTopBadges"></div>
+        <div id="fcBody"></div>
+      </div>
+
+      <div class="fc-actions">
+        <button type="button" class="btn" id="fcPrevBtn">‹ Sebelumnya</button>
+        <button type="button" class="btn warn" id="fcRepeatBtn">↻ Ulangi Nanti</button>
+        <button type="button" class="btn ok" id="fcKnownBtn">✓ Sudah Hafal</button>
+        <button type="button" class="btn primary" id="fcNextBtn">Berikutnya ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TAB 3: KUIS & COCOKKAN ================= -->
+  <section id="secKuis" class="hidden">
+    <div class="quiz-box">
+      <div class="panel" id="quizSetupPanel">
+        <h2 style="margin:0 0 12px;font-size:18px">🎯 Latihan Kosakata Katakana</h2>
+        <div class="mode-pills">
+          <button type="button" class="chip active" data-qmode="mc">📝 Kuis Pilihan Ganda</button>
+          <button type="button" class="chip" data-qmode="match">🧩 Cocokkan Pasangan</button>
+        </div>
+
+        <div id="qMcSetup" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+          <select id="qPool" class="select-sm">
+            <option value="all">Semua kosakata</option>
+            <option value="filtered">Sesuai filter daftar</option>
+            <option value="unlearned">Belum hafal</option>
+            <option value="kaishi">Dari kalimat Kaishi</option>
+            <option value="wasei">Wasei-eigo / Singkatan</option>
+            <option value="star">Ditandai ★</option>
+          </select>
+          <select id="qType" class="select-sm">
+            <option value="mix">Jenis: Campuran</option>
+            <option value="kt-id">Katakana → Arti</option>
+            <option value="id-kt">Arti → Katakana</option>
+            <option value="cloze">Isi Kalimat Rumpang</option>
+          </select>
+          <select id="qCount" class="select-sm">
+            <option value="10" selected>10 soal</option>
+            <option value="20">20 soal</option>
+            <option value="30">30 soal</option>
+          </select>
+          <button type="button" class="btn primary" id="qStartBtn">Mulai Kuis</button>
+        </div>
+
+        <div id="qMatchSetup" class="hidden" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px">
+          <select id="mPool" class="select-sm">
+            <option value="all">Semua kosakata</option>
+            <option value="filtered">Sesuai filter daftar</option>
+            <option value="unlearned">Belum hafal</option>
+            <option value="kaishi">Dari kalimat Kaishi</option>
+            <option value="wasei">Wasei-eigo / Singkatan</option>
+          </select>
+          <select id="mCount" class="select-sm">
+            <option value="12">12 kata (2 ronde)</option>
+            <option value="18" selected>18 kata (3 ronde)</option>
+            <option value="24">24 kata (4 ronde)</option>
+          </select>
+          <button type="button" class="btn primary" id="mStartBtn">Mulai Cocokkan</button>
+        </div>
+      </div>
+
+      <!-- Multiple Choice Play -->
+      <div id="qPlayArea" class="hidden">
+        <div class="list-meta">
+          <span id="qStepLabel">Soal 1/10</span>
+          <span id="qScoreLabel">Benar: 0</span>
+        </div>
+        <div class="fc-bar"><i id="qBarFill"></i></div>
+        <div class="qcard">
+          <div id="qTypeBadge" class="badge" style="display:inline-block;margin-bottom:10px">Katakana → Arti</div>
+          <div id="qPrompt" class="qprompt jp"></div>
+          <div style="margin-top:8px">
+            <button type="button" class="tbtn" id="qSpeakBtn">🔊 Dengarkan</button>
+          </div>
+          <div class="qopts" id="qOpts"></div>
+          <div class="qexp" id="qExp"></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;margin-top:16px">
+            <button type="button" class="btn" id="qQuitBtn">Keluar</button>
+            <button type="button" class="btn primary" id="qNextBtn" disabled>Lanjut ›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple Choice Result -->
+      <div id="qResultArea" class="hidden">
+        <div class="qcard">
+          <h2 id="qResTitle" style="margin:0 0 6px">Kuis Selesai 🎉</h2>
+          <p id="qResSub" style="color:var(--muted);margin:0 0 16px"></p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button type="button" class="btn primary" id="qAgainBtn">Ulangi Lagi</button>
+            <button type="button" class="btn" id="qRetryWrongBtn">Ulangi yang Salah</button>
+            <button type="button" class="btn" id="qBackBtn">Pengaturan Kuis</button>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <h3 style="margin:0 0 12px;font-size:15px">Ringkasan Jawaban</h3>
+          <div id="qReviewList"></div>
+        </div>
+      </div>
+
+      <!-- Match Play -->
+      <div id="mPlayArea" class="hidden">
+        <div class="list-meta">
+          <span id="mRoundLabel">Ronde 1/3</span>
+          <span id="mStatLabel">Cocok: 0 · Salah: 0</span>
+        </div>
+        <div class="fc-bar"><i id="mBarFill"></i></div>
+        <div class="panel">
+          <div style="font-size:13px;color:var(--muted);text-align:center">Klik kata Katakana di kiri untuk mendengar suaranya, lalu pilih arti yang cocok di kanan.</div>
+          <div class="mboard">
+            <div class="mcol" id="mColLeft"></div>
+            <div class="mcol" id="mColRight"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:14px">
+            <button type="button" class="btn" id="mQuitBtn">Selesai</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match Result -->
+      <div id="mResultArea" class="hidden">
+        <div class="qcard">
+          <h2 style="margin:0 0 6px">Cocokkan Selesai 🎉</h2>
+          <p id="mResSub" style="color:var(--muted);margin:0 0 16px"></p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button type="button" class="btn primary" id="mAgainBtn">Main Lagi</button>
+            <button type="button" class="btn" id="mBackBtn">Pengaturan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TAB 4: BAGAN & TIPS ================= -->
+  <section id="secBagan" class="hidden">
+    <div class="kana-sec">
+      <h2>⚠️ Huruf Katakana yang Mirip &amp; Sering Tertukar</h2>
+      <p>Banyak pelajar keliru membaca Katakana karena bentuk goresan dua pasang huruf ini hampir sama. Perhatikan arah goresannya:</p>
+      <div class="pair-grid">
+        <div class="pair-card">
+          <div class="pair-chars jp">シ <span style="font-size:15px;color:#78350f">(shi)</span> vs ツ <span style="font-size:15px;color:#78350f">(tsu)</span></div>
+          <small><b>シ (shi)</b>: kedua titik sejajar vertikal di kiri, tarikan panjang mengarah <b>dari bawah ke kanan atas</b> (seperti wajah miring ke samping).<br><b>ツ (tsu)</b>: kedua titik sejajar horizontal di atas, tarikan panjang mengarah <b>dari kanan atas turun ke kiri bawah</b>.</small>
+        </div>
+        <div class="pair-card">
+          <div class="pair-chars jp">ソ <span style="font-size:15px;color:#78350f">(so)</span> vs ン <span style="font-size:15px;color:#78350f">(n)</span></div>
+          <small><b>ソ (so)</b>: titik di atas mengarah lebih tegak, tarikan panjang turun <b>dari kanan atas ke bawah</b>.<br><b>ン (n)</b>: titik lebih mendatar, tarikan panjang naik <b>dari kiri bawah ke kanan atas</b> (sama seperti シ).</small>
+        </div>
+        <div class="pair-card">
+          <div class="pair-chars jp">ク <span style="font-size:15px;color:#78350f">(ku)</span> · ケ <span style="font-size:15px;color:#78350f">(ke)</span> · タ <span style="font-size:15px;color:#78350f">(ta)</span></div>
+          <small><b>ク (ku)</b> tidak punya garis tengah. <b>タ (ta)</b> punya titik kecil di dalam lengkungan. <b>ケ (ke)</b> garis atasnya mendatar seperti K miring.</small>
+        </div>
+        <div class="pair-card">
+          <div class="pair-chars jp">ウ <span style="font-size:15px;color:#78350f">(u)</span> · ワ <span style="font-size:15px;color:#78350f">(wa)</span> · フ <span style="font-size:15px;color:#78350f">(fu)</span></div>
+          <small><b>フ (fu)</b> hanya satu garis melengkung. <b>ワ (wa)</b> tambah garis kiri vertikal. <b>ウ (u)</b> tambah garis pendek di atas tengah.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="kana-sec">
+      <h2>🔤 Bagan Katakana Dasar (Gojūon) — Klik untuk Mendengar</h2>
+      <p>Ketuk huruf mana saja di bawah ini untuk mendengar pelafalan Jepangnya.</p>
+      <div class="kana-grid" id="baganBasic"></div>
+    </div>
+
+    <div class="kana-sec">
+      <h2>🔊 Bunyi Dakuten (゛), Handakuten (゜), &amp; Serapan Modern</h2>
+      <p>Katakana memakai kombinasi huruf kecil (ァィゥェォャュョ) untuk menuliskan bunyi kata asing yang tidak ada di Hiragana, seperti <b>ティ</b> (<i>ti</i> pada パーティー), <b>ファ</b> (<i>fa</i> pada ソファー), atau <b>ヴィ/ヴァ</b>.</p>
+      <div class="kana-grid" id="baganDakuten"></div>
+      <h3 style="margin:18px 0 10px;font-size:15px">Kombinasi Bunyi Serapan Populer</h3>
+      <div class="kana-grid" id="baganForeign"></div>
+    </div>
+
+    <div class="kana-sec">
+      <h2>✂️ Pola Singkatan &amp; Wasei-eigo Populer</h2>
+      <p>Bahasa Jepang sering menyingkat kata serapan panjang menjadi 3–4 mora agar praktis diucapkan:</p>
+      <div class="pair-grid" id="waseiExamples"></div>
+    </div>
+  </section>
+</div>
+
+<!-- Modal Pengaturan Suara -->
+<div class="modal" id="voiceModal">
+  <div class="mcard">
+    <button type="button" class="mx" id="vClose">✕</button>
+    <h3>🔊 Pengaturan Suara Katakana</h3>
+    <p style="margin:0 0 14px;font-size:13px;color:var(--muted)">Pengaturan ini sinkron otomatis dengan halaman Baca Teks.</p>
+    <div class="mrow">
+      <label for="vEngine">Mesin Suara</label>
+      <select id="vEngine">
+        <option value="google">Google TTS (Online + fallback Browser)</option>
+        <option value="speech">Browser Web Speech API (Instan / Offline)</option>
+        <option value="elevenlabs">ElevenLabs AI (Perlu API Key)</option>
+      </select>
+    </div>
+    <div id="vElevenBox" class="hidden">
+      <div class="mrow">
+        <label for="vElevenKey">API Key ElevenLabs</label>
+        <input type="password" id="vElevenKey" placeholder="sk_...">
+      </div>
+      <div class="mrow">
+        <label for="vElevenVoice">Voice ID</label>
+        <select id="vElevenVoice">
+          <option value="EXAVITQu4vr4xnSDxMaL">Sarah (Jelas &amp; Natural)</option>
+          <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Lembut)</option>
+          <option value="pNInz6obpgDQGcFmaJgB">Adam (Pria Dewasa)</option>
+          <option value="custom">Custom Voice ID…</option>
+        </select>
+      </div>
+      <div class="mrow hidden" id="vCustomRow">
+        <label for="vElevenCustom">Custom Voice ID</label>
+        <input type="text" id="vElevenCustom" placeholder="Masukkan Voice ID">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+      <button type="button" class="btn" id="vTestBtn">🔊 Uji Suara</button>
+      <button type="button" class="btn primary" id="vSaveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="katakana-data.js"></script>
+<script src="stats.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var DATA = window.KAISHI_KATAKANA;
+  if (!DATA || !DATA.words) {
+    document.body.innerHTML = '<p style="padding:40px;font-family:sans-serif">File <b>katakana-data.js</b> tidak ditemukan.</p>';
+    return;
+  }
+
+  var WORDS = DATA.words;
+  var CATS = DATA.categories || [];
+  var CAT_MAP = {};
+  CATS.forEach(function (c) { CAT_MAP[c.id] = c; });
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2400);
+  }
+
+  /* ---------------- localStorage: hafal & tandai ---------------- */
+  var KNOWN_KEY = 'kaishi.katakana.known.v1';
+  var STAR_KEY = 'kaishi.katakana.star.v1';
+  var VOICE_CFG_KEY = 'kaishi.voice.cfg.v1';
+
+  function loadIdMap(key) {
+    try { return JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (e) { return {}; }
+  }
+  function saveIdMap(key, map) {
+    try { localStorage.setItem(key, JSON.stringify(map)); } catch (e) {}
+  }
+
+  var knownMap = loadIdMap(KNOWN_KEY);
+  var starMap = loadIdMap(STAR_KEY);
+
+  function isKnown(id) { return !!knownMap[String(id)]; }
+  function isStar(id) { return !!starMap[String(id)]; }
+
+  function updateHeroStats() {
+    var knownCount = WORDS.filter(function (w) { return isKnown(w.id); }).length;
+    var kaishiCount = WORDS.filter(function (w) { return w.kaishi; }).length;
+    $('statTotal').textContent = WORDS.length;
+    $('statKnown').textContent = knownCount;
+    $('statKaishi').textContent = kaishiCount;
+  }
+
+  /* ---------------- Audio Engine (Local MP3 -> Voice Cfg -> Web Speech Fallback) ---------------- */
+  var curAudio = null;
+  var ELEVEN_CACHE = {};
+
+  function loadVoiceCfg() {
+    try {
+      var s = JSON.parse(localStorage.getItem(VOICE_CFG_KEY) || '{}');
+      return {
+        engine: s.engine || 'google',
+        elevenKey: s.elevenKey || '',
+        elevenVoice: s.elevenVoice || 'EXAVITQu4vr4xnSDxMaL',
+        elevenCustomVoice: s.elevenCustomVoice || '',
+        elevenModel: s.elevenModel || 'eleven_multilingual_v2'
+      };
+    } catch (e) {
+      return { engine: 'google', elevenKey: '', elevenVoice: 'EXAVITQu4vr4xnSDxMaL', elevenCustomVoice: '', elevenModel: 'eleven_multilingual_v2' };
+    }
+  }
+  function saveVoiceCfg(cfg) {
+    try { localStorage.setItem(VOICE_CFG_KEY, JSON.stringify(cfg)); } catch (e) {}
+  }
+  function updateVoiceLabel() {
+    var cfg = loadVoiceCfg();
+    var lbl = cfg.engine === 'elevenlabs' ? 'ElevenLabs' : (cfg.engine === 'speech' ? 'Browser TTS' : 'Google TTS');
+    if ($('voiceLabel')) $('voiceLabel').textContent = lbl;
+  }
+
+  function stopCurAudio() {
+    if (curAudio) {
+      try { curAudio.pause(); curAudio.src = ''; } catch (e) {}
+      curAudio = null;
+    }
+    if ('speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
+  }
+
+  function speakWebSpeech(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ja-JP';
+      u.rate = 0.92;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  function speakGoogle(text) {
+    var url = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=' + encodeURIComponent(text);
+    var a = new Audio();
+    curAudio = a;
+    var fellBack = false;
+    function fallback() {
+      if (fellBack) return;
+      fellBack = true;
+      speakWebSpeech(text);
+    }
+    a.onerror = fallback;
+    a.src = url;
+    var p = a.play();
+    if (p && typeof p.catch === 'function') p.catch(fallback);
+  }
+
+  function speakEleven(text, cfg) {
+    var voiceId = (cfg.elevenVoice === 'custom' ? (cfg.elevenCustomVoice || '').trim() : cfg.elevenVoice) || 'EXAVITQu4vr4xnSDxMaL';
+    var apiKey = (cfg.elevenKey || '').trim();
+    if (!apiKey) { speakGoogle(text); return; }
+    var key = voiceId + '_' + text;
+    if (ELEVEN_CACHE[key]) {
+      var ca = new Audio(ELEVEN_CACHE[key]);
+      curAudio = ca;
+      ca.play().catch(function () { speakGoogle(text); });
+      return;
+    }
+    fetch('https://api.elevenlabs.io/v1/text-to-speech/' + encodeURIComponent(voiceId), {
+      method: 'POST',
+      headers: { 'Accept': 'audio/mpeg', 'Content-Type': 'application/json', 'xi-api-key': apiKey },
+      body: JSON.stringify({
+        text: text,
+        model_id: cfg.elevenModel || 'eleven_multilingual_v2',
+        voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+      })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.blob();
+    }).then(function (blob) {
+      var u = URL.createObjectURL(blob);
+      ELEVEN_CACHE[key] = u;
+      var a = new Audio(u);
+      curAudio = a;
+      a.play().catch(function () { speakGoogle(text); });
+    }).catch(function () {
+      speakGoogle(text);
+    });
+  }
+
+  function speakJa(text, audioId) {
+    if (!text) return;
+    stopCurAudio();
+    if (audioId != null) {
+      var localAudio = new Audio('media/m' + audioId + '.mp3');
+      curAudio = localAudio;
+      var triedTts = false;
+      function fallbackTts() {
+        if (triedTts) return;
+        triedTts = true;
+        speakJa(text, null);
+      }
+      localAudio.onerror = fallbackTts;
+      var lp = localAudio.play();
+      if (lp && typeof lp.catch === 'function') lp.catch(fallbackTts);
+      return;
+    }
+    var cfg = loadVoiceCfg();
+    if (cfg.engine === 'elevenlabs' && cfg.elevenKey) {
+      speakEleven(text, cfg);
+    } else if (cfg.engine === 'speech') {
+      speakWebSpeech(text);
+    } else {
+      speakGoogle(text);
+    }
+  }
+
+  /* ---------------- Furigana & Sentence Renderer ---------------- */
+  function renderFuriganaHtml(sf, targetWord) {
+    var html = '';
+    var re = /\{([^{}|]+)\|([^{}|]+)\}/g;
+    var last = 0, m;
+    function wrapHighlight(plainSegment) {
+      var safe = esc(plainSegment);
+      if (!targetWord) return safe;
+      var escTarget = esc(targetWord);
+      return safe.split(escTarget).join('<mark class="kw">' + escTarget + '</mark>');
+    }
+    while ((m = re.exec(sf)) !== null) {
+      if (m.index > last) html += wrapHighlight(sf.slice(last, m.index));
+      html += '<ruby>' + esc(m[1]) + '<rt>' + esc(m[2]) + '</rt></ruby>';
+      last = re.lastIndex;
+    }
+    if (last < sf.length) html += wrapHighlight(sf.slice(last));
+    return html;
+  }
+
+  /* ---------------- Tabs Navigation ---------------- */
+  var activeTab = 'list';
+  function switchTab(tab) {
+    activeTab = tab;
+    Array.prototype.forEach.call(document.querySelectorAll('#tabNav .tab-btn'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+    });
+    $('secList').classList.toggle('hidden', tab !== 'list');
+    $('secFlashcard').classList.toggle('hidden', tab !== 'flashcard');
+    $('secKuis').classList.toggle('hidden', tab !== 'kuis');
+    $('secBagan').classList.toggle('hidden', tab !== 'bagan');
+    if (tab === 'flashcard' && !fcDeck.length) initFlashcards();
+    window.scrollTo(0, 0);
+  }
+
+  $('tabNav').addEventListener('click', function (e) {
+    var b = e.target.closest('.tab-btn');
+    if (!b) return;
+    switchTab(b.getAttribute('data-tab'));
+  });
+
+  /* ---------------- Tab 1: List & Filters ---------------- */
+  var activeCat = 'all';
+  var furiOn = true;
+  var romajiOn = true;
+  var exampleOn = true;
+
+  function renderCatChips() {
+    var counts = { all: WORDS.length };
+    WORDS.forEach(function (w) { counts[w.cat] = (counts[w.cat] || 0) + 1; });
+    var html = '<button type="button" class="chip' + (activeCat === 'all' ? ' active' : '') + '" data-cat="all">Semua <small>' + counts.all + '</small></button>';
+    CATS.forEach(function (c) {
+      html += '<button type="button" class="chip' + (activeCat === c.id ? ' active' : '') + '" data-cat="' + c.id + '">' +
+        c.icon + ' ' + esc(c.label) + ' <small>' + (counts[c.id] || 0) + '</small></button>';
+    });
+    $('catChips').innerHTML = html;
+  }
+
+  function getFilteredWords() {
+    var q = ($('searchInput').value || '').trim().toLowerCase();
+    var sp = $('specialFilter').value;
+    return WORDS.filter(function (w) {
+      if (activeCat !== 'all' && w.cat !== activeCat) return false;
+      if (sp === 'kaishi' && !w.kaishi) return false;
+      if (sp === 'wasei' && !w.wasei) return false;
+      if (sp === 'known' && !isKnown(w.id)) return false;
+      if (sp === 'unlearned' && isKnown(w.id)) return false;
+      if (sp === 'star' && !isStar(w.id)) return false;
+      if (q) {
+        var hay = (w.w + ' ' + w.romaji + ' ' + w.m + ' ' + w.asal + ' ' + w.s + ' ' + w.sm).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderVocabList() {
+    var list = getFilteredWords();
+    var knownInList = list.filter(function (w) { return isKnown(w.id); }).length;
+    $('listMetaText').textContent = 'Menampilkan ' + list.length + ' dari ' + WORDS.length + ' kosakata Katakana';
+    $('listProgressMeta').textContent = list.length ? (knownInList + '/' + list.length + ' sudah hafal') : '';
+
+    if (!list.length) {
+      $('vocabGrid').innerHTML = '<div class="empty-box" style="grid-column:1/-1">Tidak ada kosakata Katakana yang cocok dengan pencarian atau filter ini.</div>';
+      return;
+    }
+
+    var html = list.map(function (w) {
+      var cat = CAT_MAP[w.cat] || { icon: '', label: w.cat };
+      var known = isKnown(w.id);
+      var star = isStar(w.id);
+      return '<article class="v-card' + (known ? ' is-known' : '') + '" data-id="' + w.id + '">' +
+        '<div>' +
+          '<div class="v-top">' +
+            '<div class="v-word-wrap">' +
+              '<button type="button" class="v-word-btn jp" data-speak-word="' + w.id + '" title="Klik untuk mendengar pelafalan">' +
+                esc(w.w) + ' <span style="font-size:14px;opacity:.6">🔊</span>' +
+              '</button>' +
+              '<div class="v-romaji">' + esc(w.romaji) + '</div>' +
+            '</div>' +
+            '<div class="v-badges">' +
+              '<span class="v-pill cat">' + cat.icon + ' ' + esc(cat.label) + '</span>' +
+              (w.kaishi ? '<span class="v-pill kaishi" title="Muncul di deck/kalimat Kaishi 1.5k">Kaishi</span>' : '') +
+              (w.wasei ? '<span class="v-pill wasei" title="Istilah atau singkatan khas Jepang">Wasei</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="v-mean" style="margin-top:8px">' + esc(w.m) + '</div>' +
+          '<div class="v-asal">← ' + esc(w.asal) + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="v-example">' +
+            '<div class="v-ex-text">' +
+              '<div class="v-ex-jp jp">' + renderFuriganaHtml(w.sf, w.w) + '</div>' +
+              '<div class="v-ex-id">' + esc(w.sm) + '</div>' +
+            '</div>' +
+            '<button type="button" class="btn-spk" data-speak-sent="' + w.id + '" title="Putar suara kalimat">🔊</button>' +
+          '</div>' +
+          '<div class="v-foot" style="margin-top:10px">' +
+            '<button type="button" class="v-act' + (star ? ' star-on' : '') + '" data-star="' + w.id + '">' + (star ? '★ Ditandai' : '☆ Tandai') + '</button>' +
+            '<button type="button" class="v-act' + (known ? ' known-on' : '') + '" data-known="' + w.id + '">' + (known ? '✓ Sudah Hafal' : '○ Tandai Hafal') + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+    $('vocabGrid').innerHTML = html;
+  }
+
+  $('catChips').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cat]');
+    if (!b) return;
+    activeCat = b.getAttribute('data-cat');
+    renderCatChips();
+    renderVocabList();
+  });
+
+  $('searchInput').addEventListener('input', renderVocabList);
+  $('specialFilter').addEventListener('change', renderVocabList);
+
+  $('btnToggleFuri').addEventListener('click', function () {
+    furiOn = !furiOn;
+    document.body.classList.toggle('hide-furi', !furiOn);
+    this.classList.toggle('on', furiOn);
+    this.textContent = 'ふ Furigana: ' + (furiOn ? 'ON' : 'OFF');
+  });
+
+  $('btnToggleRomaji').addEventListener('click', function () {
+    romajiOn = !romajiOn;
+    document.body.classList.toggle('hide-romaji', !romajiOn);
+    this.classList.toggle('on', romajiOn);
+    this.textContent = 'Aa Romaji: ' + (romajiOn ? 'ON' : 'OFF');
+  });
+
+  $('btnToggleExample').addEventListener('click', function () {
+    exampleOn = !exampleOn;
+    document.body.classList.toggle('compact-list', !exampleOn);
+    this.classList.toggle('on', exampleOn);
+    this.textContent = '💬 Contoh: ' + (exampleOn ? 'ON' : 'OFF');
+  });
+
+  $('vocabGrid').addEventListener('click', function (e) {
+    var sw = e.target.closest('[data-speak-word]');
+    if (sw) {
+      var id = parseInt(sw.getAttribute('data-speak-word'), 10);
+      var item = WORDS.filter(function (x) { return x.id === id; })[0];
+      if (item) speakJa(item.w, item.a);
+      return;
+    }
+    var ss = e.target.closest('[data-speak-sent]');
+    if (ss) {
+      var sid = parseInt(ss.getAttribute('data-speak-sent'), 10);
+      var sitem = WORDS.filter(function (x) { return x.id === sid; })[0];
+      if (sitem) speakJa(sitem.s, null);
+      return;
+    }
+    var st = e.target.closest('[data-star]');
+    if (st) {
+      var stId = String(st.getAttribute('data-star'));
+      if (starMap[stId]) delete starMap[stId]; else starMap[stId] = 1;
+      saveIdMap(STAR_KEY, starMap);
+      renderVocabList();
+      return;
+    }
+    var kn = e.target.closest('[data-known]');
+    if (kn) {
+      var knId = String(kn.getAttribute('data-known'));
+      if (knownMap[knId]) delete knownMap[knId]; else knownMap[knId] = 1;
+      saveIdMap(KNOWN_KEY, knownMap);
+      updateHeroStats();
+      renderVocabList();
+    }
+  });
+
+  $('btnPracticeFiltered').addEventListener('click', function () {
+    $('fcSource').value = 'filtered';
+    initFlashcards();
+    switchTab('flashcard');
+  });
+
+  /* ---------------- Tab 2: Flashcards ---------------- */
+  var fcDeck = [];
+  var fcIdx = 0;
+  var fcFlipped = false;
+
+  function pickPool(sourceKey) {
+    if (sourceKey === 'filtered') return getFilteredWords();
+    if (sourceKey === 'unlearned') return WORDS.filter(function (w) { return !isKnown(w.id); });
+    if (sourceKey === 'star') return WORDS.filter(function (w) { return isStar(w.id); });
+    if (sourceKey === 'kaishi') return WORDS.filter(function (w) { return w.kaishi; });
+    if (sourceKey === 'wasei') return WORDS.filter(function (w) { return w.wasei; });
+    return WORDS.slice();
+  }
+
+  function initFlashcards() {
+    var pool = pickPool($('fcSource').value);
+    fcDeck = shuffle(pool);
+    fcIdx = 0;
+    fcFlipped = false;
+    renderFlashcard();
+  }
+
+  function renderFlashcard() {
+    if (!fcDeck.length) {
+      $('fcProgress').textContent = 'Tidak ada kartu untuk filter ini';
+      $('fcBarFill').style.width = '0%';
+      $('fcTopBadges').innerHTML = '';
+      $('fcBody').innerHTML = '<div style="color:var(--muted);font-size:15px">Pilih sumber lain di atas untuk mulai berlatih flashcard.</div>';
+      $('fcPrevBtn').disabled = true;
+      $('fcNextBtn').disabled = true;
+      $('fcKnownBtn').disabled = true;
+      $('fcRepeatBtn').disabled = true;
+      return;
+    }
+    var w = fcDeck[fcIdx];
+    var dir = $('fcDir').value;
+    var cat = CAT_MAP[w.cat] || { icon: '', label: w.cat };
+
+    $('fcProgress').textContent = 'Kartu ' + (fcIdx + 1) + ' / ' + fcDeck.length;
+    $('fcBarFill').style.width = Math.round(((fcIdx + 1) / fcDeck.length) * 100) + '%';
+    $('fcSideTag').textContent = fcFlipped ? 'BELAKANG (JAWABAN)' : 'DEPAN (KETUK UNTUK BALIK)';
+    $('fcTopBadges').innerHTML = '<span class="v-pill cat">' + cat.icon + ' ' + esc(cat.label) + '</span>' +
+      (isKnown(w.id) ? '<span class="v-pill" style="background:var(--ok-bg);color:#15803d">✓ Hafal</span>' : '');
+
+    if (!fcFlipped) {
+      if (dir === 'kt-id') {
+        $('fcBody').innerHTML = '<div class="fc-main jp">' + esc(w.w) + '</div>' +
+          '<button type="button" class="tbtn" data-fc-speak="word">🔊 Dengar Suara</button>' +
+          '<div class="fc-hint">Apa artinya dalam bahasa Indonesia? Ketuk kartu untuk melihat jawaban.</div>';
+      } else {
+        $('fcBody').innerHTML = '<div class="fc-main id-mode">' + esc(w.m) + '</div>' +
+          '<div class="v-asal">Asal: ' + esc(w.asal) + '</div>' +
+          '<div class="fc-hint">Bagaimana penulisan Katakana-nya? Ketuk kartu untuk membuka.</div>';
+      }
+    } else {
+      $('fcBody').innerHTML = '<div class="fc-back-mean">' + esc(w.m) + '</div>' +
+        '<div class="jp" style="font-size:26px;font-weight:800;margin-bottom:4px">' + esc(w.w) + '</div>' +
+        '<div class="fc-back-romaji">' + esc(w.romaji) + '</div>' +
+        '<div class="fc-back-asal">← ' + esc(w.asal) + '</div>' +
+        '<div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">' +
+          '<button type="button" class="tbtn" data-fc-speak="word">🔊 Kata</button>' +
+          '<button type="button" class="tbtn" data-fc-speak="sent">🔊 Kalimat</button>' +
+        '</div>' +
+        '<div class="fc-back-ex">' +
+          '<div class="v-ex-jp jp">' + renderFuriganaHtml(w.sf, w.w) + '</div>' +
+          '<div class="v-ex-id">' + esc(w.sm) + '</div>' +
+        '</div>';
+    }
+
+    $('fcPrevBtn').disabled = fcIdx === 0;
+    $('fcNextBtn').disabled = fcIdx >= fcDeck.length - 1;
+    $('fcKnownBtn').disabled = false;
+    $('fcRepeatBtn').disabled = false;
+  }
+
+  $('fcCard').addEventListener('click', function (e) {
+    var spk = e.target.closest('[data-fc-speak]');
+    if (spk) {
+      e.stopPropagation();
+      var w = fcDeck[fcIdx];
+      if (!w) return;
+      if (spk.getAttribute('data-fc-speak') === 'word') speakJa(w.w, w.a);
+      else speakJa(w.s, null);
+      return;
+    }
+    if (!fcDeck.length) return;
+    fcFlipped = !fcFlipped;
+    renderFlashcard();
+  });
+
+  $('fcSource').addEventListener('change', initFlashcards);
+  $('fcDir').addEventListener('change', function () { fcFlipped = false; renderFlashcard(); });
+  $('fcShuffleBtn').addEventListener('click', initFlashcards);
+  $('fcPrevBtn').addEventListener('click', function () { if (fcIdx > 0) { fcIdx--; fcFlipped = false; renderFlashcard(); } });
+  $('fcNextBtn').addEventListener('click', function () { if (fcIdx + 1 < fcDeck.length) { fcIdx++; fcFlipped = false; renderFlashcard(); } });
+  $('fcKnownBtn').addEventListener('click', function () {
+    var w = fcDeck[fcIdx];
+    if (!w) return;
+    knownMap[String(w.id)] = 1;
+    saveIdMap(KNOWN_KEY, knownMap);
+    updateHeroStats();
+    renderVocabList();
+    toast('✓ "' + w.w + '" ditandai sudah hafal');
+    if (fcIdx + 1 < fcDeck.length) { fcIdx++; fcFlipped = false; renderFlashcard(); }
+    else { toast('Selesai semua kartu di sesi ini 🎉'); renderFlashcard(); }
+  });
+  $('fcRepeatBtn').addEventListener('click', function () {
+    var w = fcDeck[fcIdx];
+    if (!w) return;
+    delete knownMap[String(w.id)];
+    saveIdMap(KNOWN_KEY, knownMap);
+    updateHeroStats();
+    renderVocabList();
+    if (fcIdx + 1 < fcDeck.length) { fcIdx++; fcFlipped = false; renderFlashcard(); }
+    else { toast('Akhir daftar — klik Acak Ulang untuk mengulang.'); }
+  });
+
+  /* ---------------- Tab 3: Kuis & Cocokkan ---------------- */
+  var curQMode = 'mc';
+  document.querySelectorAll('[data-qmode]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      curQMode = btn.getAttribute('data-qmode');
+      document.querySelectorAll('[data-qmode]').forEach(function (x) { x.classList.toggle('active', x === btn); });
+      $('qMcSetup').classList.toggle('hidden', curQMode !== 'mc');
+      $('qMatchSetup').classList.toggle('hidden', curQMode !== 'match');
+    });
+  });
+
+  // Mode A: Multiple Choice
+  var QZ = { list: [], idx: 0, ok: 0, err: 0, answered: false, wrongWords: [], reviews: [] };
+
+  function makeMcQuestion(w, qtype, allPool) {
+    var t = qtype;
+    if (t === 'mix') {
+      var types = ['kt-id', 'id-kt', 'cloze'];
+      t = types[Math.floor(Math.random() * types.length)];
+    }
+    var distractors = shuffle(WORDS.filter(function (x) { return x.id !== w.id && x.m !== w.m; })).slice(0, 3);
+    if (t === 'kt-id') {
+      var opts1 = shuffle([w].concat(distractors)).map(function (x) { return x.m; });
+      return { w: w, type: 'kt-id', label: 'Katakana → Arti', promptHtml: esc(w.w), isJp: true,
+        opts: opts1, ansIdx: opts1.indexOf(w.m), speech: w.w, audioId: w.a };
+    }
+    if (t === 'id-kt') {
+      var opts2 = shuffle([w].concat(distractors)).map(function (x) { return x.w; });
+      return { w: w, type: 'id-kt', label: 'Arti → Katakana', promptHtml: esc(w.m), isJp: false,
+        opts: opts2, ansIdx: opts2.indexOf(w.w), speech: w.w, audioId: w.a };
+    }
+    // cloze
+    var blanked = w.s.replace(w.w, '＿＿＿');
+    var opts3 = shuffle([w].concat(distractors)).map(function (x) { return x.w; });
+    return { w: w, type: 'cloze', label: 'Isi Kalimat Rumpang',
+      promptHtml: esc(blanked) + '<div style="font-size:13.5px;color:var(--muted);margin-top:8px">' + esc(w.sm) + '</div>',
+      isJp: true, opts: opts3, ansIdx: opts3.indexOf(w.w), speech: w.s, audioId: null };
+  }
+
+  function startMcQuiz(customPool) {
+    var pool = customPool || pickPool($('qPool').value);
+    if (pool.length < 4) {
+      toast('Minimal butuh 4 kosakata untuk membuat kuis pilihan ganda.');
+      return;
+    }
+    var count = parseInt($('qCount').value, 10) || 10;
+    var qtype = $('qType').value;
+    var picked = shuffle(pool).slice(0, Math.min(count, pool.length));
+    QZ.list = picked.map(function (w) { return makeMcQuestion(w, qtype, pool); });
+    QZ.idx = 0; QZ.ok = 0; QZ.err = 0; QZ.answered = false; QZ.wrongWords = []; QZ.reviews = [];
+
+    $('quizSetupPanel').classList.add('hidden');
+    $('qResultArea').classList.add('hidden');
+    $('mPlayArea').classList.add('hidden');
+    $('mResultArea').classList.add('hidden');
+    $('qPlayArea').classList.remove('hidden');
+    renderMcQuestion();
+  }
+
+  function renderMcQuestion() {
+    var q = QZ.list[QZ.idx];
+    QZ.answered = false;
+    $('qStepLabel').textContent = 'Soal ' + (QZ.idx + 1) + '/' + QZ.list.length;
+    $('qScoreLabel').textContent = 'Benar: ' + QZ.ok;
+    $('qBarFill').style.width = Math.round(((QZ.idx) / QZ.list.length) * 100) + '%';
+    $('qTypeBadge').textContent = q.label;
+    $('qPrompt').className = 'qprompt' + (q.type === 'cloze' ? ' sm jp' : (q.isJp ? ' jp' : ''));
+    $('qPrompt').innerHTML = q.promptHtml;
+    $('qSpeakBtn').classList.toggle('hidden', q.type === 'id-kt');
+    $('qExp').className = 'qexp';
+    $('qExp').innerHTML = '';
+    $('qNextBtn').disabled = true;
+    $('qNextBtn').textContent = (QZ.idx + 1 < QZ.list.length) ? 'Soal Berikutnya ›' : 'Lihat Hasil ›';
+
+    var keys = ['A', 'B', 'C', 'D'];
+    $('qOpts').innerHTML = q.opts.map(function (o, i) {
+      return '<button type="button" class="qopt" data-opt="' + i + '">' +
+        '<span class="key">' + keys[i] + '</span>' +
+        '<span class="' + (q.type !== 'kt-id' ? 'jp' : '') + '">' + esc(o) + '</span>' +
+      '</button>';
+    }).join('');
+  }
+
+  $('qOpts').addEventListener('click', function (e) {
+    var btn = e.target.closest('.qopt');
+    if (!btn || QZ.answered) return;
+    QZ.answered = true;
+    var chosen = parseInt(btn.getAttribute('data-opt'), 10);
+    var q = QZ.list[QZ.idx];
+    var right = chosen === q.ansIdx;
+    var allBtns = $('qOpts').querySelectorAll('.qopt');
+    Array.prototype.forEach.call(allBtns, function (b, i) {
+      b.disabled = true;
+      if (i === q.ansIdx) b.classList.add('correct');
+    });
+    if (right) { QZ.ok++; }
+    else { QZ.err++; btn.classList.add('wrong'); QZ.wrongWords.push(q.w); }
+
+    QZ.reviews.push({ w: q.w, right: right, chosen: q.opts[chosen], ans: q.opts[q.ansIdx] });
+    $('qScoreLabel').textContent = 'Benar: ' + QZ.ok;
+    $('qBarFill').style.width = Math.round(((QZ.idx + 1) / QZ.list.length) * 100) + '%';
+    $('qSpeakBtn').classList.remove('hidden');
+
+    var expHtml = (right ? '<b>✅ Benar!</b> ' : '<b>❌ Kurang tepat.</b> ') +
+      '<span class="jp"><b>' + esc(q.w.w) + '</b></span> (' + esc(q.w.romaji) + ') = <b>' + esc(q.w.m) + '</b>' +
+      '<br><span style="opacity:.85">Asal: ' + esc(q.w.asal) + '</span>' +
+      '<br><span class="jp" style="display:inline-block;margin-top:4px">' + renderFuriganaHtml(q.w.sf, q.w.w) + '</span>' +
+      '<br><span style="opacity:.85">' + esc(q.w.sm) + '</span>';
+    $('qExp').innerHTML = expHtml;
+    $('qExp').className = 'qexp show ' + (right ? 'good' : 'bad');
+    $('qNextBtn').disabled = false;
+
+    if (window.KaishiStats && typeof window.KaishiStats.quizAnswer === 'function') {
+      window.KaishiStats.quizAnswer({ correct: right, base: 9, level: 5, wordId: 'kt_' + q.w.id });
+    }
+  });
+
+  $('qSpeakBtn').addEventListener('click', function () {
+    var q = QZ.list[QZ.idx];
+    if (q) speakJa(q.speech, q.audioId);
+  });
+
+  $('qNextBtn').addEventListener('click', function () {
+    if (QZ.idx + 1 < QZ.list.length) { QZ.idx++; renderMcQuestion(); }
+    else { finishMcQuiz(); }
+  });
+
+  function finishMcQuiz() {
+    $('qPlayArea').classList.add('hidden');
+    $('qResultArea').classList.remove('hidden');
+    var pct = QZ.list.length ? Math.round(QZ.ok / QZ.list.length * 100) : 0;
+    $('qResTitle').textContent = pct >= 80 ? 'Hebat! Kuis Selesai 🎉' : 'Kuis Selesai 💪';
+    $('qResSub').textContent = 'Benar ' + QZ.ok + ' dari ' + QZ.list.length + ' soal (' + pct + '%).';
+    $('qRetryWrongBtn').style.display = QZ.wrongWords.length >= 4 ? '' : 'none';
+    $('qReviewList').innerHTML = QZ.reviews.map(function (r) {
+      return '<div style="padding:10px 0;border-top:1px solid #f2eff8;display:flex;justify-content:space-between;gap:12px;align-items:center">' +
+        '<div><b class="jp" style="font-size:16px">' + esc(r.w.w) + '</b> <span style="color:var(--muted);font-size:12.5px">(' + esc(r.w.romaji) + ')</span> — ' + esc(r.w.m) + '</div>' +
+        '<span class="v-pill" style="background:' + (r.right ? 'var(--ok-bg)' : 'var(--bad-bg)') + ';color:' + (r.right ? '#15803d' : '#a8332e') + '">' + (r.right ? '✓ Benar' : '✗ Salah') + '</span>' +
+      '</div>';
+    }).join('');
+    if (window.KaishiStats && typeof window.KaishiStats.quizDone === 'function') {
+      window.KaishiStats.quizDone({ correct: QZ.ok, wrong: QZ.err });
+    }
+  }
+
+  $('qStartBtn').addEventListener('click', function () { startMcQuiz(); });
+  $('qAgainBtn').addEventListener('click', function () { startMcQuiz(); });
+  $('qRetryWrongBtn').addEventListener('click', function () { startMcQuiz(QZ.wrongWords); });
+  $('qQuitBtn').addEventListener('click', function () { finishMcQuiz(); });
+  $('qBackBtn').addEventListener('click', function () {
+    $('qResultArea').classList.add('hidden');
+    $('quizSetupPanel').classList.remove('hidden');
+  });
+
+  // Mode B: Match Pairs
+  var MT = { rounds: [], ri: 0, ok: 0, err: 0, matched: 0, total: 0, selL: null, selR: null, locked: false, pool: [] };
+
+  function buildMatchRounds(pool, size) {
+    var rest = shuffle(pool);
+    var rounds = [];
+    while (rest.length) {
+      var r = [];
+      var used = {};
+      for (var i = 0; i < rest.length && r.length < size;) {
+        if (!used[rest[i].m]) { used[rest[i].m] = true; r.push(rest[i]); rest.splice(i, 1); }
+        else i++;
+      }
+      if (!r.length) r = rest.splice(0, size);
+      rounds.push(r);
+    }
+    if (rounds.length > 1 && rounds[rounds.length - 1].length === 1) {
+      var last = rounds.pop();
+      rounds[rounds.length - 1] = rounds[rounds.length - 1].concat(last);
+    }
+    return rounds;
+  }
+
+  function startMatchGame() {
+    var pool = pickPool($('mPool').value);
+    if (pool.length < 4) { toast('Minimal butuh 4 kosakata untuk bermain Cocokkan.'); return; }
+    var count = parseInt($('mCount').value, 10) || 18;
+    var picked = shuffle(pool).slice(0, Math.min(count, pool.length));
+    MT.pool = picked;
+    MT.rounds = buildMatchRounds(picked, 6);
+    MT.ri = 0; MT.ok = 0; MT.err = 0; MT.matched = 0; MT.total = picked.length;
+
+    $('quizSetupPanel').classList.add('hidden');
+    $('qPlayArea').classList.add('hidden');
+    $('qResultArea').classList.add('hidden');
+    $('mResultArea').classList.add('hidden');
+    $('mPlayArea').classList.remove('hidden');
+    renderMatchRound();
+  }
+
+  function renderMatchRound() {
+    var pairs = MT.rounds[MT.ri];
+    MT.selL = null; MT.selR = null; MT.locked = false;
+    $('mRoundLabel').textContent = 'Ronde ' + (MT.ri + 1) + '/' + MT.rounds.length;
+    $('mStatLabel').textContent = 'Cocok: ' + MT.matched + '/' + MT.total + ' · Salah: ' + MT.err;
+    $('mBarFill').style.width = Math.round((MT.matched / MT.total) * 100) + '%';
+
+    var lefts = shuffle(pairs);
+    var rights = shuffle(pairs);
+    $('mColLeft').innerHTML = '';
+    $('mColRight').innerHTML = '';
+
+    lefts.forEach(function (w) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mtile jp';
+      b.setAttribute('data-id', w.id);
+      b.innerHTML = '<span>' + esc(w.w) + '</span>';
+      b.addEventListener('click', function () {
+        if (b.classList.contains('matched')) { speakJa(w.w, w.a); return; }
+        if (MT.locked) return;
+        speakJa(w.w, w.a);
+        if (MT.selL && MT.selL.btn === b) { b.classList.remove('selected'); MT.selL = null; return; }
+        if (MT.selL) MT.selL.btn.classList.remove('selected');
+        MT.selL = { btn: b, w: w };
+        b.classList.add('selected');
+        checkMatchPair(pairs);
+      });
+      $('mColLeft').appendChild(b);
+    });
+
+    rights.forEach(function (w) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mtile';
+      b.style.fontSize = w.m.length > 26 ? '13.5px' : '15px';
+      b.setAttribute('data-id', w.id);
+      b.textContent = w.m;
+      b.addEventListener('click', function () {
+        if (b.classList.contains('matched') || MT.locked) return;
+        if (MT.selR && MT.selR.btn === b) { b.classList.remove('selected'); MT.selR = null; return; }
+        if (MT.selR) MT.selR.btn.classList.remove('selected');
+        MT.selR = { btn: b, w: w };
+        b.classList.add('selected');
+        checkMatchPair(pairs);
+      });
+      $('mColRight').appendChild(b);
+    });
+  }
+
+  function checkMatchPair(pairs) {
+    if (!MT.selL || !MT.selR) return;
+    var L = MT.selL, R = MT.selR;
+    if (L.w.m === R.w.m) {
+      L.btn.classList.remove('selected'); R.btn.classList.remove('selected');
+      L.btn.classList.add('matched'); R.btn.classList.add('matched');
+      MT.selL = null; MT.selR = null;
+      MT.ok++; MT.matched++;
+      $('mStatLabel').textContent = 'Cocok: ' + MT.matched + '/' + MT.total + ' · Salah: ' + MT.err;
+      $('mBarFill').style.width = Math.round((MT.matched / MT.total) * 100) + '%';
+      if (window.KaishiStats && typeof window.KaishiStats.matchPair === 'function') {
+        window.KaishiStats.matchPair({ correct: true, wordId: 'ktm_' + L.w.id, isNew: !isKnown(L.w.id) });
+      }
+      if ($('mColLeft').querySelectorAll('.mtile.matched').length >= pairs.length) {
+        MT.locked = true;
+        setTimeout(function () {
+          MT.ri++;
+          if (MT.ri >= MT.rounds.length) finishMatchGame();
+          else renderMatchRound();
+        }, 520);
+      }
+    } else {
+      MT.locked = true; MT.err++;
+      $('mStatLabel').textContent = 'Cocok: ' + MT.matched + '/' + MT.total + ' · Salah: ' + MT.err;
+      L.btn.classList.add('wrong'); R.btn.classList.add('wrong');
+      if (window.KaishiStats && typeof window.KaishiStats.matchPair === 'function') {
+        window.KaishiStats.matchPair({ correct: false, wordId: 'ktm_' + L.w.id });
+      }
+      setTimeout(function () {
+        L.btn.classList.remove('wrong', 'selected'); R.btn.classList.remove('wrong', 'selected');
+        MT.selL = null; MT.selR = null; MT.locked = false;
+      }, 450);
+    }
+  }
+
+  function finishMatchGame() {
+    $('mPlayArea').classList.add('hidden');
+    $('mResultArea').classList.remove('hidden');
+    $('mResSub').textContent = 'Berhasil mencocokkan ' + MT.matched + ' kata dengan ' + MT.err + ' kesalahan.';
+    if (window.KaishiStats && typeof window.KaishiStats.matchDone === 'function') {
+      window.KaishiStats.matchDone({ correct: MT.ok, wrong: MT.err });
+    }
+  }
+
+  $('mStartBtn').addEventListener('click', startMatchGame);
+  $('mAgainBtn').addEventListener('click', startMatchGame);
+  $('mQuitBtn').addEventListener('click', finishMatchGame);
+  $('mBackBtn').addEventListener('click', function () {
+    $('mResultArea').classList.add('hidden');
+    $('quizSetupPanel').classList.remove('hidden');
+  });
+
+  /* ---------------- Tab 4: Bagan Katakana ---------------- */
+  function renderBagan() {
+    var basic = [
+      ['ア','a'],['イ','i'],['ウ','u'],['エ','e'],['オ','o'],
+      ['カ','ka'],['キ','ki'],['ク','ku'],['ケ','ke'],['コ','ko'],
+      ['サ','sa'],['シ','shi'],['ス','su'],['セ','se'],['ソ','so'],
+      ['タ','ta'],['チ','chi'],['ツ','tsu'],['テ','te'],['ト','to'],
+      ['ナ','na'],['ニ','ni'],['ヌ','nu'],['ネ','ne'],['ノ','no'],
+      ['ハ','ha'],['ヒ','hi'],['フ','fu'],['ヘ','he'],['ホ','ho'],
+      ['マ','ma'],['ミ','mi'],['ム','mu'],['メ','me'],['モ','mo'],
+      ['ヤ','ya'],['',''],['ユ','yu'],['',''],['ヨ','yo'],
+      ['ラ','ra'],['リ','ri'],['ル','ru'],['レ','re'],['ロ','ro'],
+      ['ワ','wa'],['',''],['ヲ','wo'],['',''],['ン','n']
+    ];
+    var dakuten = [
+      ['ガ','ga'],['ギ','gi'],['グ','gu'],['ゲ','ge'],['ゴ','go'],
+      ['ザ','za'],['ジ','ji'],['ズ','zu'],['ゼ','ze'],['ゾ','zo'],
+      ['ダ','da'],['ヂ','ji'],['ヅ','zu'],['デ','de'],['ド','do'],
+      ['バ','ba'],['ビ','bi'],['ブ','bu'],['ベ','be'],['ボ','bo'],
+      ['パ','pa'],['ピ','pi'],['プ','pu'],['ペ','pe'],['ポ','po']
+    ];
+    var foreign = [
+      ['ティ','ti'],['ディ','di'],['ウィ','wi'],['ウェ','we'],['ウォ','wo'],
+      ['ファ','fa'],['フィ','fi'],['フェ','fe'],['フォ','fo'],['チェ','che'],
+      ['シェ','she'],['ジェ','je'],['ヴァ','va'],['ヴィ','vi'],['ヴ','vu']
+    ];
+    var waseiEx = [
+      { w: 'パソコン', full: 'パーソナル・コンピューター', m: 'Komputer pribadi / laptop' },
+      { w: 'スマホ', full: 'スマート・フォン', m: 'Ponsel pintar (smartphone)' },
+      { w: 'コンビニ', full: 'コンビニエンス・ストア', m: 'Minimarket 24 jam' },
+      { w: 'リモコン', full: 'リモート・コントロール', m: 'Pengendali jarak jauh' },
+      { w: 'エアコン', full: 'エア・コンディショナー', m: 'Pendingin ruangan (AC)' },
+      { w: 'バイト', full: 'アルバイト (Arbeit)', m: 'Kerja paruh waktu' }
+    ];
+
+    function buildCells(arr) {
+      return arr.map(function (p) {
+        if (!p[0]) return '<div class="kcell empty"></div>';
+        return '<button type="button" class="kcell" data-kana="' + esc(p[0]) + '"><b class="jp">' + esc(p[0]) + '</b><span>' + esc(p[1]) + '</span></button>';
+      }).join('');
+    }
+    $('baganBasic').innerHTML = buildCells(basic);
+    $('baganDakuten').innerHTML = buildCells(dakuten);
+    $('baganForeign').innerHTML = buildCells(foreign);
+    $('waseiExamples').innerHTML = waseiEx.map(function (x) {
+      return '<div class="pair-card" style="background:#f8fafc;border-color:#e2e8f0;cursor:pointer" data-kana="' + esc(x.w) + '">' +
+        '<div style="font-size:20px;font-weight:800;color:var(--teal)" class="jp">' + esc(x.w) + ' 🔊</div>' +
+        '<div style="font-size:12px;color:var(--muted);margin:3px 0" class="jp">← ' + esc(x.full) + '</div>' +
+        '<div style="font-size:13.5px;color:var(--ink);font-weight:600">' + esc(x.m) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  $('secBagan').addEventListener('click', function (e) {
+    var el = e.target.closest('[data-kana]');
+    if (!el) return;
+    var k = el.getAttribute('data-kana');
+    if (k) speakJa(k, null);
+  });
+
+  /* ---------------- Modal Pengaturan Suara ---------------- */
+  function syncVoiceModal() {
+    var eng = $('vEngine').value;
+    $('vElevenBox').classList.toggle('hidden', eng !== 'elevenlabs');
+    $('vCustomRow').classList.toggle('hidden', $('vElevenVoice').value !== 'custom');
+  }
+  $('btnVoiceCfg').addEventListener('click', function () {
+    var cfg = loadVoiceCfg();
+    $('vEngine').value = cfg.engine;
+    $('vElevenKey').value = cfg.elevenKey;
+    $('vElevenVoice').value = cfg.elevenVoice;
+    $('vElevenCustom').value = cfg.elevenCustomVoice;
+    syncVoiceModal();
+    $('voiceModal').classList.add('show');
+  });
+  $('vEngine').addEventListener('change', syncVoiceModal);
+  $('vElevenVoice').addEventListener('change', syncVoiceModal);
+  $('vClose').addEventListener('click', function () { $('voiceModal').classList.remove('show'); });
+  $('voiceModal').addEventListener('click', function (e) { if (e.target === $('voiceModal')) $('voiceModal').classList.remove('show'); });
+  $('vTestBtn').addEventListener('click', function () {
+    var tempCfg = {
+      engine: $('vEngine').value,
+      elevenKey: $('vElevenKey').value.trim(),
+      elevenVoice: $('vElevenVoice').value,
+      elevenCustomVoice: $('vElevenCustom').value.trim(),
+      elevenModel: 'eleven_multilingual_v2'
+    };
+    saveVoiceCfg(tempCfg);
+    updateVoiceLabel();
+    speakJa('コーヒーとパンをください。', null);
+  });
+  $('vSaveBtn').addEventListener('click', function () {
+    var prev = loadVoiceCfg();
+    prev.engine = $('vEngine').value;
+    prev.elevenKey = $('vElevenKey').value.trim();
+    prev.elevenVoice = $('vElevenVoice').value;
+    prev.elevenCustomVoice = $('vElevenCustom').value.trim();
+    saveVoiceCfg(prev);
+    updateVoiceLabel();
+    $('voiceModal').classList.remove('show');
+    toast('Pengaturan suara disimpan.');
+  });
+
+  /* ---------------- Init & URL Params ---------------- */
+  updateHeroStats();
+  updateVoiceLabel();
+  renderCatChips();
+  renderVocabList();
+  renderBagan();
+
+  var params = new URLSearchParams(location.search);
+  var pSumber = params.get('sumber');
+  if (pSumber && $('specialFilter').querySelector('option[value="' + pSumber + '"]')) {
+    $('specialFilter').value = pSumber;
+    renderVocabList();
+  }
+  var pCat = params.get('cat');
+  if (pCat && CAT_MAP[pCat]) {
+    activeCat = pCat;
+    renderCatChips();
+    renderVocabList();
+  }
+  var pTab = params.get('tab');
+  if (pTab && ['list', 'flashcard', 'kuis', 'bagan'].indexOf(pTab) !== -1) {
+    switchTab(pTab);
+  }
+})();
+</script>
+</body>
+</html>

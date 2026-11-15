@@ -8,6 +8,7 @@ Aplikasi latihan bahasa Jepang dari deck **Kaishi 1.5k (versi Indonesia)**:
   bacaan kalimat), lengkap dengan pembahasan tata bahasa dan furigana setelah dijawab.
 - **Baca Teks** — baca wacana pendek dari kosakata Kaishi, klik kata untuk arti & audio, sebaran level N5–N1, dan generator teks.
 - **Bunpo (Tata Bahasa)** — panduan komprehensif perubahan bentuk ~て (Te-form), 16 partikel utama beserta contoh kalimat ber-furigana & audio pengucapan, komparasi penting (は vs が, に vs で), serta alat uji konjugasi interaktif.
+- **Kosakata Katakana** — daftar 268 kosakata Katakana sehari-hari & yang muncul di kalimat contoh Kaishi 1.5k (11 kategori), lengkap dengan romaji, asal kata/*Wasei-eigo*, contoh kalimat ber-furigana & audio, penanda hafalan, flashcard, kuis/cocokkan pasangan, serta bagan huruf Katakana.
 
 Tanpa server web, tanpa database, tanpa akun. Cukup buka `index.html`.
 
@@ -363,6 +364,8 @@ perangkat, dan bisa direset dari halaman ini bila perlu.
 | `generate-soal.py` / `.cmd` | pembuat soal (lokal atau lewat AI) |
 | `teks.html` | pembaca teks: furigana on/off, arti per kata, sebaran level, soal pemahaman |
 | `teks-bank.js` | teks bacaan kurasi (5 teks) yang selalu tersedia |
+| `katakana.html` | halaman daftar kosakata Katakana, flashcard, kuis/cocokkan, dan bagan huruf |
+| `katakana-data.js` | data 268 kosakata Katakana (romaji, arti, asal kata, dan kalimat contoh ber-furigana) |
 | `generate-teks.py` / `.cmd` | pembuat teks bacaan (lokal atau lewat AI) → `teks.js` |
 | `progress.js` | hasil sinkronisasi (dibuat otomatis; boleh dihapus kapan saja) |
 | `ekstrak-media.py` / `.cmd` | mengambil audio dari berkas `.apkg` milik Anda → folder `media/` |
