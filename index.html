@@ -318,10 +318,8 @@
     text-transform: uppercase; margin: 0 0 10px 2px;
   }
   .menu-grid {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 22px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px;
   }
-  .menu-grid > .mcard-menu:nth-child(-n+3) { grid-column: span 2; }
-  .menu-grid > .mcard-menu:nth-child(n+4) { grid-column: span 3; }
   .mcard-menu {
     background: var(--card); border: 1px solid var(--line); border-radius: 20px;
     box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column;
@@ -341,6 +339,7 @@
   .mcard-icon.read { background: #e4f7ee; color: var(--ok); }
   .mcard-icon.grammar { background: #fff1e5; color: #d97706; }
   .mcard-icon.katakana { background: #ccfbf1; color: #0f766e; }
+  .mcard-icon.jlpt { background: #fef3c7; color: #b45309; }
   .mcard-tag {
     font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 4px 10px;
     background: #f4f2fa; color: #5c5a72;
@@ -602,6 +601,33 @@
             <a class="qbtn" href="katakana.html?tab=flashcard">🃏 Flashcard</a>
             <a class="qbtn" href="katakana.html?tab=kuis">🎯 Kuis</a>
             <a class="qbtn" href="katakana.html?tab=bagan">🔤 Bagan</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Soal Asli JLPT (N5-N1) -->
+      <div class="mcard-menu">
+        <div>
+          <div class="mcard-head">
+            <div class="mcard-icon jlpt jp">試</div>
+            <span class="mcard-tag">128 Paket · 8.897 Soal</span>
+          </div>
+          <div class="mcard-body">
+            <h2>Soal Asli JLPT (N5–N1)</h2>
+            <p>Latihan &amp; simulasi arsip ujian JLPT 2009–2026: Moji・Goi, Bunpou (kalimat, bintang ★, &amp; cloze), serta Dokkai ber-furigana.</p>
+          </div>
+          <div class="mcard-meta">
+            <span class="mcard-pill">📄 128 Paket Ujian</span>
+            <span class="mcard-pill">⭐ Susun Bintang ★</span>
+            <span class="mcard-pill">📖 Dokkai &amp; Tabel</span>
+          </div>
+        </div>
+        <div class="mcard-actions">
+          <a class="mcard-mainbtn" href="jlpt.html">Buka Soal JLPT ›</a>
+          <div class="mcard-quick">
+            <a class="qbtn" href="jlpt.html?level=N5">📗 Paket N5</a>
+            <a class="qbtn" href="jlpt.html?level=N4">📘 Paket N4</a>
+            <a class="qbtn" href="jlpt.html?level=N5&amp;mode=random&amp;subcat=grammar_star&amp;start=1">⭐ Soal Bintang ★</a>
           </div>
         </div>
       </div>
