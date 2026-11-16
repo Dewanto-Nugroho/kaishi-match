@@ -35,3 +35,13 @@ memakai data deck di atas. Silakan tentukan lisensi kode sesuai keinginan Anda
 Jika Anda ingin menyertakan `media/` di repo publik, periksa dulu apakah lisensi
 sumber audio tersebut mengizinkannya. Cara yang aman: biarkan pengguna lain
 menjalankan `ekstrak-media.cmd` dengan berkas deck milik mereka sendiri.
+
+## Soal JLPT & Kamus Bahasa Indonesia
+
+- **Bank Soal Latihan JLPT N5–N1** (`jlpt.html`, `jlpt-data-n*.js`):
+  bersumber dari proyek komunitas [astraJLPT-Editorial](https://github.com/astraJLPT/astraJLPT-Editorial)
+  (arsip soal JLPT tahun 2009–2026).
+- **Kamus & Pembahasan Bahasa Indonesia**:
+  disusun menggunakan [JIDict (Philia Space)](https://github.com/philiaspaceai/JIDict-yomitan)
+  oleh Utawnyan & Demonkzz (lisensi **CC BY-NC 4.0**), bersama data leksikal dasar
+  **JMdict** & **KANJIDIC2** dari **EDRDG** (*Electronic Dictionary Research and Development Group*).
