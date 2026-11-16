@@ -23,6 +23,15 @@
     --n4: #0284c7;
     --n4-bg: #f0f9ff;
     --n4-line: #bae6fd;
+    --n3: #d97706;
+    --n3-bg: #fffbeb;
+    --n3-line: #fde68a;
+    --n2: #e11d48;
+    --n2-bg: #fff1f2;
+    --n2-line: #fecdd3;
+    --n1: #7c3aed;
+    --n1-bg: #f5f3ff;
+    --n1-line: #ddd6fe;
     --warn: #d97706;
     --warn-bg: #fffbeb;
     --warn-line: #fde68a;
@@ -139,6 +148,8 @@
   .tab-btn:hover { border-color: var(--accent-2); color: var(--accent); background: #faf8ff; transform: translateY(-1px); }
   .tab-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: var(--accent); color: #fff; box-shadow: 0 6px 14px rgba(111, 77, 245, .24); }
   .tab-btn.active .tab-count { background: rgba(255,255,255,.22); color: #fff; }
+  .tab-btn.is-soon { opacity: .66; cursor: not-allowed; background: #faf9fd; }
+  .tab-btn.is-soon:hover { transform: none; border-color: var(--line); color: var(--ink); background: #faf9fd; }
 
   /* ---------- Bab Filter Strip ---------- */
   .bab-strip {
@@ -150,7 +161,25 @@
   }
   .bab-strip-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
   .bab-pills {
-    display: flex; flex-wrap: wrap; gap: 5px;
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+  .bab-group-btn {
+    border: 1px solid #dfd8f5; background: #fbfaff; color: var(--ink);
+    border-radius: 9px; padding: 5px 11px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: all .14s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .bab-group-btn:hover { border-color: var(--accent-2); color: var(--accent); background: #f3effe; }
+  .bab-group-btn.open, .bab-group-btn.has-active {
+    background: var(--accent-soft); border-color: #c4b5fd; color: var(--accent);
+  }
+  .bab-subpills {
+    margin-top: 9px; padding-top: 9px; border-top: 1px dashed #ebe7f5;
+    display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+  }
+  .bab-subpills-label {
+    font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .04em; margin-right: 4px;
   }
   .bab-pill {
     border: 1px solid #e6e2f3; background: #faf9fd; color: #4a475d;
@@ -161,6 +190,9 @@
   .bab-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(111, 77, 245, .25); }
   .bab-pill.n5-dot::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--n5); margin-right: 5px; vertical-align: middle; }
   .bab-pill.n4-dot::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--n4); margin-right: 5px; vertical-align: middle; }
+  .bab-pill.n3-dot::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--n3); margin-right: 5px; vertical-align: middle; }
+  .bab-pill.n2-dot::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--n2); margin-right: 5px; vertical-align: middle; }
+  .bab-pill.n1-dot::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--n1); margin-right: 5px; vertical-align: middle; }
   .bab-pill.active::before { background: #fff; }
 
   /* ---------- 2-Column Workspace ---------- */
@@ -192,20 +224,62 @@
   .sb-title { font-size: 13.5px; font-weight: 800; color: var(--ink); }
   .sb-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
 
-  .sb-bab { margin-bottom: 6px; border: 1px solid #f0edf8; border-radius: 12px; overflow: hidden; background: #fcfbfe; }
+  /* Level Parent Accordion inside Sidebar */
+  .sb-level {
+    margin-bottom: 8px; border: 1px solid #eae6f6; border-radius: 14px;
+    overflow: hidden; background: #fff; transition: border-color .15s, box-shadow .15s;
+  }
+  .sb-level.open { border-color: #d6ccf7; box-shadow: 0 4px 12px rgba(111, 77, 245, .06); }
+  .sb-level-head {
+    width: 100%; border: 0; background: #faf9fd; padding: 10px 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    font-family: inherit; text-align: left; font-size: 13px; font-weight: 800; color: var(--ink);
+    transition: background .14s, color .14s;
+  }
+  .sb-level-head:hover { background: #f3effe; color: var(--accent); }
+  .sb-level.open .sb-level-head {
+    background: linear-gradient(135deg, #f5f2ff 0%, #f0f7ff 100%);
+    color: var(--accent); border-bottom: 1px solid #e6dff9;
+  }
+  .sb-level-left { display: flex; align-items: center; gap: 7px; min-width: 0; }
+  .sb-level-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-level-right { display: flex; align-items: center; gap: 6px; flex: none; }
+  .sb-level-badge {
+    font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; white-space: nowrap;
+  }
+  .sb-level-badge.n5 { background: var(--n5-bg); color: var(--n5); }
+  .sb-level-badge.n4 { background: var(--n4-bg); color: var(--n4); }
+  .sb-level-badge.n3 { background: var(--n3-bg); color: var(--n3); }
+  .sb-level-badge.n2 { background: var(--n2-bg); color: var(--n2); }
+  .sb-level-badge.n1 { background: var(--n1-bg); color: var(--n1); }
+  .sb-level-badge.soon { background: #f3f1f9; color: var(--muted); font-weight: 700; }
+  .sb-level-caret { font-size: 11px; color: var(--muted); font-weight: 800; }
+  .sb-level-body { display: none; padding: 7px 7px 5px 10px; background: #fff; }
+  .sb-level.open .sb-level-body { display: block; }
+  .sb-level-empty {
+    padding: 10px 10px; font-size: 12px; color: var(--muted); text-align: center;
+    background: #fbfaff; border: 1px dashed #e2dcf5; border-radius: 10px; margin-bottom: 2px; line-height: 1.45;
+  }
+
+  .sb-bab { margin-bottom: 5px; border: 1px solid #f0edf8; border-left: 2.5px solid #e5defa; border-radius: 10px; overflow: hidden; background: #fcfbfe; }
   .sb-bab-head {
-    width: 100%; border: 0; background: transparent; padding: 7px 10px; cursor: pointer;
+    width: 100%; border: 0; background: transparent; padding: 7px 9px; cursor: pointer;
     display: flex; align-items: center; justify-content: space-between; gap: 6px;
-    font-family: inherit; text-align: left; font-size: 12.5px; font-weight: 700; color: var(--ink);
+    font-family: inherit; text-align: left; font-size: 12px; font-weight: 700; color: var(--ink);
     transition: background .12s;
   }
   .sb-bab-head:hover { background: #f3effe; color: var(--accent); }
   .sb-bab.open .sb-bab-head { background: #f5f2ff; color: var(--accent); border-bottom: 1px solid #ebe5f8; }
+  .sb-bab-right { display: inline-flex; align-items: center; gap: 5px; flex: none; }
   .sb-bab-badge {
     font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 5px; flex: none;
   }
   .sb-bab-badge.n5 { background: var(--n5-bg); color: var(--n5); }
   .sb-bab-badge.n4 { background: var(--n4-bg); color: var(--n4); }
+  .sb-bab-badge.n3 { background: var(--n3-bg); color: var(--n3); }
+  .sb-bab-badge.n2 { background: var(--n2-bg); color: var(--n2); }
+  .sb-bab-badge.n1 { background: var(--n1-bg); color: var(--n1); }
+  .sb-bab-caret { font-size: 10px; color: var(--muted); }
   .sb-bab-list { display: none; padding: 4px; flex-direction: column; gap: 2px; background: #fff; }
   .sb-bab.open .sb-bab-list { display: flex; }
   .sb-item {
@@ -232,6 +306,9 @@
   }
   .bab-lv-pill.n5 { background: var(--n5-bg); color: var(--n5); border: 1px solid var(--n5-line); }
   .bab-lv-pill.n4 { background: var(--n4-bg); color: var(--n4); border: 1px solid var(--n4-line); }
+  .bab-lv-pill.n3 { background: var(--n3-bg); color: var(--n3); border: 1px solid var(--n3-line); }
+  .bab-lv-pill.n2 { background: var(--n2-bg); color: var(--n2); border: 1px solid var(--n2-line); }
+  .bab-lv-pill.n1 { background: var(--n1-bg); color: var(--n1); border: 1px solid var(--n1-line); }
   .bab-heading h2 { margin: 0; font-size: 18px; font-weight: 800; color: var(--ink); }
   .bab-count { font-size: 12px; color: var(--muted); font-weight: 600; }
 
@@ -264,6 +341,9 @@
   }
   .bp-tag-loc.n5 { background: var(--n5-bg); color: var(--n5); border: 1px solid var(--n5-line); }
   .bp-tag-loc.n4 { background: var(--n4-bg); color: var(--n4); border: 1px solid var(--n4-line); }
+  .bp-tag-loc.n3 { background: var(--n3-bg); color: var(--n3); border: 1px solid var(--n3-line); }
+  .bp-tag-loc.n2 { background: var(--n2-bg); color: var(--n2); border: 1px solid var(--n2-line); }
+  .bp-tag-loc.n1 { background: var(--n1-bg); color: var(--n1); border: 1px solid var(--n1-line); }
   .bp-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .btn-card-collapse {
     background: #fff; border: 1px solid var(--line); color: var(--muted);
@@ -500,12 +580,15 @@
   @media (max-width: 960px) {
     .bunpo-layout { grid-template-columns: 1fr; }
     .bunpo-sidebar { display: none; }
+    .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 768px) {
     .wrap { padding: 14px 12px 100px; }
     .hero { padding: 18px 16px; }
     .hero h1 { font-size: 21px; }
     .ctrlbar { position: static; }
+  }
+  @media (max-width: 520px) {
     .tabs { grid-template-columns: 1fr; }
   }
 </style>
@@ -516,7 +599,7 @@
   <!-- Topbar -->
   <div class="topbar">
     <div class="crumb">
-      <a href="index.html">🏠 Beranda</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Bunpo (Minna no Nihongo)</b>
+      <a href="index.html">🏠 Beranda</a> <span>›</span> <span>Kaishi 1.5k</span> <span>›</span> <b>Bunpo (N5–N1)</b>
     </div>
     <div class="badges">
       <a class="badge badge-link" href="index.html">‹ Beranda</a>
@@ -531,21 +614,21 @@
   <!-- Hero Banner -->
   <div class="hero">
     <div class="hero-left">
-      <span class="hero-tag">📚 Minna no Nihongo I &amp; II — Philia Space</span>
-      <h1>文法 Bunpo Lengkap (N5 &amp; N4)</h1>
-      <p>Materi utama tata bahasa dari modul <b>Minna no Nihongo N5 (Bab 1–25)</b> dan <b>N4 (Bab 26–50)</b>. Setiap pola dilengkapi <b>Arti</b>, <b>Rumus</b>, <b>Penjelasan &amp; Nuansa</b>, <b>Contoh Kalimat + Konteks Anime ber-audio TTS</b>, serta <b>Latihan Soal Fokus</b> per pola dan per bab.</p>
+      <span class="hero-tag">📚 Minna no Nihongo &amp; JLPT Bunpo (N5–N1)</span>
+      <h1>文法 Bunpo Lengkap (N5–N1)</h1>
+      <p>Materi tata bahasa terstruktur mulai dari <b>Minna no Nihongo N5 (Bab 1–25)</b>, <b>N4 (Bab 26–50)</b>, hingga level <b>N3–N1</b>. Setiap pola dilengkapi <b>Arti</b>, <b>Rumus</b>, <b>Penjelasan &amp; Nuansa</b>, <b>Contoh Kalimat + Konteks Anime ber-audio TTS</b>, serta <b>Latihan Soal Fokus</b> per pola dan per bab.</p>
     </div>
     <div class="hero-stats">
       <div class="hstat-chip">
-        <b>50</b>
-        <small>Bab (第1課–第50課)</small>
+        <b id="heroBabCount">50</b>
+        <small id="heroBabSub">Bab Materi</small>
       </div>
       <div class="hstat-chip">
-        <b>166</b>
+        <b id="heroPolaCount">166</b>
         <small>Pola Bunpo</small>
       </div>
       <div class="hstat-chip">
-        <b>216</b>
+        <b id="heroQuizCount">216</b>
         <small>Paket Kuis Fokus</small>
       </div>
     </div>
@@ -555,7 +638,7 @@
   <div class="ctrlbar">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Cari pola, arti, rumus, atau bab (misal: ています, しか, Bab 14, boleh, lebih baik)...">
+      <input type="text" id="searchInput" class="search-input" placeholder="Cari pola, arti, rumus, level (N5–N1), atau bab (misal: ています, しか, Bab 14)...">
       <button type="button" id="btnClearSearch" class="search-clear" title="Bersihkan pencarian">✕</button>
     </div>
     <div class="ctrl-actions">
@@ -571,29 +654,16 @@
     </div>
   </div>
 
-  <!-- Level Tabs -->
-  <div class="tabs" id="levelTabs">
-    <button type="button" class="tab-btn active" data-level="ALL">
-      <span class="tab-btn-left"><span>🌟</span><span class="tab-btn-label">Semua Level (N5 &amp; N4)</span></span>
-      <span class="tab-count">166 pola · 50 Bab</span>
-    </button>
-    <button type="button" class="tab-btn" data-level="N5">
-      <span class="tab-btn-left"><span>📗</span><span class="tab-btn-label">Minna no Nihongo N5</span></span>
-      <span class="tab-count">Bab 1–25 · 85 pola</span>
-    </button>
-    <button type="button" class="tab-btn" data-level="N4">
-      <span class="tab-btn-left"><span>📘</span><span class="tab-btn-label">Minna no Nihongo N4</span></span>
-      <span class="tab-count">Bab 26–50 · 81 pola</span>
-    </button>
-  </div>
+  <!-- Level Tabs (N5–N1, rendered dynamically) -->
+  <div class="tabs" id="levelTabs"></div>
 
   <!-- Chapter (Bab) Quick Filter Strip -->
   <div class="bab-strip">
     <div class="bab-strip-head">
-      <span class="bab-strip-title">📌 Filter Cepat per Bab (第1課 – 第50課)</span>
-      <span id="visibleStatsText" style="font-size:12px;color:var(--muted);font-weight:600">Menampilkan semua 50 bab (166 pola)</span>
+      <span class="bab-strip-title">📌 Filter Cepat per Level &amp; Bab</span>
+      <span id="visibleStatsText" style="font-size:12px;color:var(--muted);font-weight:600">Menampilkan semua materi</span>
     </div>
-    <div class="bab-pills" id="babFilterBar"></div>
+    <div id="babFilterBar"></div>
   </div>
 
   <!-- Search Filter Status -->
@@ -607,7 +677,7 @@
     <aside class="bunpo-sidebar" id="bunpoSidebar">
       <div class="sb-head">
         <div class="sb-title">📚 Daftar Bab &amp; Materi</div>
-        <span class="sb-sub" id="sbTotalCount">50 bab</span>
+        <span class="sb-sub" id="sbTotalCount">N5–N1</span>
       </div>
       <div id="sbContent"></div>
     </aside>
@@ -790,43 +860,99 @@
     speakGoogleTTS(clean);
   }
 
-  // Build searchable plain-text cache once per item
+  // Level metadata & progression (N5 -> N1)
+  var LEVEL_ORDER = ['N5', 'N4', 'N3', 'N2', 'N1'];
+  var LEVEL_META = {
+    N5: { icon: '📗', tabTitle: 'Minna no Nihongo N5', label: 'Level N5' },
+    N4: { icon: '📘', tabTitle: 'Minna no Nihongo N4', label: 'Level N4' },
+    N3: { icon: '📙', tabTitle: 'JLPT N3', label: 'Level N3' },
+    N2: { icon: '📕', tabTitle: 'JLPT N2', label: 'Level N2' },
+    N1: { icon: '📓', tabTitle: 'JLPT N1', label: 'Level N1' }
+  };
+
+  function resolveBabQuizKey(lv, babNum) {
+    var prefixed = lv.toLowerCase() + '_bab_' + babNum;
+    if (BANK[prefixed]) return prefixed;
+    var legacy = 'bab_' + babNum;
+    if (BANK[legacy]) {
+      var targetLvNum = lv.replace(/^N/i, '');
+      if (!BANK[legacy].level || String(BANK[legacy].level) === targetLvNum) {
+        return legacy;
+      }
+    }
+    return null;
+  }
+
+  // Build searchable plain-text cache & level/bab indexes once
   var BAB_LIST = [];
   var BAB_MAP = {};
+  var LEVEL_STATS = {};
+  LEVEL_ORDER.forEach(function(lv) {
+    LEVEL_STATS[lv] = { level: lv, babs: [], itemsCount: 0 };
+  });
+
   DATA.forEach(function(item) {
+    var lv = String(item.level || 'N5').toUpperCase();
+    var babKey = lv + '_' + item.bab;
     var searchParts = [
       'bab ' + item.bab,
-      item.lokasi,
-      item.level,
+      item.lokasi || '',
+      lv,
       stripTags(item.titleMain),
-      item.titleSub.map(stripTags).join(' '),
-      item.meaning,
+      (item.titleSub || []).map(stripTags).join(' '),
+      item.meaning || '',
       stripTags(item.formula),
       stripTags(item.nuance),
-      item.examples.map(function(e) { return e.speech + ' ' + stripTags(e.id); }).join(' '),
-      item.dialogs.map(function(d) { return d.speech + ' ' + stripTags(d.id) + ' ' + d.source; }).join(' ')
+      (item.examples || []).map(function(e) { return (e.speech || '') + ' ' + stripTags(e.id); }).join(' '),
+      (item.dialogs || []).map(function(d) { return (d.speech || '') + ' ' + stripTags(d.id) + ' ' + (d.source || ''); }).join(' ')
     ];
     item._search = searchParts.join(' ').toLowerCase();
+    item._babKey = babKey;
+    item._level = lv;
 
-    if (!BAB_MAP[item.bab]) {
-      BAB_MAP[item.bab] = { bab: item.bab, lokasi: item.lokasi, level: item.level, items: [] };
-      BAB_LIST.push(BAB_MAP[item.bab]);
+    if (!LEVEL_STATS[lv]) {
+      LEVEL_STATS[lv] = { level: lv, babs: [], itemsCount: 0 };
+      LEVEL_ORDER.push(lv);
     }
-    BAB_MAP[item.bab].items.push(item);
+
+    if (!BAB_MAP[babKey]) {
+      BAB_MAP[babKey] = {
+        key: babKey,
+        bab: item.bab,
+        lokasi: item.lokasi || ('Bab ' + item.bab),
+        level: lv,
+        quizKey: resolveBabQuizKey(lv, item.bab),
+        items: []
+      };
+      BAB_LIST.push(BAB_MAP[babKey]);
+      LEVEL_STATS[lv].babs.push(BAB_MAP[babKey]);
+    }
+    BAB_MAP[babKey].items.push(item);
+    LEVEL_STATS[lv].itemsCount++;
   });
+
+  // Update Hero summary counters dynamically
+  var heroBabCount = document.getElementById('heroBabCount');
+  var heroPolaCount = document.getElementById('heroPolaCount');
+  var heroQuizCount = document.getElementById('heroQuizCount');
+  if (heroBabCount) heroBabCount.textContent = BAB_LIST.length;
+  if (heroPolaCount) heroPolaCount.textContent = DATA.length;
+  if (heroQuizCount) heroQuizCount.textContent = Object.keys(BANK).length;
 
   // UI State
   var state = {
-    level: 'ALL',     // 'ALL' | 'N5' | 'N4'
-    bab: 'ALL',       // 'ALL' | number (1..50)
+    level: 'ALL',             // 'ALL' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
+    bab: 'ALL',               // 'ALL' | babKey ('N5_1', ...)
     query: '',
     compact: false,
-    openBabSidebar: { 1: true },
+    openLevelSidebar: {},     // collapsed by default; expands when level is clicked
+    openBabSidebar: {},
+    openBabFilterLevel: null, // expanded level sub-pills in #babFilterBar when level === 'ALL'
     highlightedId: null
   };
 
   // Controls Elements
-  var levelBtns = document.querySelectorAll('#levelTabs .tab-btn');
+  var levelTabs = document.getElementById('levelTabs');
   var babFilterBar = document.getElementById('babFilterBar');
   var visibleStatsText = document.getElementById('visibleStatsText');
   var sbContent = document.getElementById('sbContent');
@@ -867,15 +993,22 @@
     });
   }
 
+  function formatBabRange(babs) {
+    if (!babs || !babs.length) return '';
+    var first = babs[0].bab;
+    var last = babs[babs.length - 1].bab;
+    return String(first) === String(last) ? ('Bab ' + first) : ('Bab ' + first + '–' + last);
+  }
+
   // 3. Populate Bottom Quiz Selector
   function populateBottomQuizSelect() {
     if (!bottomQuizSelect) return;
     var html = '';
     BAB_LIST.forEach(function(b) {
-      var ico = b.level === 'N5' ? '📗' : '📘';
-      html += '<optgroup label="' + ico + ' Bab ' + b.bab + ' (' + b.lokasi + ') — ' + b.level + '">';
-      if (BANK['bab_' + b.bab]) {
-        html += '<option value="bab_' + b.bab + '">📝 Uji Seluruh Bab ' + b.bab + ' (' + b.lokasi + ')</option>';
+      var meta = LEVEL_META[b.level] || { icon: '📚' };
+      html += '<optgroup label="' + meta.icon + ' ' + escHtml(b.level) + ' · Bab ' + escHtml(b.bab) + ' (' + escHtml(b.lokasi) + ')">';
+      if (b.quizKey && BANK[b.quizKey]) {
+        html += '<option value="' + escHtml(b.quizKey) + '">📝 Uji Seluruh Bab ' + escHtml(b.bab) + ' (' + escHtml(b.lokasi) + ')</option>';
       }
       b.items.forEach(function(it) {
         html += '<option value="' + escHtml(it.id) + '">↳ ' + escHtml(stripTags(it.titleMain)) + '</option>';
@@ -891,66 +1024,173 @@
     var groups = [];
     BAB_LIST.forEach(function(b) {
       if (state.level !== 'ALL' && b.level !== state.level) return;
-      if (state.bab !== 'ALL' && b.bab !== state.bab && !q) return;
+      if (state.bab !== 'ALL' && b.key !== state.bab && !q) return;
       var matched = b.items.filter(function(it) {
         return !q || it._search.indexOf(q) !== -1;
       });
       if (matched.length) {
-        groups.push({ bab: b.bab, lokasi: b.lokasi, level: b.level, items: matched });
+        groups.push({ key: b.key, bab: b.bab, lokasi: b.lokasi, level: b.level, quizKey: b.quizKey, items: matched });
       }
     });
     return groups;
   }
 
-  // 5. Render Bab Filter Pills
+  // 4b. Render Level Tabs (Semua Level + N5..N1)
+  function renderLevelTabs() {
+    if (!levelTabs) return;
+    var activeLevels = LEVEL_ORDER.filter(function(lv) { return LEVEL_STATS[lv] && LEVEL_STATS[lv].itemsCount > 0; });
+    var spanText = activeLevels.length >= 2
+      ? (activeLevels[0] + '–' + activeLevels[activeLevels.length - 1])
+      : (activeLevels[0] || 'N5–N1');
+
+    var html = '';
+    html += '<button type="button" class="tab-btn' + (state.level === 'ALL' ? ' active' : '') + '" data-level="ALL">';
+    html += '<span class="tab-btn-left"><span>🌟</span><span class="tab-btn-label">Semua Level (' + escHtml(spanText) + ')</span></span>';
+    html += '<span class="tab-count">' + DATA.length + ' pola · ' + BAB_LIST.length + ' Bab</span>';
+    html += '</button>';
+
+    LEVEL_ORDER.forEach(function(lv) {
+      var meta = LEVEL_META[lv] || { icon: '📚', tabTitle: 'JLPT ' + lv, label: 'Level ' + lv };
+      var st = LEVEL_STATS[lv] || { babs: [], itemsCount: 0 };
+      var hasData = st.itemsCount > 0;
+      var cls = 'tab-btn' + (state.level === lv ? ' active' : '') + (!hasData ? ' is-soon' : '');
+      var countText = hasData ? (formatBabRange(st.babs) + ' · ' + st.itemsCount + ' pola') : 'Segera Hadir';
+      html += '<button type="button" class="' + cls + '" data-level="' + escHtml(lv) + '"' + (hasData ? '' : ' disabled title="Materi ' + escHtml(lv) + ' akan segera ditambahkan"') + '>';
+      html += '<span class="tab-btn-left"><span>' + meta.icon + '</span><span class="tab-btn-label">' + escHtml(meta.tabTitle) + '</span></span>';
+      html += '<span class="tab-count">' + escHtml(countText) + '</span>';
+      html += '</button>';
+    });
+
+    levelTabs.innerHTML = html;
+  }
+
+  // 5. Render Bab Filter Pills (Grouped by Level when ALL)
   function renderBabPills() {
     if (!babFilterBar) return;
-    var babsForLevel = BAB_LIST.filter(function(b) {
-      return state.level === 'ALL' || b.level === state.level;
-    });
-    var html = '<button type="button" class="bab-pill' + (state.bab === 'ALL' ? ' active' : '') + '" data-bab="ALL">Semua Bab</button>';
-    babsForLevel.forEach(function(b) {
-      var cls = 'bab-pill ' + (b.level === 'N5' ? 'n5-dot' : 'n4-dot') + (state.bab === b.bab ? ' active' : '');
-      html += '<button type="button" class="' + cls + '" data-bab="' + b.bab + '">Bab ' + b.bab + '</button>';
-    });
+    var html = '<div class="bab-pills">';
+    html += '<button type="button" class="bab-pill' + (state.bab === 'ALL' ? ' active' : '') + '" data-bab="ALL">Semua Bab' + (state.level !== 'ALL' ? ' ' + escHtml(state.level) : '') + '</button>';
+
+    if (state.level === 'ALL') {
+      LEVEL_ORDER.forEach(function(lv) {
+        var st = LEVEL_STATS[lv];
+        if (!st || !st.babs.length) return;
+        var meta = LEVEL_META[lv] || { icon: '📚' };
+        var isExpanded = state.openBabFilterLevel === lv;
+        var hasActiveBab = state.bab !== 'ALL' && BAB_MAP[state.bab] && BAB_MAP[state.bab].level === lv;
+        html += '<button type="button" class="bab-group-btn' + (isExpanded ? ' open' : '') + (hasActiveBab ? ' has-active' : '') + '" data-bab-group="' + escHtml(lv) + '">';
+        html += meta.icon + ' ' + escHtml(lv) + ' (' + escHtml(formatBabRange(st.babs)) + ') ' + (isExpanded ? '▾' : '▸');
+        html += '</button>';
+      });
+      html += '</div>';
+
+      if (state.openBabFilterLevel && LEVEL_STATS[state.openBabFilterLevel] && LEVEL_STATS[state.openBabFilterLevel].babs.length) {
+        var openLv = state.openBabFilterLevel;
+        var dotCls = openLv.toLowerCase() + '-dot';
+        html += '<div class="bab-subpills">';
+        html += '<span class="bab-subpills-label">' + escHtml(openLv) + ':</span>';
+        LEVEL_STATS[openLv].babs.forEach(function(b) {
+          var cls = 'bab-pill ' + dotCls + (state.bab === b.key ? ' active' : '');
+          html += '<button type="button" class="' + cls + '" data-bab="' + escHtml(b.key) + '">Bab ' + escHtml(b.bab) + '</button>';
+        });
+        html += '</div>';
+      }
+    } else {
+      var stSingle = LEVEL_STATS[state.level];
+      if (stSingle && stSingle.babs.length) {
+        var dotSingleCls = state.level.toLowerCase() + '-dot';
+        stSingle.babs.forEach(function(b) {
+          var cls = 'bab-pill ' + dotSingleCls + (state.bab === b.key ? ' active' : '');
+          html += '<button type="button" class="' + cls + '" data-bab="' + escHtml(b.key) + '">Bab ' + escHtml(b.bab) + '</button>';
+        });
+      }
+      html += '</div>';
+    }
+
     babFilterBar.innerHTML = html;
   }
 
-  // 6. Render Left Sidebar Index
+  // 6. Render Left Sidebar Index (3-level Hierarchy: Level N5..N1 -> Bab -> Pola)
   function renderSidebar() {
     if (!sbContent) return;
     var q = state.query.trim().toLowerCase();
-    var babsForLevel = BAB_LIST.filter(function(b) {
-      return state.level === 'ALL' || b.level === state.level;
-    });
-    var visibleCount = 0;
+    var levelsToShow = state.level === 'ALL'
+      ? LEVEL_ORDER
+      : LEVEL_ORDER.filter(function(lv) { return lv === state.level; });
+
+    var visibleBabCount = 0;
+    var visibleItemCount = 0;
     var html = '';
 
-    babsForLevel.forEach(function(b) {
-      var items = q ? b.items.filter(function(it) { return it._search.indexOf(q) !== -1; }) : b.items;
-      if (q && !items.length) return;
-      visibleCount++;
+    levelsToShow.forEach(function(lv) {
+      var meta = LEVEL_META[lv] || { icon: '📚', label: 'Level ' + lv };
+      var st = LEVEL_STATS[lv] || { babs: [], itemsCount: 0 };
+      var lvCls = lv.toLowerCase();
 
-      var isOpen = Boolean(q || state.bab === b.bab || state.openBabSidebar[b.bab]);
-      var lvCls = b.level.toLowerCase();
-      html += '<div class="sb-bab' + (isOpen ? ' open' : '') + '" data-sb-bab="' + b.bab + '">';
-      html += '<button type="button" class="sb-bab-head" data-sb-toggle="' + b.bab + '">';
-      html += '<span>Bab ' + b.bab + ' · <span class="jp">' + escHtml(b.lokasi) + '</span></span>';
-      html += '<span class="sb-bab-badge ' + lvCls + '">' + b.level + ' (' + items.length + ')</span>';
-      html += '</button>';
-      html += '<div class="sb-bab-list">';
-      items.forEach(function(it, idx) {
-        var activeCls = state.highlightedId === it.id ? ' active' : '';
-        html += '<button type="button" class="sb-item' + activeCls + '" data-jump-id="' + escHtml(it.id) + '" data-jump-bab="' + b.bab + '">';
-        html += '<span class="sb-item-num">' + (idx + 1) + '.</span>';
-        html += '<span class="sb-item-jp jp">' + escHtml(stripTags(it.titleMain)) + '</span>';
-        html += '</button>';
+      var matchingBabs = [];
+      var lvMatchedItems = 0;
+      st.babs.forEach(function(b) {
+        var items = q ? b.items.filter(function(it) { return it._search.indexOf(q) !== -1; }) : b.items;
+        if (!q || items.length) {
+          matchingBabs.push({ babObj: b, items: items });
+          lvMatchedItems += items.length;
+        }
       });
+
+      if (q && !matchingBabs.length) return;
+
+      visibleBabCount += matchingBabs.length;
+      visibleItemCount += lvMatchedItems;
+
+      var hasSelectedBabInLv = state.bab !== 'ALL' && BAB_MAP[state.bab] && BAB_MAP[state.bab].level === lv;
+      var lvOpen = Boolean((q && matchingBabs.length > 0) || state.openLevelSidebar[lv] || hasSelectedBabInLv);
+
+      var badgeText = st.itemsCount > 0
+        ? (q ? (lvMatchedItems + ' hasil') : (st.babs.length + ' bab · ' + st.itemsCount))
+        : 'Segera';
+      var badgeCls = 'sb-level-badge ' + (st.itemsCount > 0 ? lvCls : 'soon');
+
+      html += '<div class="sb-level' + (lvOpen ? ' open' : '') + '" data-sb-level-box="' + escHtml(lv) + '">';
+      html += '<button type="button" class="sb-level-head" data-sb-level="' + escHtml(lv) + '">';
+      html += '<span class="sb-level-left"><span>' + meta.icon + '</span><span class="sb-level-name">' + escHtml(meta.label) + '</span></span>';
+      html += '<span class="sb-level-right"><span class="' + badgeCls + '">' + escHtml(badgeText) + '</span><span class="sb-level-caret">' + (lvOpen ? '▾' : '▸') + '</span></span>';
+      html += '</button>';
+      html += '<div class="sb-level-body">';
+
+      if (!matchingBabs.length) {
+        html += '<div class="sb-level-empty">Materi <b>' + escHtml(meta.label) + '</b> belum tersedia dan akan segera ditambahkan.</div>';
+      } else {
+        matchingBabs.forEach(function(entry) {
+          var b = entry.babObj;
+          var items = entry.items;
+          var babOpen = Boolean(q || state.bab === b.key || state.openBabSidebar[b.key]);
+          html += '<div class="sb-bab' + (babOpen ? ' open' : '') + '" data-sb-bab="' + escHtml(b.key) + '">';
+          html += '<button type="button" class="sb-bab-head" data-sb-toggle="' + escHtml(b.key) + '">';
+          html += '<span>Bab ' + escHtml(b.bab) + ' · <span class="jp">' + escHtml(b.lokasi) + '</span></span>';
+          html += '<span class="sb-bab-right"><span class="sb-bab-badge ' + lvCls + '">' + items.length + ' pola</span><span class="sb-bab-caret">' + (babOpen ? '▾' : '▸') + '</span></span>';
+          html += '</button>';
+          html += '<div class="sb-bab-list">';
+          items.forEach(function(it, idx) {
+            var activeCls = state.highlightedId === it.id ? ' active' : '';
+            html += '<button type="button" class="sb-item' + activeCls + '" data-jump-id="' + escHtml(it.id) + '" data-jump-bab="' + escHtml(b.key) + '" data-jump-level="' + escHtml(lv) + '">';
+            html += '<span class="sb-item-num">' + (idx + 1) + '.</span>';
+            html += '<span class="sb-item-jp jp">' + escHtml(stripTags(it.titleMain)) + '</span>';
+            html += '</button>';
+          });
+          html += '</div></div>';
+        });
+      }
+
       html += '</div></div>';
     });
 
+    if (!html) {
+      html = '<div class="sb-level-empty">Tidak ada bab atau materi yang cocok.</div>';
+    }
+
     sbContent.innerHTML = html;
-    if (sbTotalCount) sbTotalCount.textContent = visibleCount + ' bab';
+    if (sbTotalCount) {
+      sbTotalCount.textContent = visibleBabCount + ' bab · ' + visibleItemCount + ' pola';
+    }
   }
 
   // 7. Render Main Cards
@@ -962,8 +1202,9 @@
     if (visibleStatsText) {
       if (q) {
         visibleStatsText.textContent = 'Hasil pencarian: ' + totalItems + ' pola di ' + groups.length + ' bab';
-      } else if (state.bab !== 'ALL') {
-        visibleStatsText.textContent = 'Menampilkan Bab ' + state.bab + ' (' + totalItems + ' pola)';
+      } else if (state.bab !== 'ALL' && BAB_MAP[state.bab]) {
+        var bInfo = BAB_MAP[state.bab];
+        visibleStatsText.textContent = 'Menampilkan ' + bInfo.level + ' · Bab ' + bInfo.bab + ' (' + totalItems + ' pola)';
       } else {
         visibleStatsText.textContent = 'Menampilkan ' + groups.length + ' bab (' + totalItems + ' pola)';
       }
@@ -989,16 +1230,16 @@
     var hasQuery = q.length > 0;
     groups.forEach(function(g) {
       var lvCls = g.level.toLowerCase();
-      var lvIcon = g.level === 'N5' ? '📗' : '📘';
-      out += '<section class="bab-section" id="bab-sec-' + g.bab + '">';
+      var lvMeta = LEVEL_META[g.level] || { icon: '📚' };
+      out += '<section class="bab-section" id="bab-sec-' + escHtml(g.key) + '">';
       out += '<div class="bab-heading">';
       out += '<div class="bab-heading-left">';
-      out += '<span class="bab-lv-pill ' + lvCls + '">' + lvIcon + ' ' + g.level + '</span>';
-      out += '<h2>Bab ' + g.bab + ' <span class="jp" style="font-weight:700;color:var(--muted);font-size:16px">(' + escHtml(g.lokasi) + ')</span></h2>';
+      out += '<span class="bab-lv-pill ' + lvCls + '">' + lvMeta.icon + ' ' + escHtml(g.level) + '</span>';
+      out += '<h2>Bab ' + escHtml(g.bab) + ' <span class="jp" style="font-weight:700;color:var(--muted);font-size:16px">(' + escHtml(g.lokasi) + ')</span></h2>';
       out += '<span class="bab-count">· ' + g.items.length + ' Materi</span>';
       out += '</div>';
-      if (BANK['bab_' + g.bab]) {
-        out += '<button type="button" class="btn-topic-quiz" data-quiz-topic="bab_' + g.bab + '">📝 Latihan Bab ' + g.bab + ' ›</button>';
+      if (g.quizKey && BANK[g.quizKey]) {
+        out += '<button type="button" class="btn-topic-quiz" data-quiz-topic="' + escHtml(g.quizKey) + '">📝 Latihan Bab ' + escHtml(g.bab) + ' ›</button>';
       }
       out += '</div>';
 
@@ -1011,7 +1252,7 @@
         out += '<div class="bp-hero">';
         out += '<div class="bp-hero-top">';
         out += '<div style="flex:1;min-width:220px">';
-        out += '<div class="bp-meta-row"><span class="bp-tag-loc ' + lvCls + '">' + it.level + ' · Bab ' + it.bab + ' (' + escHtml(it.lokasi) + ')</span></div>';
+        out += '<div class="bp-meta-row"><span class="bp-tag-loc ' + lvCls + '">' + escHtml(it.level) + ' · Bab ' + escHtml(it.bab) + ' (' + escHtml(it.lokasi) + ')</span></div>';
         out += '<h3 class="bp-title jp">' + it.titleMain + '</h3>';
         if (it.titleSub && it.titleSub.length) {
           out += '<div class="bp-subs">';
@@ -1100,20 +1341,24 @@
   }
 
   function renderAll() {
-    levelBtns.forEach(function(b) {
-      b.classList.toggle('active', b.getAttribute('data-level') === state.level);
-    });
+    renderLevelTabs();
     renderBabPills();
     renderSidebar();
     renderMain();
   }
 
-  // Level Tab Click
-  levelBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var lv = this.getAttribute('data-level');
-      if (state.level === lv) return;
+  // Level Tab Click (Delegated)
+  if (levelTabs) {
+    levelTabs.addEventListener('click', function(e) {
+      var btn = e.target.closest('.tab-btn');
+      if (!btn || btn.disabled) return;
+      var lv = btn.getAttribute('data-level');
+      if (!lv || state.level === lv) return;
       state.level = lv;
+      if (lv !== 'ALL') {
+        state.openLevelSidebar[lv] = true;
+        state.openBabFilterLevel = lv;
+      }
       if (state.bab !== 'ALL') {
         var curBabObj = BAB_MAP[state.bab];
         if (!curBabObj || (lv !== 'ALL' && curBabObj.level !== lv)) {
@@ -1122,41 +1367,71 @@
       }
       renderAll();
     });
-  });
+  }
 
-  // Bab Pill Click
+  // Bab Group & Pill Click
   if (babFilterBar) {
     babFilterBar.addEventListener('click', function(e) {
+      var grpBtn = e.target.closest('[data-bab-group]');
+      if (grpBtn) {
+        var lv = grpBtn.getAttribute('data-bab-group');
+        state.openBabFilterLevel = (state.openBabFilterLevel === lv) ? null : lv;
+        renderBabPills();
+        return;
+      }
       var pill = e.target.closest('.bab-pill');
       if (!pill) return;
       var raw = pill.getAttribute('data-bab');
-      state.bab = raw === 'ALL' ? 'ALL' : parseInt(raw, 10);
-      if (state.bab !== 'ALL') {
+      state.bab = raw === 'ALL' ? 'ALL' : raw;
+      if (state.bab !== 'ALL' && BAB_MAP[state.bab]) {
+        state.openLevelSidebar[BAB_MAP[state.bab].level] = true;
         state.openBabSidebar[state.bab] = true;
+        state.openBabFilterLevel = BAB_MAP[state.bab].level;
       }
       renderAll();
     });
   }
 
-  // Sidebar Clicks (Toggle Bab Accordion + Jump to Card)
+  // Sidebar Clicks (Toggle Level Accordion + Toggle Bab Accordion + Jump to Card)
   if (sbContent) {
     sbContent.addEventListener('click', function(e) {
+      var lvTog = e.target.closest('[data-sb-level]');
+      if (lvTog) {
+        var lvKey = lvTog.getAttribute('data-sb-level');
+        var nextLvOpen = !state.openLevelSidebar[lvKey];
+        state.openLevelSidebar[lvKey] = nextLvOpen;
+        var lvBox = lvTog.closest('.sb-level');
+        if (lvBox) {
+          lvBox.classList.toggle('open', nextLvOpen);
+          var lvCaret = lvTog.querySelector('.sb-level-caret');
+          if (lvCaret) lvCaret.textContent = nextLvOpen ? '▾' : '▸';
+        }
+        return;
+      }
       var tog = e.target.closest('[data-sb-toggle]');
       if (tog) {
-        var bNum = parseInt(tog.getAttribute('data-sb-toggle'), 10);
-        state.openBabSidebar[bNum] = !state.openBabSidebar[bNum];
+        var bKey = tog.getAttribute('data-sb-toggle');
+        var nextBabOpen = !state.openBabSidebar[bKey];
+        state.openBabSidebar[bKey] = nextBabOpen;
         var box = tog.closest('.sb-bab');
-        if (box) box.classList.toggle('open', !!state.openBabSidebar[bNum]);
+        if (box) {
+          box.classList.toggle('open', nextBabOpen);
+          var bCaret = tog.querySelector('.sb-bab-caret');
+          if (bCaret) bCaret.textContent = nextBabOpen ? '▾' : '▸';
+        }
         return;
       }
       var itemBtn = e.target.closest('[data-jump-id]');
       if (!itemBtn) return;
       var targetId = itemBtn.getAttribute('data-jump-id');
-      var targetBab = parseInt(itemBtn.getAttribute('data-jump-bab'), 10);
+      var targetBabKey = itemBtn.getAttribute('data-jump-bab');
+      var targetLv = itemBtn.getAttribute('data-jump-level');
       state.highlightedId = targetId;
-      state.openBabSidebar[targetBab] = true;
-      if (state.bab !== 'ALL' && state.bab !== targetBab) {
-        state.bab = targetBab;
+      if (targetLv) state.openLevelSidebar[targetLv] = true;
+      state.openBabSidebar[targetBabKey] = true;
+      if (state.bab !== 'ALL' && state.bab !== targetBabKey) {
+        state.bab = targetBabKey;
+        if (targetLv) state.openBabFilterLevel = targetLv;
         renderAll();
       } else {
         sbContent.querySelectorAll('.sb-item').forEach(function(el) {
@@ -1225,18 +1500,32 @@
   if (btnClearSearch) btnClearSearch.addEventListener('click', clearSearch);
   if (btnResetSearchBanner) btnResetSearchBanner.addEventListener('click', clearSearch);
 
-  // URL Parameters (?level=N5/N4, ?bab=1..50)
+  // URL Parameters (?level=N5..N1, ?bab=1..50)
   var params = new URLSearchParams(window.location.search);
   var urlLv = (params.get('level') || '').toUpperCase();
-  if (urlLv === 'N5' || urlLv === 'N4') {
-    state.level = urlLv;
-    state.openBabSidebar[urlLv === 'N5' ? 1 : 26] = true;
+  if (urlLv && LEVEL_STATS[urlLv]) {
+    state.openLevelSidebar[urlLv] = true;
+    if (LEVEL_STATS[urlLv].itemsCount > 0) {
+      state.level = urlLv;
+      state.openBabFilterLevel = urlLv;
+    }
   }
-  var urlBab = parseInt(params.get('bab') || '', 10);
-  if (urlBab && BAB_MAP[urlBab]) {
-    state.bab = urlBab;
-    state.level = BAB_MAP[urlBab].level;
-    state.openBabSidebar[urlBab] = true;
+  var urlBabRaw = (params.get('bab') || '').trim();
+  if (urlBabRaw) {
+    var matchedBab = null;
+    for (var bi = 0; bi < BAB_LIST.length; bi++) {
+      if (String(BAB_LIST[bi].bab) === urlBabRaw && (!urlLv || BAB_LIST[bi].level === urlLv)) {
+        matchedBab = BAB_LIST[bi];
+        break;
+      }
+    }
+    if (matchedBab) {
+      state.bab = matchedBab.key;
+      state.level = matchedBab.level;
+      state.openLevelSidebar[matchedBab.level] = true;
+      state.openBabSidebar[matchedBab.key] = true;
+      state.openBabFilterLevel = matchedBab.level;
+    }
   }
 
   populateBottomQuizSelect();
