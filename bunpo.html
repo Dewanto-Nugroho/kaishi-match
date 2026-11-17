@@ -261,7 +261,8 @@
     background: #fbfaff; border: 1px dashed #e2dcf5; border-radius: 10px; margin-bottom: 2px; line-height: 1.45;
   }
 
-  .sb-bab { margin-bottom: 5px; border: 1px solid #f0edf8; border-left: 2.5px solid #e5defa; border-radius: 10px; overflow: hidden; background: #fcfbfe; }
+  .sb-bab { margin-bottom: 5px; border: 1px solid #f0edf8; border-left: 2.5px solid #e5defa; border-radius: 10px; overflow: hidden; background: #fcfbfe; transition: border-color .14s, box-shadow .14s; }
+  .sb-bab.active { border-color: #c4b5fd; border-left: 3.5px solid var(--accent); box-shadow: 0 2px 10px rgba(111, 77, 245, .09); }
   .sb-bab-head {
     width: 100%; border: 0; background: transparent; padding: 7px 9px; cursor: pointer;
     display: flex; align-items: center; justify-content: space-between; gap: 6px;
@@ -270,6 +271,7 @@
   }
   .sb-bab-head:hover { background: #f3effe; color: var(--accent); }
   .sb-bab.open .sb-bab-head { background: #f5f2ff; color: var(--accent); border-bottom: 1px solid #ebe5f8; }
+  .sb-bab.active .sb-bab-head { background: #efe9ff; color: var(--accent); font-weight: 800; }
   .sb-bab-right { display: inline-flex; align-items: center; gap: 5px; flex: none; }
   .sb-bab-badge {
     font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 5px; flex: none;
@@ -311,6 +313,21 @@
   .bab-lv-pill.n1 { background: var(--n1-bg); color: var(--n1); border: 1px solid var(--n1-line); }
   .bab-heading h2 { margin: 0; font-size: 18px; font-weight: 800; color: var(--ink); }
   .bab-count { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .bab-heading-actions { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .btn-bab-nav {
+    background: #faf9fd; border: 1px solid var(--line); color: var(--ink);
+    border-radius: 9px; padding: 6px 10px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 4px;
+    transition: all .14s;
+  }
+  .btn-bab-nav:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: #f5f2ff; }
+  .btn-bab-nav:disabled { opacity: .42; cursor: not-allowed; }
+  .bab-pager {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    margin-top: 6px; margin-bottom: 10px; padding: 12px 16px; border-radius: 16px;
+    background: #fff; border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(28,26,43,.03);
+  }
+  .bab-pager-info { font-size: 12.5px; font-weight: 700; color: var(--muted); }
 
   /* ---------- Philia Space Structured Card ---------- */
   .bp-card {
@@ -940,15 +957,17 @@
   if (heroPolaCount) heroPolaCount.textContent = DATA.length;
   if (heroQuizCount) heroQuizCount.textContent = Object.keys(BANK).length;
 
-  // UI State
+  // UI State (default: focus on Bab 1 so only 1 chapter renders at a time)
+  var firstBabObj = BAB_LIST.length ? BAB_LIST[0] : null;
   var state = {
     level: 'ALL',             // 'ALL' | 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
-    bab: 'ALL',               // 'ALL' | babKey ('N5_1', ...)
+    bab: firstBabObj ? firstBabObj.key : 'ALL',
     query: '',
+    searchGlobal: false,
     compact: false,
-    openLevelSidebar: {},     // collapsed by default; expands when level is clicked
-    openBabSidebar: {},
-    openBabFilterLevel: null, // expanded level sub-pills in #babFilterBar when level === 'ALL'
+    openLevelSidebar: firstBabObj ? (function(o) { o[firstBabObj.level] = true; return o; })({}) : {},
+    openBabSidebar: firstBabObj ? (function(o) { o[firstBabObj.key] = true; return o; })({}) : {},
+    openBabFilterLevel: firstBabObj ? firstBabObj.level : null,
     highlightedId: null
   };
 
@@ -956,6 +975,7 @@
   var levelTabs = document.getElementById('levelTabs');
   var babFilterBar = document.getElementById('babFilterBar');
   var visibleStatsText = document.getElementById('visibleStatsText');
+  var bunpoSidebar = document.getElementById('bunpoSidebar');
   var sbContent = document.getElementById('sbContent');
   var sbTotalCount = document.getElementById('sbTotalCount');
   var bunpoMain = document.getElementById('bunpoMain');
@@ -1025,7 +1045,7 @@
     var groups = [];
     BAB_LIST.forEach(function(b) {
       if (state.level !== 'ALL' && b.level !== state.level) return;
-      if (state.bab !== 'ALL' && b.key !== state.bab && !q) return;
+      if (state.bab !== 'ALL' && b.key !== state.bab && !(q && state.searchGlobal)) return;
       var matched = b.items.filter(function(it) {
         return !q || it._search.indexOf(q) !== -1;
       });
@@ -1163,8 +1183,9 @@
         matchingBabs.forEach(function(entry) {
           var b = entry.babObj;
           var items = entry.items;
-          var babOpen = Boolean(q || state.bab === b.key || state.openBabSidebar[b.key]);
-          html += '<div class="sb-bab' + (babOpen ? ' open' : '') + '" data-sb-bab="' + escHtml(b.key) + '">';
+          var isCurrentBab = (state.bab === b.key);
+          var babOpen = Boolean((q && state.searchGlobal) || state.openBabSidebar[b.key]);
+          html += '<div class="sb-bab' + (babOpen ? ' open' : '') + (isCurrentBab ? ' active' : '') + '" data-sb-bab="' + escHtml(b.key) + '">';
           html += '<button type="button" class="sb-bab-head" data-sb-toggle="' + escHtml(b.key) + '">';
           html += '<span>Bab ' + escHtml(b.bab) + ' · <span class="jp">' + escHtml(b.lokasi) + '</span></span>';
           html += '<span class="sb-bab-right"><span class="sb-bab-badge ' + lvCls + '">' + items.length + ' pola</span><span class="sb-bab-caret">' + (babOpen ? '▾' : '▸') + '</span></span>';
@@ -1229,9 +1250,23 @@
 
     var out = '';
     var hasQuery = q.length > 0;
+    var isSingleBabView = (state.bab !== 'ALL' && groups.length === 1 && !(hasQuery && state.searchGlobal));
+    var navPool = (state.level !== 'ALL' && LEVEL_STATS[state.level]) ? LEVEL_STATS[state.level].babs : BAB_LIST;
+
     groups.forEach(function(g) {
       var lvCls = g.level.toLowerCase();
       var lvMeta = LEVEL_META[g.level] || { icon: '📚' };
+      var curPos = -1;
+      var prevBab = null;
+      var nextBab = null;
+      if (isSingleBabView) {
+        for (var ni = 0; ni < navPool.length; ni++) {
+          if (navPool[ni].key === g.key) { curPos = ni; break; }
+        }
+        if (curPos > 0) prevBab = navPool[curPos - 1];
+        if (curPos !== -1 && curPos + 1 < navPool.length) nextBab = navPool[curPos + 1];
+      }
+
       out += '<section class="bab-section" id="bab-sec-' + escHtml(g.key) + '">';
       out += '<div class="bab-heading">';
       out += '<div class="bab-heading-left">';
@@ -1239,9 +1274,15 @@
       out += '<h2>Bab ' + escHtml(g.bab) + ' <span class="jp" style="font-weight:700;color:var(--muted);font-size:16px">(' + escHtml(g.lokasi) + ')</span></h2>';
       out += '<span class="bab-count">· ' + g.items.length + ' Materi</span>';
       out += '</div>';
+      out += '<div class="bab-heading-actions">';
+      if (isSingleBabView) {
+        out += '<button type="button" class="btn-bab-nav" data-nav-bab="' + (prevBab ? escHtml(prevBab.key) : '') + '"' + (prevBab ? ' title="Kembali ke Bab ' + escHtml(prevBab.bab) + '"' : ' disabled') + '>' + (prevBab ? ('‹ Bab ' + escHtml(prevBab.bab)) : '‹ Awal') + '</button>';
+        out += '<button type="button" class="btn-bab-nav" data-nav-bab="' + (nextBab ? escHtml(nextBab.key) : '') + '"' + (nextBab ? ' title="Lanjut ke Bab ' + escHtml(nextBab.bab) + '"' : ' disabled') + '>' + (nextBab ? ('Bab ' + escHtml(nextBab.bab) + ' ›') : 'Akhir ›') + '</button>';
+      }
       if (g.quizKey && BANK[g.quizKey]) {
         out += '<button type="button" class="btn-topic-quiz" data-quiz-topic="' + escHtml(g.quizKey) + '">📝 Latihan Bab ' + escHtml(g.bab) + ' ›</button>';
       }
+      out += '</div>';
       out += '</div>';
 
       g.items.forEach(function(it) {
@@ -1335,17 +1376,112 @@
         out += '</article>';
       });
 
+      if (isSingleBabView) {
+        out += '<div class="bab-pager">';
+        out += '<button type="button" class="btn-bab-nav" data-nav-bab="' + (prevBab ? escHtml(prevBab.key) : '') + '"' + (prevBab ? '' : ' disabled') + '>' + (prevBab ? ('‹ Bab ' + escHtml(prevBab.bab) + ' · ' + escHtml(prevBab.lokasi)) : '‹ Bab Pertama') + '</button>';
+        out += '<span class="bab-pager-info">' + escHtml(g.level) + ' · Bab ' + escHtml(g.bab) + ' (' + (curPos + 1) + ' / ' + navPool.length + ')</span>';
+        out += '<button type="button" class="btn-bab-nav" data-nav-bab="' + (nextBab ? escHtml(nextBab.key) : '') + '"' + (nextBab ? '' : ' disabled') + '>' + (nextBab ? ('Bab ' + escHtml(nextBab.bab) + ' · ' + escHtml(nextBab.lokasi) + ' ›') : 'Bab Terakhir ›') + '</button>';
+        out += '</div>';
+      }
+
       out += '</section>';
     });
 
     bunpoMain.innerHTML = out;
   }
 
-  function renderAll() {
+  function findByDataAttr(root, attr, val) {
+    if (!root || val == null) return null;
+    var els = root.querySelectorAll('[' + attr + ']');
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].getAttribute(attr) === val) return els[i];
+    }
+    return null;
+  }
+
+  function renderSidebarPreservingScroll(anchorAttr, anchorVal) {
+    var anchorTop = null;
+    if (anchorAttr && anchorVal && sbContent && bunpoSidebar) {
+      var prevEl = findByDataAttr(sbContent, anchorAttr, anchorVal);
+      if (prevEl) anchorTop = prevEl.getBoundingClientRect().top;
+    }
+    var prevScroll = bunpoSidebar ? bunpoSidebar.scrollTop : 0;
+    renderSidebar();
+    if (bunpoSidebar) {
+      bunpoSidebar.scrollTop = prevScroll;
+      if (anchorAttr && anchorVal && anchorTop !== null) {
+        var nextEl = findByDataAttr(sbContent, anchorAttr, anchorVal);
+        if (nextEl) {
+          var delta = nextEl.getBoundingClientRect().top - anchorTop;
+          if (Math.abs(delta) > 1) bunpoSidebar.scrollTop += delta;
+        }
+      }
+    }
+  }
+
+  function alignMainAfterBabSwitch(cardEl) {
+    if (cardEl) {
+      var cRect = cardEl.getBoundingClientRect();
+      if (cRect.top < 78 || cRect.top > window.innerHeight - 140) {
+        var cTarget = Math.max(0, window.pageYOffset + cRect.top - 86);
+        window.scrollTo({ top: cTarget, behavior: 'auto' });
+      }
+      return;
+    }
+    if (!bunpoMain) return;
+    var mRect = bunpoMain.getBoundingClientRect();
+    var mTarget = Math.max(0, window.pageYOffset + mRect.top - 84);
+    if (window.pageYOffset > mTarget + 4) {
+      window.scrollTo({ top: mTarget, behavior: 'auto' });
+    }
+  }
+
+  function renderAll(anchorAttr, anchorVal) {
     renderLevelTabs();
     renderBabPills();
-    renderSidebar();
+    renderSidebarPreservingScroll(anchorAttr, anchorVal);
     renderMain();
+  }
+
+  function selectBab(bKey, opts) {
+    opts = opts || {};
+    var prevBab = state.bab;
+    if (opts.clearSearch !== false && state.query) {
+      state.query = '';
+      if (searchInput) searchInput.value = '';
+      if (btnClearSearch) btnClearSearch.classList.remove('show');
+    }
+    state.searchGlobal = false;
+    state.bab = bKey === 'ALL' ? 'ALL' : bKey;
+    if (!opts.keepHighlight) state.highlightedId = null;
+
+    if (state.bab !== 'ALL' && BAB_MAP[state.bab]) {
+      var lv = BAB_MAP[state.bab].level;
+      if (state.level !== 'ALL' && state.level !== lv) {
+        state.level = lv;
+      }
+      state.openLevelSidebar[lv] = true;
+      state.openBabFilterLevel = lv;
+      state.openBabSidebar = {};
+      state.openBabSidebar[state.bab] = true;
+    }
+
+    renderAll(opts.anchorAttr, opts.anchorVal);
+
+    if (opts.cardId) {
+      var targetCard = document.getElementById('card-' + opts.cardId);
+      if (targetCard) {
+        targetCard.classList.remove('is-collapsed');
+        var colBtn = targetCard.querySelector('.btn-card-collapse');
+        if (colBtn) colBtn.textContent = '▾ Ringkas';
+        alignMainAfterBabSwitch(targetCard);
+        targetCard.classList.remove('card-highlight');
+        void targetCard.offsetWidth;
+        targetCard.classList.add('card-highlight');
+      }
+    } else if (prevBab !== state.bab) {
+      alignMainAfterBabSwitch(null);
+    }
   }
 
   // Level Tab Click (Delegated)
@@ -1359,14 +1495,24 @@
       if (lv !== 'ALL') {
         state.openLevelSidebar[lv] = true;
         state.openBabFilterLevel = lv;
-      }
-      if (state.bab !== 'ALL') {
-        var curBabObj = BAB_MAP[state.bab];
-        if (!curBabObj || (lv !== 'ALL' && curBabObj.level !== lv)) {
-          state.bab = 'ALL';
+        var curBabObj = state.bab !== 'ALL' ? BAB_MAP[state.bab] : null;
+        if (!curBabObj || curBabObj.level !== lv) {
+          var firstInLv = (LEVEL_STATS[lv] && LEVEL_STATS[lv].babs.length) ? LEVEL_STATS[lv].babs[0].key : 'ALL';
+          state.bab = firstInLv;
+          if (firstInLv !== 'ALL') {
+            state.openBabSidebar = {};
+            state.openBabSidebar[firstInLv] = true;
+          }
         }
+      } else if (state.bab === 'ALL' && BAB_LIST.length) {
+        state.bab = BAB_LIST[0].key;
+        state.openBabSidebar = {};
+        state.openBabSidebar[state.bab] = true;
       }
+      state.searchGlobal = false;
+      state.highlightedId = null;
       renderAll();
+      alignMainAfterBabSwitch(null);
     });
   }
 
@@ -1383,17 +1529,11 @@
       var pill = e.target.closest('.bab-pill');
       if (!pill) return;
       var raw = pill.getAttribute('data-bab');
-      state.bab = raw === 'ALL' ? 'ALL' : raw;
-      if (state.bab !== 'ALL' && BAB_MAP[state.bab]) {
-        state.openLevelSidebar[BAB_MAP[state.bab].level] = true;
-        state.openBabSidebar[state.bab] = true;
-        state.openBabFilterLevel = BAB_MAP[state.bab].level;
-      }
-      renderAll();
+      selectBab(raw === 'ALL' ? 'ALL' : raw, { anchorAttr: raw === 'ALL' ? null : 'data-sb-bab', anchorVal: raw });
     });
   }
 
-  // Sidebar Clicks (Toggle Level Accordion + Toggle Bab Accordion + Jump to Card)
+  // Sidebar Clicks (Toggle Level Accordion + Select Bab + Jump to Pattern)
   if (sbContent) {
     sbContent.addEventListener('click', function(e) {
       var lvTog = e.target.closest('[data-sb-level]');
@@ -1412,50 +1552,43 @@
       var tog = e.target.closest('[data-sb-toggle]');
       if (tog) {
         var bKey = tog.getAttribute('data-sb-toggle');
-        var nextBabOpen = !state.openBabSidebar[bKey];
-        state.openBabSidebar[bKey] = nextBabOpen;
-        var box = tog.closest('.sb-bab');
-        if (box) {
-          box.classList.toggle('open', nextBabOpen);
-          var bCaret = tog.querySelector('.sb-bab-caret');
-          if (bCaret) bCaret.textContent = nextBabOpen ? '▾' : '▸';
+        if (bKey === state.bab && !state.searchGlobal) {
+          var nextBabOpen = !state.openBabSidebar[bKey];
+          state.openBabSidebar[bKey] = nextBabOpen;
+          var box = tog.closest('.sb-bab');
+          if (box) {
+            box.classList.toggle('open', nextBabOpen);
+            var bCaret = tog.querySelector('.sb-bab-caret');
+            if (bCaret) bCaret.textContent = nextBabOpen ? '▾' : '▸';
+          }
+          return;
         }
+        selectBab(bKey, { anchorAttr: 'data-sb-bab', anchorVal: bKey });
         return;
       }
       var itemBtn = e.target.closest('[data-jump-id]');
       if (!itemBtn) return;
       var targetId = itemBtn.getAttribute('data-jump-id');
       var targetBabKey = itemBtn.getAttribute('data-jump-bab');
-      var targetLv = itemBtn.getAttribute('data-jump-level');
       state.highlightedId = targetId;
-      if (targetLv) state.openLevelSidebar[targetLv] = true;
-      state.openBabSidebar[targetBabKey] = true;
-      if (state.bab !== 'ALL' && state.bab !== targetBabKey) {
-        state.bab = targetBabKey;
-        if (targetLv) state.openBabFilterLevel = targetLv;
-        renderAll();
-      } else {
-        sbContent.querySelectorAll('.sb-item').forEach(function(el) {
-          el.classList.toggle('active', el.getAttribute('data-jump-id') === targetId);
-        });
-      }
-      var cardEl = document.getElementById('card-' + targetId);
-      if (cardEl) {
-        cardEl.classList.remove('is-collapsed');
-        var colBtn = cardEl.querySelector('.btn-card-collapse');
-        if (colBtn) colBtn.textContent = '▾ Ringkas';
-        var rect = cardEl.getBoundingClientRect();
-        var top = window.pageYOffset + rect.top - 86;
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-        cardEl.classList.remove('card-highlight');
-        void cardEl.offsetWidth;
-        cardEl.classList.add('card-highlight');
-      }
+      selectBab(targetBabKey, {
+        keepHighlight: true,
+        cardId: targetId,
+        anchorAttr: 'data-jump-id',
+        anchorVal: targetId
+      });
     });
   }
 
-  // Delegated Main Clicks (TTS Audio, Card Collapse, Dialog Expand)
+  // Delegated Main Clicks (TTS Audio, Card Collapse, Dialog Expand, Prev/Next Bab)
   document.addEventListener('click', function(e) {
+    var navBabBtn = e.target.closest('[data-nav-bab]');
+    if (navBabBtn && !navBabBtn.disabled) {
+      var navKey = navBabBtn.getAttribute('data-nav-bab');
+      if (navKey) selectBab(navKey, { anchorAttr: 'data-sb-bab', anchorVal: navKey });
+      return;
+    }
+
     var audioBtn = e.target.closest('.btn-audio');
     if (audioBtn) {
       if (audioBtn.id === 'qmAudioBtn') return;
@@ -1489,8 +1622,10 @@
   // Search Filter
   function onSearchChange() {
     state.query = searchInput ? searchInput.value : '';
-    if (btnClearSearch) btnClearSearch.classList.toggle('show', state.query.trim().length > 0);
-    renderSidebar();
+    var hasQ = state.query.trim().length > 0;
+    state.searchGlobal = hasQ;
+    if (btnClearSearch) btnClearSearch.classList.toggle('show', hasQ);
+    renderSidebarPreservingScroll(null, null);
     renderMain();
   }
   function clearSearch() {
@@ -1501,31 +1636,42 @@
   if (btnClearSearch) btnClearSearch.addEventListener('click', clearSearch);
   if (btnResetSearchBanner) btnResetSearchBanner.addEventListener('click', clearSearch);
 
-  // URL Parameters (?level=N5..N1, ?bab=1..50)
+  // URL Parameters (?level=N5..N1, ?bab=1..50|all)
   var params = new URLSearchParams(window.location.search);
   var urlLv = (params.get('level') || '').toUpperCase();
+  var urlBabRaw = (params.get('bab') || '').trim();
   if (urlLv && LEVEL_STATS[urlLv]) {
     state.openLevelSidebar[urlLv] = true;
     if (LEVEL_STATS[urlLv].itemsCount > 0) {
       state.level = urlLv;
       state.openBabFilterLevel = urlLv;
-    }
-  }
-  var urlBabRaw = (params.get('bab') || '').trim();
-  if (urlBabRaw) {
-    var matchedBab = null;
-    for (var bi = 0; bi < BAB_LIST.length; bi++) {
-      if (String(BAB_LIST[bi].bab) === urlBabRaw && (!urlLv || BAB_LIST[bi].level === urlLv)) {
-        matchedBab = BAB_LIST[bi];
-        break;
+      if (!urlBabRaw && LEVEL_STATS[urlLv].babs.length) {
+        var lvFirstBab = LEVEL_STATS[urlLv].babs[0].key;
+        state.bab = lvFirstBab;
+        state.openBabSidebar = {};
+        state.openBabSidebar[lvFirstBab] = true;
       }
     }
-    if (matchedBab) {
-      state.bab = matchedBab.key;
-      state.level = matchedBab.level;
-      state.openLevelSidebar[matchedBab.level] = true;
-      state.openBabSidebar[matchedBab.key] = true;
-      state.openBabFilterLevel = matchedBab.level;
+  }
+  if (urlBabRaw) {
+    if (urlBabRaw.toLowerCase() === 'all') {
+      state.bab = 'ALL';
+    } else {
+      var matchedBab = null;
+      for (var bi = 0; bi < BAB_LIST.length; bi++) {
+        if (String(BAB_LIST[bi].bab) === urlBabRaw && (!urlLv || BAB_LIST[bi].level === urlLv)) {
+          matchedBab = BAB_LIST[bi];
+          break;
+        }
+      }
+      if (matchedBab) {
+        state.bab = matchedBab.key;
+        state.level = matchedBab.level;
+        state.openLevelSidebar[matchedBab.level] = true;
+        state.openBabSidebar = {};
+        state.openBabSidebar[matchedBab.key] = true;
+        state.openBabFilterLevel = matchedBab.level;
+      }
     }
   }
 
