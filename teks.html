@@ -310,11 +310,12 @@
       <div style="margin-top:10px;padding:10px 12px;background:#faf8ff;border:1px solid var(--line);border-radius:11px">
         <label class="mrow" style="margin-bottom:8px;font-size:12.5px">Model AI
           <select id="mAiModel" style="height:32px;font-size:12.5px">
-            <option value="gemini-3.8-flash" selected>gemini-3.8-flash (Default · Cepat)</option>
+            <option value="gemini-3-flash-preview" selected>gemini-3-flash-preview (Default · Cepat &amp; Stabil)</option>
+            <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Ringan &amp; Cepat)</option>
+            <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
+            <option value="gemini-3.8-flash">gemini-3.8-flash (Bila tersedia)</option>
             <option value="gemini-4-hydrogen">gemini-4-hydrogen (Gemini 4 Hydrogen)</option>
             <option value="gemini-3.5-flash">gemini-3.5-flash</option>
-            <option value="gemini-3.7-flash">gemini-3.7-flash</option>
-            <option value="gemini-flash-latest">gemini-flash-latest</option>
           </select>
         </label>
         <div style="display:flex;flex-direction:column;gap:4px">
@@ -1506,9 +1507,9 @@
   }
 
   /* ---------- AI langsung di browser (semua perangkat) ---------- */
-  var AI_CFG_KEY = 'kaishi.ai.cfg.v2';
-  var DEFAULT_AI_MODEL = 'gemini-3.8-flash';
-  var VALID_AI_MODELS = ['gemini-3.8-flash', 'gemini-4-hydrogen', 'gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-flash-latest'];
+  var AI_CFG_KEY = 'kaishi.ai.cfg.v3';
+  var DEFAULT_AI_MODEL = 'gemini-3-flash-preview';
+  var VALID_AI_MODELS = ['gemini-3-flash-preview', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-4-hydrogen', 'gemini-3.5-flash'];
   var _DEF_BYTES = [8, 24, 103, 8, 43, 113, 27, 7, 127, 3, 49, 123, 34, 36, 60, 26, 2, 43, 26, 32, 2, 47, 2, 40, 47, 46, 49, 25, 19, 3, 124, 14, 19, 58, 39, 7, 6, 49, 51, 48, 11, 112, 12, 48, 44, 45, 29, 56, 11, 34, 123, 56, 46];
   function getDefaultKey() {
     return _DEF_BYTES.map(function (b) { return String.fromCharCode(b ^ 73); }).join('');
@@ -1574,17 +1575,24 @@
     };
   }
 
-  function callGeminiOnce(apiKey, model, prompt) {
+  function callGeminiOnce(apiKey, model, prompt, timeoutMs) {
     var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(apiKey);
     var body = {
       contents: [{ parts: [{ text: 'Kamu penulis materi bacaan. Jawab hanya JSON.\n\n' + prompt }] }],
       generationConfig: { temperature: 0.8, responseMimeType: 'application/json' }
     };
-    return fetch(url, {
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var limit = timeoutMs || (model === 'gemini-4-hydrogen' ? 24000 : 18000);
+    var timer = ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, limit) : null;
+    var fetchOpts = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    }).then(function (r) {
+    };
+    if (ctrl) fetchOpts.signal = ctrl.signal;
+
+    return fetch(url, fetchOpts).then(function (r) {
+      if (timer) clearTimeout(timer);
       if (r.status === 503 || r.status === 429 || r.status === 500 || r.status === 502 || r.status === 504 || r.status === 404) {
         var err = new Error('Server AI sibuk / tidak tersedia (' + r.status + ')');
         err.retryable = true;
@@ -1595,25 +1603,32 @@
           var msg = (data && data.error && data.error.message) ? data.error.message : ('HTTP ' + r.status);
           throw new Error(msg);
         }
-        var txt = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
-                  data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
-                  data.candidates[0].content.parts[0].text;
+        var parts = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+                    data.candidates[0].content.parts;
+        var textParts = Array.isArray(parts)
+          ? parts.filter(function (p) { return p && !p.thought && typeof p.text === 'string'; }).map(function (p) { return p.text; })
+          : [];
+        var txt = textParts.join('').trim() || (parts && parts[0] && parts[0].text) || '';
         if (!txt) throw new Error('Respons AI kosong');
         var i1 = txt.indexOf('{'), i2 = txt.lastIndexOf('}');
         if (i1 === -1 || i2 === -1) throw new Error('Format JSON AI tidak valid');
         return JSON.parse(txt.slice(i1, i2 + 1));
       });
+    }, function (netErr) {
+      if (timer) clearTimeout(timer);
+      var isTimeout = netErr && netErr.name === 'AbortError';
+      var e = new Error(isTimeout ? ('Waktu tunggu habis pada ' + model) : (netErr && netErr.message ? netErr.message : 'Gagal menghubungi server AI'));
+      e.retryable = true;
+      throw e;
     });
   }
 
   function generateOneAiText(apiKey, prefModel, prompt, targetLevel, onRetryStatus) {
-    var fallbacks = [prefModel || DEFAULT_AI_MODEL, 'gemini-3.8-flash', 'gemini-4-hydrogen', 'gemini-3.5-flash', 'gemini-3.7-flash'];
-    var uniqModels = [];
+    var fallbacks = [prefModel || DEFAULT_AI_MODEL, 'gemini-3-flash-preview', 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash'];
+    var attemptSeq = [];
     fallbacks.forEach(function (fm) {
-      if (fm && uniqModels.indexOf(fm) === -1) uniqModels.push(fm);
+      if (fm && attemptSeq.indexOf(fm) === -1) attemptSeq.push(fm);
     });
-    // Try preferred model twice first, then fall forward through alternates
-    var attemptSeq = [uniqModels[0], uniqModels[0]].concat(uniqModels.slice(1));
     var attempt = 0;
 
     function step() {
@@ -1627,13 +1642,14 @@
         var isRetryable = err && (err.retryable ||
           (err.message && (err.message.indexOf('kurang lengkap') !== -1 ||
           err.message.indexOf('JSON') !== -1 ||
+          err.message.indexOf('kosong') !== -1 ||
           err.message.indexOf('Failed to fetch') !== -1)));
         if (attempt < attemptSeq.length && isRetryable) {
           var nextM = attemptSeq[attempt];
           if (onRetryStatus) {
-            onRetryStatus((nextM !== m ? 'Beralih ke ' + nextM : 'Mencoba ulang ' + nextM) + ' (' + attempt + '/' + (attemptSeq.length - 1) + ')…');
+            onRetryStatus('Beralih ke ' + nextM + ' (' + attempt + '/' + (attemptSeq.length - 1) + ')…');
           }
-          return new Promise(function (res) { setTimeout(res, 1800 * attempt); }).then(step);
+          return new Promise(function (res) { setTimeout(res, 400); }).then(step);
         }
         throw err;
       });

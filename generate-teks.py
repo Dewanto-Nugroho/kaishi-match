@@ -373,19 +373,40 @@ def call_anthropic(cfg, prompt, timeout):
 
 def call_gemini(cfg, prompt, timeout):
     base = (cfg.get("base_url") or "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
-    url = "%s/models/%s:generateContent?key=%s" % (base, cfg["model"], cfg["api_key"])
-    body = {
-        "contents": [{"parts": [{"text": "Kamu penulis materi bacaan. Jawab hanya JSON.\n\n" + prompt}]}],
-        "generationConfig": {"temperature": 0.8, "responseMimeType": "application/json"},
-    }
-    req = urllib.request.Request(
-        url, data=json.dumps(body).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        data = json.loads(r.read().decode("utf-8"))
-    text = data["candidates"][0]["content"]["parts"][0]["text"]
-    return parse_json(text)
+    pref = cfg.get("model") or "gemini-3-flash-preview"
+    models = []
+    for m in (pref, "gemini-3-flash-preview", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"):
+        if m and m not in models:
+            models.append(m)
+    last_err = None
+    for idx, model in enumerate(models):
+        url = "%s/models/%s:generateContent?key=%s" % (base, model, cfg["api_key"])
+        body = {
+            "contents": [{"parts": [{"text": "Kamu penulis materi bacaan. Jawab hanya JSON.\n\n" + prompt}]}],
+            "generationConfig": {"temperature": 0.8, "responseMimeType": "application/json"},
+        }
+        req = urllib.request.Request(
+            url, data=json.dumps(body).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=min(timeout, 25)) as r:
+                data = json.loads(r.read().decode("utf-8"))
+            parts = data["candidates"][0]["content"]["parts"]
+            txt_parts = [p["text"] for p in parts if not p.get("thought") and isinstance(p.get("text"), str)]
+            text = "".join(txt_parts).strip() or parts[0]["text"]
+            return parse_json(text)
+        except urllib.error.HTTPError as exc:
+            last_err = exc
+            if exc.code in (404, 429, 500, 502, 503, 504) and idx + 1 < len(models):
+                continue
+            raise
+        except (urllib.error.URLError, TimeoutError) as exc:
+            last_err = exc
+            if idx + 1 < len(models):
+                continue
+            raise
+    raise last_err
 
 
 def load_ai_config(args):
