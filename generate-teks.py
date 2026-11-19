@@ -268,9 +268,9 @@ def teks_lokal(words, jumlah, rng, vocab_map, npar=3):
 # ------------------------------------------------------------------ AI
 PROMPT = """Kamu penulis materi bacaan bahasa Jepang untuk pembelajar Indonesia.
 
-Tulis SATU teks bacaan yang RUNTUT: tepat %d paragraf, masing-masing 2-3 kalimat
-(sekitar %d-%d kalimat). Satu topik yang mengalir dari awal ke akhir — bukan kumpulan
-kalimat lepas. Tema ringan sehari-hari (sekolah, makanan, cuaca, kebiasaan, keluarga).
+Tulis SATU teks bacaan yang RUNTUT dan CUKUP PANJANG: tepat %d paragraf.
+Setiap paragraf wajib berisi 3-4 kalimat penuh (sekitar 105-140 karakter Jepang bersih per paragraf; total panjang seluruh teks minimal %d karakter Jepang tanpa menghitung furigana). Satu topik yang mengalir dari awal sampai akhir dengan detail suasana, alasan, dan kejadian nyata — JANGAN terlalu singkat.
+Tema ringan sehari-hari (sekolah, makanan, cuaca, kebiasaan, keluarga, perjalanan).
 Level bahasa kira-kira %s.
 
 Kosakata yang sebaiknya dipakai (boleh bentuk infleksi/okurigana, tidak harus semuanya):
@@ -284,8 +284,8 @@ ATURAN FURIGANA (penting):
 - Kata di luar daftar boleh dipakai bila perlu, tetap dengan furigana yang benar.
 
 Ketentuan lain:
-- Kalimat pendek, natural, dan saling berhubungan.
-- 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan, dalam bahasa Jepang.
+- Kalimat jelas, natural, cukup deskriptif, dan saling berhubungan.
+- Wajib buat tepat 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan, dalam bahasa Jepang.
 
 Balas HANYA JSON:
 {"judul":"...","paragraf":["{今朝|けさ}、..."],"arti":"terjemahan Indonesia seluruh teks",
@@ -430,7 +430,7 @@ def load_ai_config(args):
 
 
 def call_ai(cfg, vocab_block, level_name, paragraf=3, timeout=180):
-    prompt = PROMPT % (paragraf, paragraf * 2, paragraf * 3, level_name, vocab_block)
+    prompt = PROMPT % (paragraf, max(320, paragraf * 105), level_name, vocab_block)
     provider = detect_provider(cfg)
     if provider == "anthropic":
         return call_anthropic(cfg, prompt, timeout)

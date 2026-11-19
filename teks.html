@@ -283,7 +283,15 @@
     </label>
 
     <label class="mrow" id="mParRow">Paragraf (AI)
-      <select id="mParagraf"><option>2</option><option selected>3</option><option>4</option></select>
+      <select id="mParagraf"><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+    </label>
+
+    <label class="mrow" id="mLenRow">Panjang (AI)
+      <select id="mPanjang">
+        <option value="ringkas">Ringkas (~200–260 karakter)</option>
+        <option value="sedang" selected>Standar (~320–450 karakter)</option>
+        <option value="panjang">Panjang (~500–680 karakter)</option>
+      </select>
     </label>
 
     <label class="mrow" id="mAudioRow" style="cursor:pointer">
@@ -1678,6 +1686,7 @@
     var ai = this.value === 'ai';
     $('mLevelRow').style.display = ai ? 'flex' : 'none';
     $('mParRow').style.display = ai ? 'flex' : 'none';
+    if ($('mLenRow')) $('mLenRow').style.display = ai ? 'flex' : 'none';
     if ($('mAiAdv')) $('mAiAdv').style.display = ai ? 'block' : 'none';
     $('mStatus').textContent = '';
     $('mStatus').className = 'mstatus';
@@ -1720,6 +1729,12 @@
 
     var targetLevel = parseInt($('mLevel').value, 10) || 4;
     var nPar = parseInt($('mParagraf').value, 10) || 3;
+    var lenMode = ($('mPanjang') ? $('mPanjang').value : 'sedang') || 'sedang';
+    var lenCfg = lenMode === 'ringkas'
+      ? { minChars: Math.max(180, nPar * 65), maxChars: Math.max(260, nPar * 90), sentPerPar: '2-3', perParChars: '65-90' }
+      : (lenMode === 'panjang'
+        ? { minChars: Math.max(460, nPar * 140), maxChars: Math.max(680, nPar * 190), sentPerPar: '4-6', perParChars: '140-185' }
+        : { minChars: Math.max(320, nPar * 105), maxChars: Math.max(460, nPar * 145), sentPerPar: '3-4', perParChars: '105-140' });
     var lvName = LV_NAME[targetLevel] || 'N4';
 
     var basePool = poolWords(opts).filter(function (w) { return levelOf(w.f) >= targetLevel; });
@@ -1752,10 +1767,11 @@
       var sample = shuffle(basePool).slice(0, 100);
       var vocabBlock = sample.map(function (w) { return '- ' + w.w + '（' + w.r + '）= ' + w.m; }).join('\n');
       var prompt = 'Kamu penulis materi bacaan bahasa Jepang untuk pembelajar Indonesia.\n\n' +
-        'Tulis SATU teks bacaan yang RUNTUT: tepat ' + nPar + ' paragraf, masing-masing 2-3 kalimat ' +
-        '(sekitar ' + (nPar * 2) + '-' + (nPar * 3) + ' kalimat). Satu topik yang mengalir dari awal ke akhir — bukan kumpulan ' +
-        'kalimat lepas. Tema ringan sehari-hari (sekolah, makanan, cuaca, kebiasaan, keluarga, perjalanan).\n' +
-        'Level bahasa kira-kira ' + lvName + '.\n\n' +
+        'Tulis SATU teks bacaan yang RUNTUT dan CUKUP PANJANG: tepat ' + nPar + ' paragraf.\n' +
+        '- Setiap paragraf WAJIB berisi ' + lenCfg.sentPerPar + ' kalimat penuh (sekitar ' + lenCfg.perParChars + ' karakter Jepang bersih per paragraf, tanpa menghitung furigana).\n' +
+        '- Target total panjang seluruh paragraf digabung (tanpa kurung furigana): minimal ' + lenCfg.minChars + ' hingga ' + lenCfg.maxChars + ' karakter Jepang.\n' +
+        '- Satu topik yang mengalir utuh dari awal, isi detail (alasan, suasana, aksi, atau percakapan singkat), hingga penutup — JANGAN menulis terlalu singkat.\n' +
+        'Tema ringan sehari-hari (sekolah, makanan, cuaca, kebiasaan, keluarga, perjalanan). Level bahasa kira-kira ' + lvName + '.\n\n' +
         'Kosakata yang sebaiknya dipakai (boleh bentuk infleksi/okurigana, tidak harus semuanya):\n\n' +
         vocabBlock + '\n\n' +
         'ATURAN FURIGANA (penting):\n' +
@@ -1764,8 +1780,8 @@
         '- Kana, partikel, dan okurigana ditulis biasa di luar kurung.\n' +
         '- Kata di luar daftar boleh dipakai bila perlu, tetap dengan furigana yang benar.\n\n' +
         'Ketentuan lain:\n' +
-        '- Kalimat pendek, natural, dan saling berhubungan.\n' +
-        '- 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan, dalam bahasa Jepang.\n\n' +
+        '- Kalimat jelas, natural, informatif, dan saling berhubungan.\n' +
+        '- Wajib buat TEPAT 3 pertanyaan pemahaman isi bacaan, masing-masing 4 pilihan, dalam bahasa Jepang.\n\n' +
         'Balas HANYA JSON:\n' +
         '{"judul":"...","paragraf":["{今朝|けさ}、..."],"arti":"terjemahan Indonesia seluruh teks",' +
         '"soal":[{"q":"...","o":["..","..","..",".."],"a":0,"n":"penjelasan singkat"}]}';
