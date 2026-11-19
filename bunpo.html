@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f5f4fb">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236f4df5'/%3E%3Ctext x='50' y='70' font-size='54' text-anchor='middle' fill='white' font-family='sans-serif'%3E%E5%AD%97%3C/text%3E%3C/svg%3E">
-<title>Bunpo (Tata Bahasa) — Minna no Nihongo N5 &amp; N4</title>
+<title>Bunpo (Tata Bahasa) — N5, N4, N3 &amp; N2</title>
 <style>
   :root {
     --bg: #f5f4fb;
@@ -632,21 +632,21 @@
   <!-- Hero Banner -->
   <div class="hero">
     <div class="hero-left">
-      <span class="hero-tag">📚 Minna no Nihongo &amp; JLPT Bunpo (N5–N1)</span>
-      <h1>文法 Bunpo Lengkap (N5–N1)</h1>
-      <p>Materi tata bahasa terstruktur mulai dari <b>Minna no Nihongo N5 (Bab 1–25)</b>, <b>N4 (Bab 26–50)</b>, hingga level <b>N3–N1</b>. Setiap pola dilengkapi <b>Arti</b>, <b>Rumus</b>, <b>Penjelasan &amp; Nuansa</b>, <b>Contoh Kalimat + Konteks Anime ber-audio TTS</b>, serta <b>Latihan Soal Fokus</b> per pola dan per bab.</p>
+      <span class="hero-tag">📚 Minna no Nihongo · Soumatome N3 · Nihongo no Mori N2</span>
+      <h1>文法 Bunpo Lengkap (N5–N2)</h1>
+      <p>Materi tata bahasa terstruktur: <b>Minna no Nihongo N5 (Bab 1–25)</b>, <b>N4 (Bab 26–50)</b>, <b>Soumatome N3 (Bab 1–36)</b>, dan <b>Nihongo no Mori N2 (Bab 1–32)</b>. Setiap pola dilengkapi <b>Arti</b>, <b>Rumus</b>, <b>Penjelasan &amp; Nuansa</b>, <b>Contoh Kalimat + Konteks Anime ber-audio TTS</b>, serta <b>Latihan Soal Fokus</b> per pola dan per bab.</p>
     </div>
     <div class="hero-stats">
       <div class="hstat-chip">
-        <b id="heroBabCount">50</b>
+        <b id="heroBabCount">118</b>
         <small id="heroBabSub">Bab Materi</small>
       </div>
       <div class="hstat-chip">
-        <b id="heroPolaCount">166</b>
+        <b id="heroPolaCount">422</b>
         <small>Pola Bunpo</small>
       </div>
       <div class="hstat-chip">
-        <b id="heroQuizCount">216</b>
+        <b id="heroQuizCount">540</b>
         <small>Paket Kuis Fokus</small>
       </div>
     </div>
@@ -883,8 +883,8 @@
   var LEVEL_META = {
     N5: { icon: '📗', tabTitle: 'Minna no Nihongo N5', label: 'Level N5' },
     N4: { icon: '📘', tabTitle: 'Minna no Nihongo N4', label: 'Level N4' },
-    N3: { icon: '📙', tabTitle: 'JLPT N3', label: 'Level N3' },
-    N2: { icon: '📕', tabTitle: 'JLPT N2', label: 'Level N2' },
+    N3: { icon: '📙', tabTitle: 'Soumatome N3', label: 'Level N3' },
+    N2: { icon: '📕', tabTitle: 'Nihongo no Mori N2', label: 'Level N2' },
     N1: { icon: '📓', tabTitle: 'JLPT N1', label: 'Level N1' }
   };
 
@@ -918,7 +918,7 @@
       lv,
       stripTags(item.titleMain),
       (item.titleSub || []).map(stripTags).join(' '),
-      item.meaning || '',
+      stripTags(item.meaning || ''),
       stripTags(item.formula),
       stripTags(item.nuance),
       (item.examples || []).map(function(e) { return (e.speech || '') + ' ' + stripTags(e.id); }).join(' '),
@@ -1311,7 +1311,7 @@
         }
         out += '</div>';
         out += '</div>'; // /.bp-hero-top
-        out += '<div class="bp-meaning"><span class="bp-meaning-tag">Arti</span><div>' + escHtml(it.meaning) + '</div></div>';
+        out += '<div class="bp-meaning"><span class="bp-meaning-tag">Arti</span><div>' + escHtml(it.meaning).replace(/&lt;(\/?)b&gt;/gi, '<$1b>') + '</div></div>';
         out += '</div>'; // /.bp-hero
 
         // Card Body (3 Structured Sub-sections)
