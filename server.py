@@ -10,6 +10,7 @@ Tekan Ctrl+C untuk berhenti.
 import argparse
 import html
 import http.server
+import importlib.util
 import json
 import os
 import socket
@@ -88,6 +89,23 @@ def run_generate_teks(payload):
     return {"ok": True, "log": (p.stdout or "").strip()[-600:]}
 
 
+_ANKI_MOD = None
+
+
+def run_sinkron_anki():
+    """Jalankan sinkronisasi Anki langsung lewat modul sinkron-anki.py."""
+    global _ANKI_MOD
+    script = os.path.join(HERE, "sinkron-anki.py")
+    if not os.path.exists(script):
+        return {"ok": False, "error": "sinkron-anki.py tidak ditemukan"}
+    if _ANKI_MOD is None:
+        spec = importlib.util.spec_from_file_location("sinkron_anki", script)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _ANKI_MOD = mod
+    return _ANKI_MOD.sync_progress(verbose=False)
+
+
 def lan_ips():
     """Semua alamat IPv4 lokal yang mungkin dipakai HP."""
     found = set()
@@ -114,7 +132,34 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         # jangan sampai HP memakai cache lama setelah deck/progress diubah
         self.send_header("Cache-Control", "no-store, must-revalidate")
+        if getattr(self, "path", "").startswith("/api/"):
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Allow-Private-Network", "true")
         super().end_headers()
+
+    def _send_json(self, code, data):
+        body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_OPTIONS(self):
+        if self.path.split("?")[0].startswith("/api/"):
+            self.send_response(204)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        self.send_error(405)
+
+    def do_GET(self):
+        if self.path.split("?")[0] == "/api/anki-status":
+            self._send_json(200, {"ok": True, "server": "kaishi-match"})
+            return
+        return super().do_GET()
 
     def log_message(self, fmt, *args):
         msg = fmt % args
@@ -123,7 +168,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         sys.stderr.write("  %s - %s\n" % (self.address_string(), msg))
 
     def do_POST(self):
-        if self.path.split("?")[0] != "/api/teks":
+        route = self.path.split("?")[0]
+        if route == "/api/sinkron-anki":
+            try:
+                result = run_sinkron_anki()
+            except Exception as exc:
+                result = {"ok": False, "error": str(exc)[:300]}
+            self._send_json(200 if result.get("ok") else 500, result)
+            return
+
+        if route != "/api/teks":
             self.send_error(404)
             return
         try:
@@ -135,12 +189,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             result = run_generate_teks(payload)
         except Exception as exc:  # jangan sampai server mati
             result = {"ok": False, "error": str(exc)[:300]}
-        body = json.dumps(result, ensure_ascii=False).encode("utf-8")
-        self.send_response(200 if result.get("ok") else 500)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        self._send_json(200 if result.get("ok") else 500, result)
 
 
 class Server(socketserver.ThreadingTCPServer):

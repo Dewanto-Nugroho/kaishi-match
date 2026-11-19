@@ -51,6 +51,37 @@
   .badge.badge-link { text-decoration: none; background: #fff; border: 1px solid var(--line); color: var(--accent); }
   .badge.badge-link:hover { background: var(--accent-soft); border-color: transparent; }
   .badge.badge-anki.ok { color: var(--ok); background: var(--ok-bg); }
+  .badge.badge-sync {
+    border: 1px solid #c9bdfc; background: #fff; color: var(--accent); cursor: pointer;
+    font-family: inherit; transition: all .14s; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .badge.badge-sync:hover:not(:disabled) { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .badge.badge-sync:disabled { opacity: .65; cursor: wait; }
+
+  .anki-modal-bg {
+    position: fixed; inset: 0; background: rgba(24, 21, 38, .48); z-index: 80;
+    display: grid; place-items: center; padding: 16px; backdrop-filter: blur(3px);
+  }
+  .anki-modal {
+    background: #fff; border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(20, 18, 35, .24); max-width: 480px; width: 100%;
+    padding: 20px 22px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .anki-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .anki-modal-head h3 { margin: 0; font-size: 17px; }
+  .anki-msg {
+    font-size: 13px; line-height: 1.5; padding: 10px 12px; border-radius: 12px;
+    background: #faf8ff; border: 1px solid #e6defc; color: #3c3852;
+  }
+  .anki-msg.err { background: #fff5f5; border-color: #fecaca; color: #991b1b; }
+  .anki-drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    padding: 14px; border-radius: 14px; border: 1.5px dashed #c4b5fd; background: #faf8ff;
+    color: var(--accent); font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: center;
+    transition: background .14s, border-color .14s;
+  }
+  .anki-drop:hover { background: #f2edff; border-color: var(--accent); }
+  .anki-drop small { font-weight: 500; color: var(--muted); font-size: 11.5px; }
   .badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .chip.anki { background: #f6fbf8; border-color: #d9ece3; color: #2a6b4d; }
   .chip.anki:hover { background: #eaf7f0; border-color: #a9dcc4; color: #1e7d4e; }
@@ -438,6 +469,7 @@
         <button class="badge badge-poin js-poin-badge" type="button" title="Lihat progres & poin">★ 0</button>
         <span class="badge" id="homeDeckBadge">1.488 kata</span>
         <span class="badge badge-anki" id="homeAnkiBadge">Anki belum tersambung</span>
+        <button type="button" class="badge badge-sync js-sync-anki" title="Sinkronkan progres terbaru dari Anki langsung dari web">🔄 Sinkron Anki</button>
       </div>
     </div>
 
@@ -462,7 +494,7 @@
       <div class="hstat">
         <div class="hstat-top"><span>PROGRES ANKI</span><span id="hsAnkiPct">0%</span></div>
         <div class="hstat-val" id="hsAnkiLearned">0 / 1488</div>
-        <div class="hstat-sub" id="hsAnkiSub">Jalankan sinkron-anki.cmd</div>
+        <div class="hstat-sub" id="hsAnkiSub">Klik 🔄 Sinkron Anki</div>
         <div class="hstat-bar"><i id="hsAnkiBar" style="width:0%;background:linear-gradient(90deg,#44c486,#1e9d63)"></i></div>
       </div>
     </div>
@@ -638,7 +670,10 @@
       <div class="hpanel">
         <div class="hpanel-head">
           <h3>Latihan Cepat Menurut Status Anki</h3>
-          <span class="badge badge-anki" id="homeAnkiTime" style="font-size:11px">Belum disinkronkan</span>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+            <span class="badge badge-anki" id="homeAnkiTime" style="font-size:11px">Belum disinkronkan</span>
+            <button type="button" class="qbtn js-sync-anki" style="flex:none;padding:4px 10px" title="Sinkronkan progres terbaru dari Anki">🔄 Sinkron</button>
+          </div>
         </div>
         <p style="margin:0;font-size:13px;color:var(--muted)" id="homeAnkiDesc">
           Klik salah satu kategori di bawah untuk langsung berlatih mencocokkan kata dari progres Anki Anda (maks. 20 kata acak per sesi).
@@ -710,6 +745,7 @@
         <button class="badge badge-poin" id="poinBadge" type="button" title="Lihat progres & poin">★ 0</button>
         <span class="badge" id="deckBadge">memuat…</span>
         <span class="badge badge-anki" id="ankiBadge">Anki belum tersambung</span>
+        <button type="button" class="badge badge-sync js-sync-anki" title="Sinkronkan ulang progres dari Anki">🔄 Sinkron Anki</button>
       </div>
     </div>
 
@@ -848,6 +884,32 @@
   </div>
 </section>
 
+<div class="anki-modal-bg hidden" id="modalAnkiSync">
+  <div class="anki-modal" role="dialog" aria-modal="true">
+    <div class="anki-modal-head">
+      <h3>🔄 Sinkronkan Progres Anki</h3>
+      <button type="button" class="qbtn" id="ankiSyncClose" style="flex:none;padding:4px 10px" aria-label="Tutup">✕</button>
+    </div>
+    <div class="anki-msg" id="ankiSyncMsg">Menyiapkan sinkronisasi…</div>
+    <label class="anki-drop">
+      <span>📂 Pilih file <code>collection.anki2</code> atau <code>progress.js</code></span>
+      <small>Langsung dibaca di browser tanpa perlu klik skrip Python</small>
+      <input type="file" id="ankiFileInput" accept=".anki2,.js" hidden>
+    </label>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted)">
+      <span>Lokasi default Windows: <code style="user-select:all">%APPDATA%\Anki2\User 1</code></span>
+      <button type="button" class="qbtn" id="ankiCopyPath" style="flex:none;padding:4px 9px">📋 Salin Path</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.45;border-top:1px solid var(--line);padding-top:10px">
+      <b>Tips 1-klik di PC:</b> buka lewat <code>jalankan-server.cmd</code> atau nyalakan Anki dengan add-on <b>AnkiConnect</b> (<code>2055492159</code>).
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button type="button" class="btn ghost" id="ankiSyncCloseBtn" style="height:38px;padding:0 14px;font-size:13px">Tutup</button>
+      <button type="button" class="btn primary" id="ankiSyncRetry" style="height:38px;padding:0 16px;font-size:13px">🔄 Coba Hubungkan Lagi</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script src="deck.js"></script>
 <script src="progress.js" onerror="window.__progressMissing=true"></script>
@@ -867,8 +929,25 @@
     return { id: i, w: e.w, r: e.r || '', m: e.m || '', f: e.f, s: e.s || '', sm: e.sm || '', a: e.a };
   });
 
-  /* ---------------- progres dari Anki (progress.js) ---------------- */
-  var PROG = (window.KAISHI_PROGRESS && window.KAISHI_PROGRESS.cards) ? window.KAISHI_PROGRESS : null;
+  /* ---------------- progres dari Anki (progress.js / localStorage) ---------------- */
+  var ANKI_LS_KEY = 'kaishi.anki.progress.v1';
+  function pickFresherProgress() {
+    var fileProg = (window.KAISHI_PROGRESS && window.KAISHI_PROGRESS.cards) ? window.KAISHI_PROGRESS : null;
+    var lsProg = null;
+    try {
+      var rawLs = localStorage.getItem(ANKI_LS_KEY);
+      if (rawLs) {
+        var parsedLs = JSON.parse(rawLs);
+        if (parsedLs && parsedLs.cards) lsProg = parsedLs;
+      }
+    } catch (e) {}
+    if (lsProg && (!fileProg || (lsProg.generatedAt || 0) >= (fileProg.generatedAt || 0))) {
+      window.KAISHI_PROGRESS = lsProg;
+      return lsProg;
+    }
+    return fileProg;
+  }
+  var PROG = pickFresherProgress();
   var PCARDS = PROG ? PROG.cards : {};
 
   // kartu: [type, queue, ivl, reps, lapses, lastReview, nextDue, deckId]
@@ -1562,15 +1641,18 @@
 
     if (!PROG) {
       elAnki.textContent = 'Anki belum tersambung';
-      if (elHomeAnki) elHomeAnki.textContent = 'Anki belum tersambung';
-      elInfo.innerHTML = 'Untuk melihat kata yang sudah dipelajari, jalankan <b>sinkron-anki.cmd</b> ' +
-        '(atau <b>python sinkron-anki.py</b>) di folder ini, lalu muat ulang halaman.';
+      elAnki.classList.remove('ok');
+      if (elHomeAnki) {
+        elHomeAnki.textContent = 'Anki belum tersambung';
+        elHomeAnki.classList.remove('ok');
+      }
+      elInfo.innerHTML = 'Progres Anki belum tersinkron. Klik tombol <b>🔄 Sinkron Anki</b> di atas untuk membaca progres belajar dari Anki secara langsung.';
       document.getElementById('ankiGroup').classList.add('hidden');
       if ($('hsAnkiLearned')) $('hsAnkiLearned').textContent = '0 / ' + ALL.length;
-      if ($('hsAnkiSub')) $('hsAnkiSub').textContent = 'Jalankan sinkron-anki.cmd';
+      if ($('hsAnkiSub')) $('hsAnkiSub').textContent = 'Klik 🔄 Sinkron Anki';
       if ($('haUnlearned')) $('haUnlearned').textContent = ALL.length;
       if ($('homeAnkiDesc')) {
-        $('homeAnkiDesc').innerHTML = 'Progres Anki belum disinkronkan. Jalankan <b>sinkron-anki.cmd</b> di folder ini agar status kartu terbaca otomatis.';
+        $('homeAnkiDesc').innerHTML = 'Progres Anki belum disinkronkan. Klik <b>🔄 Sinkron Anki</b> untuk membaca kartu Anki Anda langsung dari web.';
       }
       return;
     }
@@ -1618,7 +1700,7 @@
     elInfo.innerHTML = 'Tersambung ke Anki · <b>' + learned + '</b> kata pernah diulang, ' +
       '<b>' + recent + '</b> baru diulang (3 hari), <b>' + young + '</b> masih muda, ' +
       '<b>' + mature + '</b> matang, <b>' + lapsed + '</b> pernah lupa · data ' +
-      whenStr + ' · jalankan sinkron lagi setelah belajar di Anki.';
+      whenStr + ' · klik <b>🔄 Sinkron Anki</b> setelah belajar di Anki.';
 
     document.getElementById('ankiGroup').classList.remove('hidden');
     // lengkapi label dropdown dengan jumlah kata per kategori
@@ -1634,6 +1716,348 @@
   pickWotd(false);
   renderList();
   updateSelectionUi();
+
+  /* ---------------- tombol sinkronisasi Anki di web ---------------- */
+  var syncBtns = Array.prototype.slice.call(document.querySelectorAll('.js-sync-anki'));
+  var syncBusy = false;
+  var modalSync = $('modalAnkiSync');
+  var elSyncMsg = $('ankiSyncMsg');
+
+  function setSyncUiBusy(busy) {
+    syncBusy = busy;
+    syncBtns.forEach(function (b) {
+      b.disabled = busy;
+      if (busy) {
+        if (!b.getAttribute('data-orig')) b.setAttribute('data-orig', b.textContent);
+        b.textContent = '⏳ Menyinkronkan…';
+      } else if (b.getAttribute('data-orig')) {
+        b.textContent = b.getAttribute('data-orig');
+      }
+    });
+  }
+
+  function applySyncedProgress(progData, ankiOpenNote) {
+    if (!progData || !progData.cards) return false;
+    window.KAISHI_PROGRESS = progData;
+    PROG = progData;
+    PCARDS = progData.cards || {};
+    try { localStorage.setItem(ANKI_LS_KEY, JSON.stringify(progData)); } catch (e) {}
+    initAnki();
+    renderList();
+    updateSelectionUi();
+    pickWotd(false);
+    if (modalSync) modalSync.classList.add('hidden');
+    var learned = ALL.filter(isLearned).length;
+    var mature = ALL.filter(function (e) { return ankiStatus(e) === 'matang'; }).length;
+    var msg = '✅ Anki tersinkron! ' + learned + ' dipelajari · ' + mature + ' matang';
+    if (ankiOpenNote) msg += ' (Anki terbuka — tutup Anki jika review terakhir belum masuk)';
+    toast(msg);
+    return true;
+  }
+
+  function fetchWithTimeout(url, opts, ms) {
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, ms) : null;
+    var cfg = Object.assign({}, opts || {});
+    if (ctrl) cfg.signal = ctrl.signal;
+    return fetch(url, cfg).then(function (res) {
+      if (timer) clearTimeout(timer);
+      return res;
+    }, function (err) {
+      if (timer) clearTimeout(timer);
+      throw err;
+    });
+  }
+
+  function syncViaServer() {
+    var isHttp = (location.protocol === 'http:' || location.protocol === 'https:');
+    var isGh = location.hostname.indexOf('github.io') !== -1;
+    var endpoints = [];
+    if (isHttp && !isGh) endpoints.push({ url: '/api/sinkron-anki', ms: 12000 });
+    else endpoints.push({ url: 'http://127.0.0.1:8080/api/sinkron-anki', ms: 2200 });
+
+    var i = 0;
+    function nextEp() {
+      if (i >= endpoints.length) return Promise.resolve({ reached: false });
+      var ep = endpoints[i++];
+      return fetchWithTimeout(ep.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }, ep.ms)
+        .then(function (r) {
+          return r.json().then(function (data) {
+            return { reached: true, data: data };
+          });
+        })
+        .catch(function () { return nextEp(); });
+    }
+    return nextEp();
+  }
+
+  function acPost(action, params) {
+    return fetchWithTimeout('http://127.0.0.1:8765', {
+      method: 'POST',
+      body: JSON.stringify({ action: action, version: 6, params: params || {} })
+    }, 2500).then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.error) throw new Error(d.error);
+      return d ? d.result : null;
+    });
+  }
+
+  function syncViaAnkiConnect() {
+    return acPost('deckNamesAndIds').then(function (decksMap) {
+      if (!decksMap) throw new Error('AnkiConnect tidak tersedia');
+      var allDecks = Object.keys(decksMap);
+      var kaishiDecks = allDecks.filter(function (name) { return /kaishi/i.test(name); });
+      var query = kaishiDecks.length
+        ? kaishiDecks.map(function (n) { return 'deck:"' + n.replace(/"/g, '\\"') + '"'; }).join(' OR ')
+        : 'deck:*';
+      return acPost('findNotes', { query: query }).then(function (noteIds) {
+        if (!noteIds || !noteIds.length) return null;
+        return acPost('notesInfo', { notes: noteIds.slice(0, 3000) }).then(function (notes) {
+          var wordToIdx = {};
+          DECK.words.forEach(function (wd, idx) {
+            if (wd.w && wordToIdx[wd.w] === undefined) wordToIdx[wd.w] = idx;
+          });
+          var cardToWordIdx = {};
+          var cids = [];
+          (notes || []).forEach(function (nt) {
+            if (!nt || !nt.fields || !nt.cards || !nt.cards.length) return;
+            var matchedIdx = -1;
+            var fieldNames = Object.keys(nt.fields);
+            for (var fi = 0; fi < fieldNames.length; fi++) {
+              var val = String((nt.fields[fieldNames[fi]] && nt.fields[fieldNames[fi]].value) || '')
+                .replace(/<[^>]+>/g, '').trim();
+              if (val && wordToIdx[val] !== undefined) {
+                matchedIdx = wordToIdx[val];
+                break;
+              }
+            }
+            if (matchedIdx !== -1) {
+              var cid = nt.cards[0];
+              cardToWordIdx[cid] = matchedIdx;
+              cids.push(cid);
+            }
+          });
+          if (!cids.length) return null;
+          return acPost('cardsInfo', { cards: cids }).then(function (cardsList) {
+            var outCards = {};
+            var outDecks = {};
+            (cardsList || []).forEach(function (c) {
+              var wIdx = cardToWordIdx[c.cardId];
+              if (wIdx === undefined) return;
+              var q = Number(c.queue || 0);
+              var ivl = Number(c.interval || 0);
+              var modMs = c.mod ? Number(c.mod) * 1000 : null;
+              var did = Number(decksMap[c.deckName] || 1);
+              outDecks[did] = c.deckName || 'Kaishi 1.5k';
+              outCards[String(wIdx)] = [
+                Number(c.type || 0), q, ivl, Number(c.reps || 0),
+                Number(c.lapses || 0), modMs, null, did
+              ];
+            });
+            var vals = Object.keys(outCards).map(function (k) { return outCards[k]; });
+            if (!vals.length) return null;
+            return {
+              generatedAt: Date.now(),
+              source: 'AnkiConnect (127.0.0.1:8765)',
+              decks: outDecks,
+              total: DECK.words.length,
+              matched: vals.length,
+              learned: vals.filter(function (v) { return v[3] > 0; }).length,
+              mature: vals.filter(function (v) { return v[1] === 2 && v[2] >= 21; }).length,
+              cards: outCards
+            };
+          });
+        });
+      });
+    });
+  }
+
+  function loadSqlJsOnce() {
+    if (window._kaishiSqlPromise) return window._kaishiSqlPromise;
+    window._kaishiSqlPromise = new Promise(function (resolve, reject) {
+      if (typeof window.initSqlJs === 'function') {
+        resolve(window.initSqlJs);
+        return;
+      }
+      var sc = document.createElement('script');
+      sc.src = 'https://cdn.jsdelivr.net/npm/sql.js@1.11.0/dist/sql-wasm.js';
+      sc.onload = function () {
+        if (typeof window.initSqlJs === 'function') resolve(window.initSqlJs);
+        else reject(new Error('Gagal memuat pembaca SQLite (sql.js).'));
+      };
+      sc.onerror = function () {
+        window._kaishiSqlPromise = null;
+        reject(new Error('Gagal mengunduh pembaca SQLite. Periksa koneksi internet atau pilih file progress.js.'));
+      };
+      document.head.appendChild(sc);
+    }).then(function (initFn) {
+      return initFn({ locateFile: function (f) { return 'https://cdn.jsdelivr.net/npm/sql.js@1.11.0/dist/' + f; } });
+    });
+    return window._kaishiSqlPromise;
+  }
+
+  function handleAnkiFile(file) {
+    if (!file) return;
+    if (file.name.toLowerCase().endsWith('.js')) {
+      var frJs = new FileReader();
+      frJs.onload = function () {
+        try {
+          var txt = String(frJs.result || '');
+          var i1 = txt.indexOf('{'), i2 = txt.lastIndexOf('}');
+          if (i1 === -1 || i2 === -1) throw new Error('Isi file .js bukan format KAISHI_PROGRESS.');
+          var obj = JSON.parse(txt.slice(i1, i2 + 1));
+          if (!obj || !obj.cards) throw new Error('Data cards tidak ditemukan dalam file tersebut.');
+          applySyncedProgress(obj, false);
+        } catch (err) {
+          if (elSyncMsg) {
+            elSyncMsg.className = 'anki-msg err';
+            elSyncMsg.textContent = 'Gagal membaca file progress.js: ' + (err.message || err);
+          }
+        }
+      };
+      frJs.readAsText(file, 'utf-8');
+      return;
+    }
+
+    if (elSyncMsg) {
+      elSyncMsg.className = 'anki-msg';
+      elSyncMsg.textContent = '⏳ Membaca database Anki (' + file.name + ')…';
+    }
+    var frBin = new FileReader();
+    frBin.onload = function () {
+      var buf = frBin.result;
+      loadSqlJsOnce().then(function (SQL) {
+        var db = new SQL.Database(new Uint8Array(buf));
+        try {
+          var guids = {};
+          DECK.words.forEach(function (wd, idx) {
+            if (wd.g) guids[wd.g] = idx;
+          });
+          var deckNames = {};
+          try {
+            var dres = db.exec('select id, name from decks');
+            if (dres && dres[0]) {
+              dres[0].values.forEach(function (r) { deckNames[r[0]] = r[1]; });
+            }
+          } catch (e) {}
+          var lastRev = {};
+          try {
+            var rres = db.exec('select cid, max(id) from revlog group by cid');
+            if (rres && rres[0]) {
+              rres[0].values.forEach(function (r) { lastRev[r[0]] = r[1]; });
+            }
+          } catch (e) {}
+
+          var qres = db.exec('select n.guid, k.id, k.type, k.queue, k.ivl, k.reps, k.lapses, k.due, k.did, k.odid, c.crt from cards k join notes n on n.id = k.nid join col c on c.id = 1');
+          var cards = {};
+          var titles = {};
+          if (qres && qres[0]) {
+            qres[0].values.forEach(function (row) {
+              var guid = row[0];
+              if (guids[guid] === undefined) return;
+              var cid = row[1], ctype = row[2], queue = row[3], ivl = row[4];
+              var reps = row[5], lapses = row[6], due = row[7], did = row[8], odid = row[9], crt = row[10];
+              var deckId = odid || did;
+              titles[deckId] = deckNames[deckId] || String(deckId);
+              var nextDue = (queue === 2 || queue === 3) && due ? Math.round(crt * 1000 + due * 86400000) : null;
+              cards[String(guids[guid])] = [
+                Number(ctype), Number(queue), Number(ivl), Number(reps), Number(lapses),
+                lastRev[cid] || null, nextDue, Number(deckId)
+              ];
+            });
+          }
+          var vals = Object.keys(cards).map(function (k) { return cards[k]; });
+          if (!vals.length) throw new Error('Tidak ada kartu dek Kaishi yang cocok di file collection.anki2 ini.');
+          applySyncedProgress({
+            generatedAt: Date.now(),
+            source: file.name,
+            decks: titles,
+            total: DECK.words.length,
+            matched: vals.length,
+            learned: vals.filter(function (v) { return v[3] > 0; }).length,
+            mature: vals.filter(function (v) { return v[1] === 2 && v[2] >= 21; }).length,
+            cards: cards
+          }, false);
+        } finally {
+          db.close();
+        }
+      }).catch(function (err) {
+        if (elSyncMsg) {
+          elSyncMsg.className = 'anki-msg err';
+          elSyncMsg.textContent = 'Gagal memproses database Anki: ' + (err && err.message ? err.message : err);
+        }
+      });
+    };
+    frBin.readAsArrayBuffer(file);
+  }
+
+  function showSyncModal(msgText, isErr) {
+    if (!modalSync) return;
+    if (elSyncMsg) {
+      elSyncMsg.className = 'anki-msg' + (isErr ? ' err' : '');
+      elSyncMsg.textContent = msgText;
+    }
+    modalSync.classList.remove('hidden');
+  }
+
+  function runAnkiSync() {
+    if (syncBusy) return;
+    setSyncUiBusy(true);
+    syncViaServer().then(function (srv) {
+      if (srv && srv.reached) {
+        if (srv.data && srv.data.ok && srv.data.progress) {
+          applySyncedProgress(srv.data.progress, !!srv.data.ankiRunning);
+          setSyncUiBusy(false);
+          return;
+        }
+        setSyncUiBusy(false);
+        showSyncModal((srv.data && srv.data.error) || 'Sinkronisasi server gagal.', true);
+        return;
+      }
+      return syncViaAnkiConnect().then(function (acProg) {
+        setSyncUiBusy(false);
+        if (acProg) {
+          applySyncedProgress(acProg, false);
+        } else {
+          showSyncModal('Server lokal (jalankan-server.cmd) atau AnkiConnect tidak terdeteksi di perangkat ini. Anda tetap bisa memilih file collection.anki2 atau progress.js langsung di bawah:', false);
+        }
+      }).catch(function () {
+        setSyncUiBusy(false);
+        showSyncModal('Tidak terhubung ke server lokal ataupun AnkiConnect. Pilih file collection.anki2 (atau progress.js) langsung di browser di bawah ini:', false);
+      });
+    }).catch(function () {
+      setSyncUiBusy(false);
+      showSyncModal('Koneksi sinkronisasi gagal. Silakan pilih file collection.anki2 atau coba lagi.', true);
+    });
+  }
+
+  syncBtns.forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      runAnkiSync();
+    });
+  });
+  if ($('ankiSyncClose')) $('ankiSyncClose').addEventListener('click', function () { modalSync.classList.add('hidden'); });
+  if ($('ankiSyncCloseBtn')) $('ankiSyncCloseBtn').addEventListener('click', function () { modalSync.classList.add('hidden'); });
+  if (modalSync) {
+    modalSync.addEventListener('click', function (e) {
+      if (e.target === modalSync) modalSync.classList.add('hidden');
+    });
+  }
+  if ($('ankiSyncRetry')) $('ankiSyncRetry').addEventListener('click', runAnkiSync);
+  if ($('ankiFileInput')) {
+    $('ankiFileInput').addEventListener('change', function () {
+      if (this.files && this.files[0]) handleAnkiFile(this.files[0]);
+      this.value = '';
+    });
+  }
+  if ($('ankiCopyPath')) {
+    $('ankiCopyPath').addEventListener('click', function () {
+      var p = '%APPDATA%\\Anki2\\User 1';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(p).then(function () { toast('Path %APPDATA%\\Anki2\\User 1 disalin!'); }).catch(function () {});
+      }
+    });
+  }
 
   // Mulai cepat: index.html?n=20 langsung memilih N kata acak dan memulai sesi.
   var params = new URLSearchParams(location.search);

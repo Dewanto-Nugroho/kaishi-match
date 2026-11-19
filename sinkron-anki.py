@@ -14,12 +14,14 @@ import shutil
 import sqlite3
 import sys
 import tempfile
+import threading
 import time
 import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DECK_JS = os.path.join(HERE, "deck.js")
 OUT_JS = os.path.join(HERE, "progress.js")
+_SYNC_LOCK = threading.Lock()
 
 
 def uni(a, b):
@@ -80,7 +82,7 @@ def anki_running():
 
 def read_progress(collection, guids):
     # Salin dulu ke berkas sementara di folder ini supaya koleksi Anki tidak tersentuh.
-    copy = os.path.join(HERE, ".anki-copy-%d.anki2" % os.getpid())
+    copy = os.path.join(HERE, ".anki-copy-%d-%d.anki2" % (os.getpid(), threading.get_ident()))
     shutil.copy2(collection, copy)
     extra = []
     # ikutkan berkas WAL bila ada (Anki kadang memakainya)
@@ -142,73 +144,102 @@ def read_progress(collection, guids):
                 pass
 
 
-def main():
+def sync_progress(verbose=False):
+    """Jalankan sinkronisasi Anki -> progress.js dan kembalikan dict hasil lengkap."""
     if not os.path.exists(DECK_JS):
-        print("! Berkas deck.js tidak ditemukan di folder ini.")
-        print("  Letakkan skrip ini di folder yang sama dengan index.html dan deck.js.")
+        return {"ok": False, "error": "Berkas deck.js tidak ditemukan di folder aplikasi."}
+
+    with _SYNC_LOCK:
+        deck, guids = load_guids()
+        if verbose:
+            print("Deck  : %s" % deck.get("deck", "Kaishi 1.5k"))
+            print("Kata  : %d entri" % len(deck["words"]))
+
+        collections = find_collections()
+        if not collections:
+            return {
+                "ok": False,
+                "error": "Database Anki (collection.anki2) tidak ditemukan di komputer ini. Pastikan Anki sudah terpasang dan pernah dibuka minimal sekali.",
+            }
+
+        if verbose:
+            print("\nProfil Anki yang ditemukan:")
+            for i, p in enumerate(collections):
+                print("  [%d] %s  (%.1f MB, diubah %s)" % (
+                    i, p, os.path.getsize(p) / 1048576,
+                    time.strftime("%Y-%m-%d %H:%M", time.localtime(os.path.getmtime(p))),
+                ))
+
+        best = None
+        last_err = None
+        for path in collections:
+            try:
+                cards, titles = read_progress(path, guids)
+            except sqlite3.Error as exc:
+                last_err = str(exc)
+                if verbose:
+                    print("  ! gagal membaca %s: %s" % (path, exc))
+                continue
+            if cards:
+                best = (path, cards, titles)
+                break
+
+        if best is None:
+            return {
+                "ok": False,
+                "error": "Tidak ada kartu Kaishi yang cocok di koleksi Anki (%s)." % (last_err or "impor dulu dek .apkg Kaishi ke Anki"),
+            }
+
+        path, cards, titles = best
+        is_open = anki_running()
+        learned = sum(1 for v in cards.values() if v[3] > 0)
+        mature = sum(1 for v in cards.values() if v[1] == 2 and v[2] >= 21)
+        payload = {
+            "generatedAt": int(time.time() * 1000),
+            "source": path,
+            "decks": titles,
+            "total": len(deck["words"]),
+            "matched": len(cards),
+            "learned": learned,
+            "mature": mature,
+            "cards": cards,
+        }
+
+        tmp_out = OUT_JS + ".tmp-%d" % threading.get_ident()
+        with open(tmp_out, "w", encoding="utf-8") as f:
+            f.write("window.KAISHI_PROGRESS = ")
+            json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+            f.write(";\n")
+        os.replace(tmp_out, OUT_JS)
+
+        return {
+            "ok": True,
+            "source": path,
+            "matched": len(cards),
+            "total": len(deck["words"]),
+            "learned": learned,
+            "mature": mature,
+            "ankiRunning": is_open,
+            "generatedAt": payload["generatedAt"],
+            "progress": payload,
+        }
+
+
+def main():
+    res = sync_progress(verbose=True)
+    if not res.get("ok"):
+        print("\n! " + res.get("error", "Sinkronisasi gagal."))
         return 1
 
-    deck, guids = load_guids()
-    print("Deck  : %s" % deck.get("deck", "Kaishi 1.5k"))
-    print("Kata  : %d entri" % len(deck["words"]))
-
-    collections = find_collections()
-    if not collections:
-        print("\n! Tidak ada collection.anki2 yang ditemukan.")
-        print("  Pastikan Anki sudah pernah dibuka minimal sekali di komputer ini.")
-        return 1
-
-    print("\nProfil Anki yang ditemukan:")
-    for i, path in enumerate(collections):
-        print("  [%d] %s  (%.1f MB, diubah %s)" % (
-            i, path, os.path.getsize(path) / 1048576,
-            time.strftime("%Y-%m-%d %H:%M", time.localtime(os.path.getmtime(path))),
-        ))
-
-    best = None
-    for path in collections:
-        try:
-            cards, titles = read_progress(path, guids)
-        except sqlite3.Error as exc:
-            print("  ! gagal membaca %s: %s" % (path, exc))
-            continue
-        if cards:
-            best = (path, cards, titles)
-            break
-
-    if best is None:
-        print("\n! Tidak ada catatan Kaishi yang cocok di koleksi Anki mana pun.")
-        print("  Impor dulu berkas .apkg Kaishi ke Anki, lalu jalankan skrip ini lagi.")
-        return 1
-
-    path, cards, titles = best
-    if anki_running():
+    if res.get("ankiRunning"):
         print("\n  Catatan: Anki sedang terbuka. Data dibaca dari salinan, jadi perubahan")
         print("  beberapa menit terakhir bisa belum ikut. Tutup Anki untuk hasil paling akurat.")
 
-    learned = sum(1 for v in cards.values() if v[3] > 0)
-    mature = sum(1 for v in cards.values() if v[1] == 2 and v[2] >= 21)
-    payload = {
-        "generatedAt": int(time.time() * 1000),
-        "source": path,
-        "decks": titles,
-        "total": len(deck["words"]),
-        "matched": len(cards),
-        "learned": learned,
-        "mature": mature,
-        "cards": cards,
-    }
-
-    with open(OUT_JS, "w", encoding="utf-8") as f:
-        f.write("window.KAISHI_PROGRESS = ")
-        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
-        f.write(";\n")
-
     print("\nSelesai.")
-    print("  Sumber        : %s" % path)
-    print("  Kata cocok    : %d dari %d" % (len(cards), len(deck["words"])))
-    print("  Sudah diulang : %d" % learned)
-    print("  Matang        : %d" % mature)
+    print("  Sumber        : %s" % res["source"])
+    print("  Kata cocok    : %d dari %d" % (res["matched"], res["total"]))
+    print("  Sudah diulang : %d" % res["learned"])
+    print("  Matang        : %d" % res["mature"])
     print("  Ditulis       : %s" % OUT_JS)
     print("\nBuka index.html (muat ulang halaman), lalu pakai filter 'Sudah dipelajari'.")
     return 0

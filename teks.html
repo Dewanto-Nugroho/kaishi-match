@@ -481,10 +481,22 @@
 
   /* ---------- progres Anki ---------- */
   var STUDIED = {};
-  if (window.KAISHI_PROGRESS && window.KAISHI_PROGRESS.cards) {
-    var cards = window.KAISHI_PROGRESS.cards;
-    Object.keys(cards).forEach(function (k) { STUDIED[k] = cards[k][3] > 0; });
-  }
+  (function () {
+    var prog = (window.KAISHI_PROGRESS && window.KAISHI_PROGRESS.cards) ? window.KAISHI_PROGRESS : null;
+    try {
+      var lsRaw = localStorage.getItem('kaishi.anki.progress.v1');
+      if (lsRaw) {
+        var lsProg = JSON.parse(lsRaw);
+        if (lsProg && lsProg.cards && (!prog || (lsProg.generatedAt || 0) >= (prog.generatedAt || 0))) {
+          prog = lsProg;
+          window.KAISHI_PROGRESS = lsProg;
+        }
+      }
+    } catch (e) {}
+    if (prog && prog.cards) {
+      Object.keys(prog.cards).forEach(function (k) { STUDIED[k] = prog.cards[k][3] > 0; });
+    }
+  })();
   function studied(w) { return STUDIED[w.id] === true; }
 
   /* ---------- util ---------- */
