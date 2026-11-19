@@ -310,9 +310,11 @@
       <div style="margin-top:10px;padding:10px 12px;background:#faf8ff;border:1px solid var(--line);border-radius:11px">
         <label class="mrow" style="margin-bottom:8px;font-size:12.5px">Model AI
           <select id="mAiModel" style="height:32px;font-size:12.5px">
-            <option value="gemini-3.5-flash" selected>gemini-3.5-flash (Default)</option>
-            <option value="gemini-2.5-flash">gemini-2.5-flash (Stabil)</option>
-            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+            <option value="gemini-3.8-flash" selected>gemini-3.8-flash (Default · Cepat)</option>
+            <option value="gemini-4-hydrogen">gemini-4-hydrogen (Gemini 4 Hydrogen)</option>
+            <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+            <option value="gemini-3.7-flash">gemini-3.7-flash</option>
+            <option value="gemini-flash-latest">gemini-flash-latest</option>
           </select>
         </label>
         <div style="display:flex;flex-direction:column;gap:4px">
@@ -1492,7 +1494,9 @@
   }
 
   /* ---------- AI langsung di browser (semua perangkat) ---------- */
-  var AI_CFG_KEY = 'kaishi.ai.cfg.v1';
+  var AI_CFG_KEY = 'kaishi.ai.cfg.v2';
+  var DEFAULT_AI_MODEL = 'gemini-3.8-flash';
+  var VALID_AI_MODELS = ['gemini-3.8-flash', 'gemini-4-hydrogen', 'gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-flash-latest'];
   var _DEF_BYTES = [8, 24, 103, 8, 43, 113, 27, 7, 127, 3, 49, 123, 34, 36, 60, 26, 2, 43, 26, 32, 2, 47, 2, 40, 47, 46, 49, 25, 19, 3, 124, 14, 19, 58, 39, 7, 6, 49, 51, 48, 11, 112, 12, 48, 44, 45, 29, 56, 11, 34, 123, 56, 46];
   function getDefaultKey() {
     return _DEF_BYTES.map(function (b) { return String.fromCharCode(b ^ 73); }).join('');
@@ -1501,9 +1505,10 @@
   function loadAiCfg() {
     try {
       var s = JSON.parse(localStorage.getItem(AI_CFG_KEY) || '{}');
-      return { model: s.model || 'gemini-3.5-flash', key: s.key || '' };
+      var m = (s.model && VALID_AI_MODELS.indexOf(s.model) !== -1) ? s.model : DEFAULT_AI_MODEL;
+      return { model: m, key: s.key || '' };
     } catch (e) {
-      return { model: 'gemini-3.5-flash', key: '' };
+      return { model: DEFAULT_AI_MODEL, key: '' };
     }
   }
   function saveAiCfg(model, key) {
@@ -1568,8 +1573,8 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     }).then(function (r) {
-      if (r.status === 503 || r.status === 429) {
-        var err = new Error('Server AI sibuk (' + r.status + ')');
+      if (r.status === 503 || r.status === 429 || r.status === 500 || r.status === 502 || r.status === 504 || r.status === 404) {
+        var err = new Error('Server AI sibuk / tidak tersedia (' + r.status + ')');
         err.retryable = true;
         throw err;
       }
@@ -1590,20 +1595,33 @@
   }
 
   function generateOneAiText(apiKey, prefModel, prompt, targetLevel, onRetryStatus) {
-    var modelsToTry = [prefModel, prefModel === 'gemini-2.5-flash' ? 'gemini-3.5-flash' : 'gemini-2.5-flash'];
+    var fallbacks = [prefModel || DEFAULT_AI_MODEL, 'gemini-3.8-flash', 'gemini-4-hydrogen', 'gemini-3.5-flash', 'gemini-3.7-flash'];
+    var uniqModels = [];
+    fallbacks.forEach(function (fm) {
+      if (fm && uniqModels.indexOf(fm) === -1) uniqModels.push(fm);
+    });
+    // Try preferred model twice first, then fall forward through alternates
+    var attemptSeq = [uniqModels[0], uniqModels[0]].concat(uniqModels.slice(1));
     var attempt = 0;
 
     function step() {
-      var m = modelsToTry[Math.min(attempt >= 2 ? 1 : 0, modelsToTry.length - 1)];
+      var m = attemptSeq[Math.min(attempt, attemptSeq.length - 1)];
       return callGeminiOnce(apiKey, m, prompt).then(function (raw) {
         var parsed = parseAiTeks(raw, targetLevel);
         if (!parsed) throw new Error('Hasil AI kurang lengkap');
         return parsed;
       }).catch(function (err) {
         attempt++;
-        if (attempt < 4 && (err.retryable || err.message.indexOf('kurang lengkap') !== -1 || err.message.indexOf('JSON') !== -1)) {
-          if (onRetryStatus) onRetryStatus('Server sibuk, mencoba lagi (' + attempt + '/3)…');
-          return new Promise(function (res) { setTimeout(res, 2500 * attempt); }).then(step);
+        var isRetryable = err && (err.retryable ||
+          (err.message && (err.message.indexOf('kurang lengkap') !== -1 ||
+          err.message.indexOf('JSON') !== -1 ||
+          err.message.indexOf('Failed to fetch') !== -1)));
+        if (attempt < attemptSeq.length && isRetryable) {
+          var nextM = attemptSeq[attempt];
+          if (onRetryStatus) {
+            onRetryStatus((nextM !== m ? 'Beralih ke ' + nextM : 'Mencoba ulang ' + nextM) + ' (' + attempt + '/' + (attemptSeq.length - 1) + ')…');
+          }
+          return new Promise(function (res) { setTimeout(res, 1800 * attempt); }).then(step);
         }
         throw err;
       });
@@ -1668,7 +1686,7 @@
 
     // Mode AI langsung dari browser (bekerja di HP, tablet, laptop, GitHub Pages, maupun lokal)
     var customKey = ($('mAiKey') ? $('mAiKey').value.trim() : '');
-    var model = ($('mAiModel') ? $('mAiModel').value : 'gemini-3.5-flash');
+    var model = ($('mAiModel') && $('mAiModel').value ? $('mAiModel').value : DEFAULT_AI_MODEL);
     saveAiCfg(model, customKey);
     var apiKey = customKey || getDefaultKey();
 
